@@ -259,7 +259,7 @@ $(function () {
         { 
           label: metric, 
           borderColor: getHeatmap(i++),
-          data: await data.series.map(d=> {return {x: new Date(d[0]), y:d[1] }} )
+          data: data.series.map(d=> {return {x: new Date(d[0]), y:d[1] }} )
         })
       }
     }
