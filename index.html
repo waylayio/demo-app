@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+    <head>
+        <meta charset="utf-8">
+        <title>Waylay Demo</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" type="text/css" href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" />
+        <link rel="stylesheet" type="text/css" href="css/styles.css">
+    </head>
+    <body>
+    <div id="cover"></div>        
+        <div class="container">
+            <div class="popup" id="popup"></div>
+            <div id="formConnect">
+                <h2>Connect to Waylay</h2>
+                <label for="user">Email</label>
+                <input type="text" id="user" placeholder="email" />
+                <label for="password">Password</label>
+                <input type="password" id="pwd" placeholder="password" />
+                <br>
+                <button id="btnFormConnect" class="btn btn-success btn-lg">Connect</button>
+                <p class="login-error">Your credentials are not correct</p>
+            </div>
+        </div>
+        <div id="app" class="container">
+            <button id="btnLogout" style="float: right" title="Logout">Logout</button>  
+            <span>Select</span>
+            <input type="text" style="left: right"  id="resource" placeholder="select resource" />
+            <button id="load-btn" title="Load data">Get Data </button>
+            <select name="time" id="time">
+                <option value="PT30M">30 minutes</option>
+                <option value="PT60M">1 hour</option>
+                <option value="P1D">1 day</option>
+                <option value="P1M">1 month</option>
+            </select>
+            <div>
+                <canvas id="my-simple-chart"></canvas>
+            </div>
+            <hr>
+            <div>
+                <h3>Triggering configuration</h3>
+                <p>Select the trigger condition under which there are no issues, out of boundaries are lower and upper limit, if values are above or below, an alarm <strong><em>Out of Range</em></strong> will be generated:</p>
+                <button id="task-btn" title="Start a task ">Trigger</button>
+                <select name="type" id="type">
+                    <option value="periodic">periodic</option>
+                    <option value="reactive">when data arrives</option>
+                </select>
+                <select id="metricSelect"></select>
+                <input type="number" id="lowerLimit" placeholder="lower limit" name="lowerLimit" value="0">
+                <input type="number" id="upperLimit" placeholder="upper limit" name="upperLimit" value="20">
+            </div>
+            <hr>
+            <div>
+                <h3>Notification configuration</h3>
+                <button id="notify-btn" title="Start alert task ">Notification </button>
+                <select name="type" id="type">
+                    <option value="periodic">email</option>
+                    <option value="reactive">sms</option>
+                    <option value="reactive">zendesk</option>
+                </select>
+            </div>
+            <hr>
+            <h3>Tasks</h3>
+            <div id="tasks"></div>
+            <h3>Alarms</h3>
+            <div id="alarms"></div>
+        </div>
+        <script src="https://unpkg.com/@waylay/client/dist/waylay.umd.js"></script>
+        <script
+          src="https://code.jquery.com/jquery-3.6.0.min.js"
+          integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+          crossorigin="anonymous"></script>
+          <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js" integrity="sha256-eTyxS0rkjpLEo16uXTS0uVCS4815lc40K2iVpWDvdSY=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.bundle.js"></script>
+        <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
+        <script src="js/config.js"></script>
+        <script src="js/script.js"></script>
+    </body>
+</html>
+
+

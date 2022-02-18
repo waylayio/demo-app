@@ -1,0 +1,22 @@
+#cover { position: fixed; height: 100%; width: 100%; top:0; left: 0; background: #FFF; z-index:9999;}
+.ui-helper-hidden-accessible {
+ visibility: hidden;
+}
+
+button:hover {
+    background-color : rgba(26, 13, 3, 0.26);
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+}
+
+.popup {
+  position: absolute;
+  top: 40px;
+  right: 0px;
+  box-shadow: rgb(38, 57, 77) 0px 10px 10px -5px;
+} 
+
+
