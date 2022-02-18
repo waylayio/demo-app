@@ -29,9 +29,7 @@ async function login() {
 }
 
 function getPlugin(name) {
-  const plug = plugins.filter(x=> x.name === name)
-  if(plug.length > 0)
-    return plug[0] 
+  return plugins.find(x=> x.name === name)
 }
 
 function getHeatmap(num) {
@@ -125,9 +123,10 @@ async function listAlarms() {
 function plot(data) {
   var ctx = document.getElementById('my-simple-chart').getContext('2d')
   if(chart !== null){
-    chart.destroy()
-  }
-  chart = new Chart(ctx, {
+    chart.data.datasets = data
+    chart.update()
+  } else {
+    chart = new Chart(ctx, {
     type: 'line',
     data: { datasets: data },
     options: {
@@ -138,7 +137,8 @@ function plot(data) {
         }]
       }
     }
-  })
+    })
+  }
 }
 
 $(function () {
@@ -170,6 +170,7 @@ $(function () {
       })
     })
   })
+  
   $('#notify-btn').on('click', function(e) {
     const resource = $('#resource').val()
     startNotificationTask(resource)
