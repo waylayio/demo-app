@@ -220,6 +220,19 @@ $(function () {
     }
   })
 
+  $('#tasks-btn').on('click', function(e) {
+    waylay.tasks.list({'tags.demo':'demo-task', status: 'running'})
+    .then(tasks => {
+      tasks.forEach(task => {
+        waylay.tasks.stopAndRemove(task.ID)
+      })
+    })
+    .catch(err=> {
+      alert(err)
+    })
+    setTimeout(listTasks, 3000)
+  })
+
   $('#resource').autocomplete({
     source: function(request, response) {
       waylay.resources.search({
