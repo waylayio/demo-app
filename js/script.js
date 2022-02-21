@@ -440,7 +440,10 @@ $(function () {
           {
             sourceLabel: 'condition',
             destinationLabel: 'clearAlarm',
-            statesTrigger: [ 'False' ]
+            stateChangeTrigger: {
+              stateFrom: "*",
+              stateTo: 'False'
+            }
           }
         ],
         task: { 
