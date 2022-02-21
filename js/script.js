@@ -1,13 +1,13 @@
-const DOMAIN = config.domain
+
 var waylay
 var chart = null
 var gridTasks = null
 var gridAlarms = null
 var plugins
 
-async function login() {
+async function login(domain) {
   waylay = new waylay({
-    domain: DOMAIN
+    domain: domain
   })
   await waylay.login($('#user').val(), $('#pwd').val())
   await waylay.loadSettings()
@@ -146,9 +146,11 @@ $(function () {
   $('#formConnect').show()
   $('#app').hide()
   $('.login-error').hide()
+  $('#domain').val(config.domain)
+
 
   $('#btnFormConnect').click(function () {
-    login()
+    login($('#domain').val())
   })
 
   $('#btnLogout').click(function () {
@@ -176,9 +178,9 @@ $(function () {
     startNotificationTask(resource)
     .then(task=>{
       if(task.created_before) {
-        showMessage('Notification task started before ' + task.ID)
+        showMessage('Already configured' + task.ID)
       } else {
-        showMessage('started a notification task ' + task.ID)
+        showMessage('Started a task ' + task.ID)
         listTasks()
       }
     })
@@ -191,17 +193,17 @@ $(function () {
     const upperLimit = parseFloat($('#upperLimit').val())
     const type = $('#type').val()
     if(metric === undefined || metric == '') {
-      showMessage("please select a metric")
+      showMessage("Please select a metric")
     } else if(lowerLimit > upperLimit) {
-      showMessage("the upper limit must be bigger or equal to the lower limit")
+      showMessage("The upper limit must be bigger or equal to the lower limit")
     } else {
       if(type === 'reactive') {
         startStreamTask(resource, metric, lowerLimit, upperLimit)
         .then(task=> {
           if(task.created_before) {
-            showMessage('The task with the same config already started before ' + task.ID)
+            showMessage('The task with the same config ' + task.ID)
           } else {
-            showMessage('started a reactive task ' + task.ID)
+            showMessage('New task ' + task.ID)
             listTasks()
           }
         })
@@ -210,9 +212,9 @@ $(function () {
         startPollingTask(resource, metric, duration, lowerLimit, upperLimit)
         .then(task=> {
           if(task.created_before) {
-            showMessage('The task with the same config already started before ' + task.ID)
+            showMessage('The task with the same config ' + task.ID)
           } else {
-            showMessage('started a polling task ' + task.ID)
+            showMessage('New task ' + task.ID)
             listTasks()
           }
         })

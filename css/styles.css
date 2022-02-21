@@ -13,9 +13,9 @@ ul {
 }
 
 .popup {
-  position: absolute;
-  top: 40px;
-  right: 0px;
+  position: fixed;
+  top: 50%;
+  left: 5%;
   box-shadow: rgb(38, 57, 77) 0px 10px 10px -5px;
 } 
 
