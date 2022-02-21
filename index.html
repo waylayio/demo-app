@@ -29,13 +29,13 @@
             <button id="btnLogout" style="float: right" title="Logout">Logout</button>  
             <span>Select</span>
             <input type="text" style="left: right"  id="resource" placeholder="select resource" />
-            <button id="load-btn" title="Load data">Get Data </button>
             <select name="time" id="time">
                 <option value="PT30M">30 minutes</option>
                 <option value="PT60M">1 hour</option>
                 <option value="P1D">1 day</option>
                 <option value="P1M">1 month</option>
             </select>
+            <button id="load-btn" title="Load data">Get Data</button>
             <div>
                 <canvas id="my-simple-chart"></canvas>
             </div>
@@ -44,7 +44,7 @@
                 <h3>Trigger configuration</h3>
                 <p>Select the trigger condition under which there are no issues, out of boundaries are lower and upper limit, if values are above or below, an alarm <strong><em>Out of Range</em></strong> will be generated:</p>
                 <button id="task-btn" title="Start a task ">Trigger</button>
-                <select name="type" id="type">
+                <select id="type">
                     <option value="periodic">periodic</option>
                     <option value="reactive">when data arrives</option>
                 </select>
@@ -56,10 +56,10 @@
             <div>
                 <h3>Notification configuration</h3>
                 <button id="notify-btn" title="Start alert task ">Notification </button>
-                <select name="type" id="type">
-                    <option value="periodic">email</option>
-                    <option value="reactive">sms</option>
-                    <option value="reactive">zendesk</option>
+                <select name="notification" id="notification">
+                    <option value="email">email</option>
+                    <option value="sms">sms</option>
+                    <option value="zendesk">zendesk</option>
                 </select>
             </div>
             <hr>

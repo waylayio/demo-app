@@ -174,9 +174,13 @@ $(function () {
   $('#notify-btn').on('click', function(e) {
     const resource = $('#resource').val()
     startNotificationTask(resource)
-    .then(id=>{
-      showMessage('started a notificaion task ' + id.ID)
-      listTasks()
+    .then(task=>{
+      if(task.created_before) {
+        showMessage('Notification task started before ' + task.ID)
+      } else {
+        showMessage('started a notification task ' + task.ID)
+        listTasks()
+      }
     })
   })
 
@@ -457,52 +461,59 @@ $(function () {
   }
 
   async function startNotificationTask(resource, plugin = 'mandrillMail') {
-    const alarmEventSensorPlug = getPlugin('AlarmEventSensor')
-    const notificationPlug = getPlugin(plugin)
-    var task = {
-      sensors: [
-        {
-          label: alarmEventSensorPlug.name,
-          name: alarmEventSensorPlug.name,
-          version: alarmEventSensorPlug.version,
-          resource: resource,
-          dataTrigger: false,
-          tickTrigger: false,
-          properties: {
-            status: 'ACTIVE'
-          },
-          position: [ 150, 150 ]
-        },
-        {
-          label: notificationPlug.name,
-          name: notificationPlug.name,
-          version: notificationPlug.version,
-          properties: { 
-            ...config[plugin],
-            message: 'Out of range',
-            subject: 'Out of range',
+    const tasks = await waylay.tasks.list({'tags.use_case':createStreamUseCaseID(resource, plugin), status: 'running'})
+    if(tasks.length > 0) {
+      const task = {...tasks[0], created_before: true}
+      return task
+    } else {
+      const alarmEventSensorPlug = getPlugin('AlarmEventSensor')
+      const notificationPlug = getPlugin(plugin)
+      var task = {
+        sensors: [
+          {
+            label: alarmEventSensorPlug.name,
+            name: alarmEventSensorPlug.name,
+            version: alarmEventSensorPlug.version,
+            resource: resource,
+            dataTrigger: false,
+            tickTrigger: false,
+            properties: {
+              status: 'ACTIVE'
             },
-            position: [ 800, 250 ]
+            position: [ 150, 150 ]
+          },
+          {
+            label: notificationPlug.name,
+            name: notificationPlug.name,
+            version: notificationPlug.version,
+            properties: { 
+              ...config[plugin],
+              message: 'Out of range',
+              subject: 'Out of range resource ' + resource,
+              },
+              position: [ 800, 250 ]
+            }
+        ],
+        triggers: [
+          {
+            sourceLabel: alarmEventSensorPlug.name,
+            destinationLabel: notificationPlug.name,
+            statesTrigger: ["Created", "Occurred again", "Updated"]
           }
-      ],
-      triggers: [
-        {
-          sourceLabel: alarmEventSensorPlug.name,
-          destinationLabel: notificationPlug.name,
-          statesTrigger: ["Created", "Occurred again", "Updated"]
-        }
-      ],
-      task: { 
-        resource: resource,
-        type: 'reactive', 
-        start: true, 
-        name: 'notification-task',
-        tags :{
-          demo: 'demo-task'
+        ],
+        task: { 
+          resource: resource,
+          type: 'reactive', 
+          start: true, 
+          name: 'notification-task',
+          tags :{
+            demo: 'demo-task',
+            use_case: createStreamUseCaseID(resource, plugin)
+          }
         }
       }
+      return await waylay.tasks.create(task, {})
     }
-    return await waylay.tasks.create(task, {})
   }
 })
 
