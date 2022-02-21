@@ -187,8 +187,8 @@ $(function () {
   $('#task-btn').on('click', function(e) {
     const resource = $('#resource').val()
     const metric = $('#metricSelect').val()
-    const lowerLimit = $('#lowerLimit').val()
-    const upperLimit = $('#upperLimit').val()
+    const lowerLimit = parseFloat($('#lowerLimit').val())
+    const upperLimit = parseFloat($('#upperLimit').val())
     const type = $('#type').val()
     if(metric === undefined || metric == '') {
       showMessage("please select a metric")
