@@ -272,7 +272,7 @@ $(function () {
   async function getMetrics(resource) {
     const res = await client.data.getSeries(resource, { metadata: true })
     const metrics = res.map( x => {return x.name })
-    return metrics
+    return metrics.filter(metric => {return metric !== 'collectedTime'})
   }
 
   async function loadData(resource, metrics) {
