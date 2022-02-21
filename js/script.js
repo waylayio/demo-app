@@ -193,16 +193,24 @@ $(function () {
     } else {
       if(type === 'reactive') {
         startStreamTask(resource, metric, lowerLimit, upperLimit)
-        .then(id=>{
-          showMessage('started a reactive task ' + id.ID)
-          listTasks()
+        .then(task=> {
+          if(task.created_before) {
+            showMessage('The task with the same config already started before ' + task.ID)
+          } else {
+            showMessage('started a reactive task ' + task.ID)
+            listTasks()
+          }
         })
       } else {
         const duration = $('#time :selected').val()
         startPollingTask(resource, metric, duration, lowerLimit, upperLimit)
-        .then(id=>{
-          showMessage('started a polling task ' + id.ID)
-          listTasks()
+        .then(task=> {
+          if(task.created_before) {
+            showMessage('The task with the same config already started before ' + task.ID)
+          } else {
+            showMessage('started a polling task ' + task.ID)
+            listTasks()
+          }
         })
       }
     }
@@ -225,6 +233,7 @@ $(function () {
     select: function(event, ui) {
       getMetrics(ui.item.value)
       .then(metrics => {
+        //loadData(resource, metrics)
         $('#metricSelect').find('option').remove()
         metrics.forEach(metric => {
           $('#metricSelect').append($('<option>', { 
@@ -266,161 +275,185 @@ $(function () {
     plot(ts) 
   }
 
+  function createStreamUseCaseID(resource, metric, lowerLimit, upperLimit) {
+    return btoa(JSON.stringify({resource, metric, lowerLimit, upperLimit}))
+  }
+
+  // function getStreamUseCaseID(guid) {
+  //   const uid = JSON.parse(atob(guid))
+  // }
+
   async function startStreamTask(resource, metric = 'temperature', lowerLimit=0, upperLimit=10) {
-    const value = '${streamdata.' + metric + '}'
-    const inRangePlug = getPlugin('inRange')
-    const createAlarmPlug = getPlugin('createAlarm')
-    const clearAlarmPlug = getPlugin('clearAlarm')
-    var task = {
-      sensors: [
-        {
-          label: 'inRange',
-          name: 'inRange',
-          version: inRangePlug.version,
-          dataTrigger: true,
-          tickTrigger: false,
-          resource: resource,
-          properties: {
-            value: value,
-            lowerLimit: lowerLimit,
-            upperLimit: upperLimit
+    const tasks = await waylay.tasks.list({'tags.use_case':createStreamUseCaseID(resource, metric, lowerLimit, upperLimit), status: 'running'})
+    if(tasks.length > 0) {
+      const task = {...tasks[0], created_before: true}
+      return task
+    } else {
+      const value = '${streamdata.' + metric + '}'
+      const inRangePlug = getPlugin('inRange')
+      const createAlarmPlug = getPlugin('createAlarm')
+      const clearAlarmPlug = getPlugin('clearAlarm')
+      var task = {
+        sensors: [
+          {
+            label: 'inRange',
+            name: 'inRange',
+            version: inRangePlug.version,
+            dataTrigger: true,
+            tickTrigger: false,
+            resource: resource,
+            properties: {
+              value: value,
+              lowerLimit: lowerLimit,
+              upperLimit: upperLimit
+            },
+            position: [ 150, 150 ]
           },
-          position: [ 150, 150 ]
-        },
-        {
-          label: 'createAlarm',
-          name: 'createAlarm',
-          version: createAlarmPlug.version,
-          properties: { 
-            text: 'Out of range',
-            severity: 'MINOR',
-            type: 'Out of range ' + metric,
-            resource: resource
+          {
+            label: 'createAlarm',
+            name: 'createAlarm',
+            version: createAlarmPlug.version,
+            properties: { 
+              text: 'Out of range',
+              severity: 'MINOR',
+              type: 'Out of range ' + metric,
+              resource: resource
+              },
+              position: [ 800, 250 ]
+            },
+            {
+            label: 'clearAlarm',
+            name: 'clearAlarm',
+            version: clearAlarmPlug.version,
+            properties: { 
+              type: 'Out of range ' + metric,
+              resource: resource
+            },
+            position: [ 800, 450 ]
+          }
+        ],
+        triggers: [
+          {
+            sourceLabel: 'inRange',
+            destinationLabel: 'createAlarm',
+            statesTrigger: [ 'Above' , 'Below']
+          },
+          {
+            sourceLabel: 'inRange',
+            destinationLabel: 'clearAlarm',
+            stateChangeTrigger: {
+              stateFrom: "*",
+              stateTo: 'In Range'
+            }
+          }
+        ],
+        task: { 
+          resource: resource,
+          type: 'reactive', 
+          start: true, 
+          name: 'example-reactive-task',
+          tags :{
+            demo: 'demo-task',
+            use_case: createStreamUseCaseID(resource, metric, lowerLimit, upperLimit)
+          }
+        }
+      }
+      return await waylay.tasks.create(task, {})
+    }
+   
+  }
+
+  async function startPollingTask(resource, metric = 'temperature', from="PT30M", lowerLimit=0, upperLimit=10) {
+    const tasks = await waylay.tasks.list({'tags.use_case':createStreamUseCaseID(resource, metric, from, lowerLimit, upperLimit), status: 'running'})
+    if(tasks.length > 0) {
+      const task = {...tasks[0], created_before: true}
+      return task
+    } else {
+      const pollingInterval = moment.duration(from).asSeconds() / 2
+      const getMetricValuePlug = getPlugin('getMetricValue')
+      const conditionPlug = getPlugin('condition')
+      const createAlarmPlug = getPlugin('createAlarm')
+      const clearAlarmPlug = getPlugin('clearAlarm')
+      var task = {
+        sensors: [
+          {
+            label: 'getMetricValue',
+            name: 'getMetricValue',
+            version: getMetricValuePlug.version,
+            dataTrigger: false,
+            tickTrigger: true,
+            properties: {
+              resource: resource,
+              metric: metric,
+              duration: from
+            },
+            position: [ 150, 150 ]
+          },
+          {
+            label: 'condition',
+            name: 'condition',
+            version: conditionPlug.version,
+            properties: {
+              condition: "${nodes.getMetricValue.rawData.result} > " + upperLimit + " || ${nodes.getMetricValue.rawData.result} < " + lowerLimit
+            },
+            position: [ 350, 250 ]
+          },
+          {
+            label: 'createAlarm',
+            name: 'createAlarm',
+            version: createAlarmPlug.version,
+            properties: { 
+              text: 'Out of range',
+              severity: 'MINOR',
+              type: 'Out of range ' + metric,
+              resource: resource
+
             },
             position: [ 800, 250 ]
           },
           {
-          label: 'clearAlarm',
-          name: 'clearAlarm',
-          version: clearAlarmPlug.version,
-          properties: { 
-            type: 'Out of range ' + metric,
-            resource: resource
+            label: 'clearAlarm',
+            name: 'clearAlarm',
+            version: clearAlarmPlug.version,
+            properties: { 
+              type: 'Out of range ' + metric,
+              resource: resource
+            },
+            position: [ 800, 450 ]
+          }
+        ],
+        triggers: [
+         {
+            sourceLabel: 'getMetricValue',
+            destinationLabel: 'condition',
+            statesTrigger: [ 'Collected' ]
           },
-          position: [ 800, 450 ]
-        }
-      ],
-      triggers: [
-        {
-          sourceLabel: 'inRange',
-          destinationLabel: 'createAlarm',
-          statesTrigger: [ 'Above' , 'Below']
-        },
-        {
-          sourceLabel: 'inRange',
-          destinationLabel: 'clearAlarm',
-          stateChangeTrigger: {
-            stateFrom: "*",
-            stateTo: 'In Range'
+          {
+            sourceLabel: 'condition',
+            destinationLabel: 'createAlarm',
+            statesTrigger: [ 'True' ]
+          },
+          {
+            sourceLabel: 'condition',
+            destinationLabel: 'clearAlarm',
+            statesTrigger: [ 'False' ]
+          }
+        ],
+        task: { 
+          resource: resource,
+          type: 'periodic', 
+          pollingInterval: pollingInterval,
+          start: true, 
+          name: 'example-polling-task',
+          tags :{
+            demo: 'demo-task',
+            use_case: createStreamUseCaseID(resource, metric, from, lowerLimit, upperLimit)
           }
         }
-      ],
-      task: { 
-        resource: resource,
-        type: 'reactive', 
-        start: true, 
-        name: 'example-reactive-task',
-        tags :{
-          demo: 'demo-task'
-        }
       }
+      return await waylay.tasks.create(task, {})
     }
-    return await waylay.tasks.create(task, {})
-  }
-
-  async function startPollingTask(resource, metric = 'temperature', from="PT30M", lowerLimit=0, upperLimit=10) {
-    const pollingInterval = moment.duration(from).asSeconds() / 2
-    const getMetricValuePlug = getPlugin('getMetricValue')
-    const conditionPlug = getPlugin('condition')
-    const createAlarmPlug = getPlugin('createAlarm')
-    const clearAlarmPlug = getPlugin('clearAlarm')
-    var task = {
-      sensors: [
-        {
-          label: 'getMetricValue',
-          name: 'getMetricValue',
-          version: getMetricValuePlug.version,
-          dataTrigger: false,
-          tickTrigger: true,
-          properties: {
-            resource: resource,
-            metric: metric,
-            duration: from
-          },
-          position: [ 150, 150 ]
-        },
-        {
-          label: 'condition',
-          name: 'condition',
-          version: conditionPlug.version,
-          properties: {
-            condition: "${nodes.getMetricValue.rawData.result} > " + upperLimit + " || ${nodes.getMetricValue.rawData.result} < " + lowerLimit
-          },
-          position: [ 350, 250 ]
-        },
-        {
-          label: 'createAlarm',
-          name: 'createAlarm',
-          version: createAlarmPlug.version,
-          properties: { 
-            text: 'Out of range',
-            severity: 'MINOR',
-            type: 'Out of range ' + metric,
-            resource: resource
-
-          },
-          position: [ 800, 250 ]
-        },
-        {
-          label: 'clearAlarm',
-          name: 'clearAlarm',
-          version: clearAlarmPlug.version,
-          properties: { 
-            type: 'Out of range ' + metric,
-            resource: resource
-          },
-          position: [ 800, 450 ]
-        }
-      ],
-      triggers: [
-       {
-          sourceLabel: 'getMetricValue',
-          destinationLabel: 'condition',
-          statesTrigger: [ 'Collected' ]
-        },
-        {
-          sourceLabel: 'condition',
-          destinationLabel: 'createAlarm',
-          statesTrigger: [ 'True' ]
-        },
-        {
-          sourceLabel: 'condition',
-          destinationLabel: 'clearAlarm',
-          statesTrigger: [ 'False' ]
-        }
-      ],
-      task: { 
-        resource: resource,
-        type: 'periodic', 
-        pollingInterval: pollingInterval,
-        start: true, 
-        name: 'example-polling-task',
-        tags :{
-          demo: 'demo-task'
-        }
-      }
-    }
-    return await waylay.tasks.create(task, {})
+    
   }
 
   async function startNotificationTask(resource, plugin = 'mandrillMail') {
