@@ -1,29 +1,29 @@
 
-var waylay
+var client
 var chart = null
 var gridTasks = null
 var gridAlarms = null
 var plugins
 
 async function login(domain) {
-  waylay = new waylay({
+  client = new waylay({
     domain: domain
   })
-  await waylay.login($('#user').val(), $('#pwd').val())
-  await waylay.loadSettings()
+  await client.login($('#user').val(), $('#pwd').val())
+  await client.loadSettings()
   .then(()=>{
     $('.login-error').hide()
     $('#formConnect').hide()
     $('#app').show()
     $("#tabs").show()
-    showMessage("Connected to waylay", 500)
+    showMessage("Connected to client", 500)
   })
   .catch(error => {
     $('.login-error').show()
     $('#formConnect').show()
     $('#app').hide()
   })
-  plugins = await waylay.sensors.list()
+  plugins = await client.sensors.list()
   listTasks()
   setInterval(() => listAlarms(), 5000)
 }
@@ -45,7 +45,7 @@ function showMessage(text, delay=5000) {
 }
 
 async function listTasks() {
-  const tasks = await waylay.tasks.list({'tags.demo':'demo-task', status: 'running'})
+  const tasks = await client.tasks.list({'tags.demo':'demo-task', status: 'running'})
   const t = tasks.map(task => { 
     return {
       name: task.name,
@@ -83,7 +83,7 @@ async function listTasks() {
 }
 
 async function listAlarms() {
-  const alarms = await waylay.alarms.search({status:'ACTIVE'})
+  const alarms = await client.alarms.search({status:'ACTIVE'})
   const t = alarms.alarms.map(alarm => { 
     return {
       time: alarm.lastUpdateTime,
@@ -154,7 +154,7 @@ $(function () {
   })
 
   $('#btnLogout').click(function () {
-    delete waylay 
+    delete client 
     window.location.reload();
   })
 
@@ -223,10 +223,10 @@ $(function () {
   })
 
   $('#tasks-btn').on('click', function(e) {
-    waylay.tasks.list({'tags.demo':'demo-task', status: 'running'})
+    client.tasks.list({'tags.demo':'demo-task', status: 'running'})
     .then(tasks => {
       tasks.forEach(task => {
-        waylay.tasks.stopAndRemove(task.ID)
+        client.tasks.stopAndRemove(task.ID)
       })
     })
     .catch(err=> {
@@ -237,7 +237,7 @@ $(function () {
 
   $('#resource').autocomplete({
     source: function(request, response) {
-      waylay.resources.search({
+      client.resources.search({
        filter: request.term,
        skip: 0,
        limit: 100
@@ -270,7 +270,7 @@ $(function () {
   })
 
   async function getMetrics(resource) {
-    const res = await waylay.data.getSeries(resource, { metadata: true })
+    const res = await client.data.getSeries(resource, { metadata: true })
     const metrics = res.map( x => {return x.name })
     return metrics
   }
@@ -281,7 +281,7 @@ $(function () {
     var ts = []
     var i = 0
     for (const metric of metrics) {
-      var data = await waylay.data.getMetricSeries(resource, encodeURI(metric), {from})
+      var data = await client.data.getMetricSeries(resource, encodeURI(metric), {from})
       if(data.series.length) {
         ts.push( 
         { 
@@ -303,7 +303,7 @@ $(function () {
   // }
 
   async function startStreamTask(resource, metric = 'temperature', lowerLimit=0, upperLimit=10) {
-    const tasks = await waylay.tasks.list({'tags.use_case':createStreamUseCaseID(resource, metric, lowerLimit, upperLimit), status: 'running'})
+    const tasks = await client.tasks.list({'tags.use_case':createStreamUseCaseID(resource, metric, lowerLimit, upperLimit), status: 'running'})
     if(tasks.length > 0) {
       const task = {...tasks[0], created_before: true}
       return task
@@ -377,13 +377,13 @@ $(function () {
           }
         }
       }
-      return await waylay.tasks.create(task, {})
+      return await client.tasks.create(task, {})
     }
    
   }
 
   async function startPollingTask(resource, metric = 'temperature', from="PT30M", lowerLimit=0, upperLimit=10) {
-    const tasks = await waylay.tasks.list({'tags.use_case':createStreamUseCaseID(resource, metric, from, lowerLimit, upperLimit), status: 'running'})
+    const tasks = await client.tasks.list({'tags.use_case':createStreamUseCaseID(resource, metric, from, lowerLimit, upperLimit), status: 'running'})
     if(tasks.length > 0) {
       const task = {...tasks[0], created_before: true}
       return task
@@ -473,13 +473,13 @@ $(function () {
           }
         }
       }
-      return await waylay.tasks.create(task, {})
+      return await client.tasks.create(task, {})
     }
     
   }
 
   async function startNotificationTask(resource, plugin = 'mandrillMail') {
-    const tasks = await waylay.tasks.list({'tags.use_case':createStreamUseCaseID(resource, plugin), status: 'running'})
+    const tasks = await client.tasks.list({'tags.use_case':createStreamUseCaseID(resource, plugin), status: 'running'})
     if(tasks.length > 0) {
       const task = {...tasks[0], created_before: true}
       return task
@@ -530,7 +530,7 @@ $(function () {
           }
         }
       }
-      return await waylay.tasks.create(task, {})
+      return await client.tasks.create(task, {})
     }
   }
 })
