@@ -239,6 +239,10 @@ $(function () {
     setTimeout(listTasks, 3000)
   })
 
+  $('#alarms-btn').on('click', function(e) {
+    client.alarms.removeAll({status: 'ACTIVE'})
+  })
+
   $('#resource').autocomplete({
     source: function(request, response) {
       client.resources.search({
