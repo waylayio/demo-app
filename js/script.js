@@ -20,7 +20,7 @@ async function login(domain) {
     $('#formConnect').hide()
     $('#app').show()
     $("#tabs").show()
-    showMessage("Connected to client", 500)
+    showMessage("Connected", 500)
   })
   .catch(error => {
     $('.login-error').show()
