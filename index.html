@@ -5,8 +5,9 @@
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+    <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="css/styles.css">
 </head>
 <body>
@@ -14,13 +15,13 @@
     <div id="formConnect" class="box-form">
         <div class="left">
             <div class="overlay">
-                <h1>Waylay Demo</h1>
+                <h1>Waylay Demo App</h1>
             </div>
         </div>
         <div class="right">
             <h5>Login</h5>
-            <br>
-            <p>Developer-friendly Low-Code platform. Just automate it!</p>
+            <br><br><br>
+            <p>Developer-friendly Low-Code platform. </p>
             <label for="user">Email</label>
             <input type="text" id="user" placeholder="email" />
             <label for="password">Password</label>
@@ -28,45 +29,117 @@
             <hr>
             <label for="domain">Domain</label>
             <input type="text" id="domain" placeholder="domain" />
-            <br>
-            <br>
-            <br>
-            <button id="btnFormConnect" class="btn btn-success btn-lg">Connect</button>
+            <br><br><br><br>
+            <button id="btnFormConnect">Connect</button>
             <p class="login-error">Your credentials are not correct</p>
         </div>
     </div>
 
-    <div id="app" class="container">
+
+    <div id="app" class="page-wrapper chiller-theme toggled">
+  <a id="show-sidebar" class="btn btn-sm btn-dark" href="#">
+    <i class="fas fa-bars"></i>
+  </a>
+  
+  <nav id="sidebar" class="sidebar-wrapper">
+    <div class="sidebar-content">
+      <div class="sidebar-brand">
+        <a href="#">Waylay</a>
+        <div id="close-sidebar"><i class="fas fa-times"></i></div>
+      </div>
+      <div class="sidebar-header">
+        <div class="user-pic" style="color:#fff;">
+          <i class="fa fa-user-circle fa-4x" aria-hidden="true"></i>
+        </div>
+        <div class="user-info">
+          <span class="user-name"> <strong>Veselin Pizurica</strong></span>
+          <span class="user-role">Administrator</span>
+          <span class="user-status"><i class="fa fa-circle"></i> <span>Online</span></span>
+        </div>
+      </div>
+      <div class="sidebar-search">
+        <div>
+          <div class="input-group">
+            <input type="text" class="form-control search-menu" id="resource" placeholder="Search..." />
+            <div class="input-group-append">
+              <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="sidebar-menu">
+        <ul>
+          <li class="header-menu"><span>General</span></li>
+          <li class="sidebar-dropdown">
+            <a href="#dashboards_" ><i class="fa fa-tachometer-alt"></i><span>Dashboard</a>
+          </li>
+          <li class="sidebar-dropdown">
+            <a href="#tasks_"><i class="fa fa-file-code"></i><span>Tasks</span><span id='tasks_num' class="badge badge-pill badge-primary"></span></a>
+            <div class="sidebar-submenu">
+              <ul>
+                <li><a href="#tasks_">Tasks</a></li>
+                <li><a href="#notifications_">Notifications</a></li>
+              </ul>
+            </div>
+          </li>
+          <li class="sidebar-dropdown">
+            <a href="#alarms_"><i class="far fa-bell"></i><span>Alarms </span><span class="badge badge-pill badge-danger alarms_num"></span></a>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="sidebar-footer">
+      <a href="#">
+        <i class="fa fa-bell"></i>
+        <span class="badge badge-pill badge-danger notification alarms_num"></span>
+      </a>
+      <a href="#alarms_" id="logout">
+        <i class="fa fa-power-off"></i>
+      </a>
+    </div>
+  </nav>
+    
+  <main class="page-content">
+    <div class="container-fluid">
         <div class="popup" id="popup"></div>
-        <button id="btnLogout" style="float: right" title="Logout">Logout</button>  
-        <span>Select</span>
-        <input type="text" style="left: right"  id="resource" placeholder="select resource" />
-        <select name="time" id="time">
-            <option value="PT30M">30 minutes</option>
-            <option value="PT60M">1 hour</option>
-            <option value="P1D">1 day</option>
-            <option value="P1M">1 month</option>
-        </select>
-        <button id="load-btn" title="Load data">Get Data</button>
-        <div>
-            <canvas id="my-simple-chart"></canvas>
-        </div>
-        <hr>
-        <div>
-            <h3>Trigger configuration</h3>
-            <p>Select the trigger condition under which there are no issues, out of boundaries are lower and upper limit, if values are above or below, an alarm <strong><em>Out of Range</em></strong> will be generated:</p>
-            <button id="task-btn" title="Start a task ">Trigger</button>
-            <select id="type">
-                <option value="periodic">periodic</option>
-                <option value="reactive">when data arrives</option>
+        <div id="dashboards_">
+            <h1>Dashboard</h1>
+            <div>
+                <canvas id="my-simple-chart"></canvas>
+            </div>
+            <select name="time" id="time">
+                <option value="PT30M">30 minutes</option>
+                <option value="PT60M">1 hour</option>
+                <option value="P1D">1 day</option>
+                <option value="P1M">1 month</option>
+                <option value="P1Y">1 year</option>
             </select>
-            <select id="metricSelect"></select>
-            <input type="number" id="lowerLimit" placeholder="lower limit" name="lowerLimit" value="0">
-            <input type="number" id="upperLimit" placeholder="upper limit" name="upperLimit" value="20">
+            <button id="load-btn" title="Load data">Get Data</button>
         </div>
         <hr>
-        <div>
-            <h3>Notification configuration</h3>
+        <div id="triggers_">
+            <div>
+                <h1>Trigger configuration</h1>
+                <p>Select the trigger condition under which there are no issues, out of boundaries are lower and upper limit, if values are above or below, an alarm <strong><em>Out of Range</em></strong> will be generated:</p>
+                <button id="task-btn" title="Start a task ">Trigger</button>
+                <select id="type">
+                    <option value="periodic">periodic</option>
+                    <option value="reactive">when data arrives</option>
+                </select>
+                <select id="metricSelect"></select>
+                <input type="number" id="lowerLimit" placeholder="lower limit" name="lowerLimit" value="0">
+                <input type="number" id="upperLimit" placeholder="upper limit" name="upperLimit" value="20">
+            </div>
+        </div>
+        <hr>
+        <div id="tasks_">
+            <h1>Tasks</h1>
+            <div id="tasks"></div>
+            <button id="tasks-btn" title="Stop and delete All">Stop and delete</button>
+        </div>
+        <hr>
+        <div id="notifications_">
+            <h1>Notification configuration</h1>
             <button id="notify-btn" title="Start alert task ">Notification </button>
             <select name="notification" id="notification">
                 <option value="email">email</option>
@@ -75,22 +148,26 @@
             </select>
         </div>
         <hr>
-        <h3>Tasks</h3>
-        <div id="tasks"></div>
-        <button id="tasks-btn" title="Stop and delete All">Stop and delete</button>
-        <h3>Alarms</h3>
-        <div id="alarms"></div>
-        <button id="alarms-btn" title="Delete All">Clear and delete</button>
+        <div id="alarms_">
+            <h1>Alarms</h1>
+            <div id="alarms"></div>
+            <button id="alarms-btn" title="Delete All">Clear and delete</button>
+        </div>
     </div>
+  </main>
+</div>
+
+
+
     <script src="https://unpkg.com/@waylay/client/dist/waylay.umd.js"></script>
-    <script
-    src="https://code.jquery.com/jquery-3.6.0.min.js"
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
     integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
     crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js" integrity="sha256-eTyxS0rkjpLEo16uXTS0uVCS4815lc40K2iVpWDvdSY=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.bundle.js"></script>
     <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
     <script src="js/config.js"></script>
     <script src="js/script.js"></script>
 </body>

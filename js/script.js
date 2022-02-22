@@ -50,6 +50,7 @@ function showMessage(text, delay=5000) {
 
 async function listTasks() {
   const tasks = await client.tasks.list({'tags.demo':'demo-task', status: 'running'})
+  $("#tasks_num").text(tasks.length)
   const t = tasks.map(task => { 
     return {
       name: task.name,
@@ -88,6 +89,7 @@ async function listTasks() {
 
 async function listAlarms() {
   const alarms = await client.alarms.search({status:'ACTIVE'})
+  $(".alarms_num").text(alarms.alarms.length)
   const t = alarms.alarms.map(alarm => { 
     return {
       time: alarm.lastUpdateTime,
@@ -152,14 +154,37 @@ $(function () {
   $('.login-error').hide()
   $('#domain').val(config.domain)
 
+  $(".sidebar-dropdown > a").click(function() {
+    $(".sidebar-submenu").slideUp(200);
+    if ($(this).parent().hasClass("active")) {
+      $(".sidebar-dropdown").removeClass("active");
+      $(this).parent().removeClass("active");
+    } else {
+      $(".sidebar-dropdown").removeClass("active");
+      $(this).next(".sidebar-submenu").slideDown(200);
+      $(this).parent().addClass("active");
+    }
+  });
+
+  $("#close-sidebar").click(function() {
+    $(".page-wrapper").removeClass("toggled");
+  });
+
+  $("#show-sidebar").click(function() {
+    $(".page-wrapper").addClass("toggled");
+  });
+
 
   $('#btnFormConnect').click(function () {
     login($('#domain').val())
   })
 
-  $('#btnLogout').click(function () {
+
+  $('#logout').click( function(e) {
+    e.preventDefault(); 
     delete client 
-    window.location.reload();
+    window.location.reload() 
+    return false 
   })
 
   $('#load-btn').on('click', function(e) {
@@ -249,8 +274,8 @@ $(function () {
        filter: request.term,
        skip: 0,
        limit: 100
-     })
-      .then(data => {
+    })
+    .then(data => {
         var resource = data.values.map(x=> {return x.id})
         response(resource)
       })
