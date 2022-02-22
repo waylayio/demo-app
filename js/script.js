@@ -10,6 +10,10 @@ async function login(domain) {
     domain: domain
   })
   await client.login($('#user').val(), $('#pwd').val())
+  .catch(error => {
+    $('.login-error').show()
+  })
+
   await client.loadSettings()
   .then(()=>{
     $('.login-error').hide()
