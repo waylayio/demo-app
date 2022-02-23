@@ -1,4 +1,3 @@
-
 var client
 var chart = null
 var gridTasks = null
@@ -20,6 +19,7 @@ async function login(domain) {
     $('#formConnect').hide()
     $('#app').show()
     $("#tabs").show()
+    $("#user-name").text($('#user').val())
     showMessage("Connected", 500)
   })
   .catch(error => {
@@ -51,6 +51,11 @@ function showMessage(text, delay=5000) {
 async function listTasks() {
   const tasks = await client.tasks.list({'tags.demo':'demo-task', status: 'running'})
   $("#tasks_num").text(tasks.length)
+  const notification_tasks = tasks.filter(task => 
+      {return(task.tags.type !== undefined && 
+              task.tags.type ==='notification')}).length
+  $("#notifications_num").text(notification_tasks)
+  $("#monitoring_num").text(tasks.length - notification_tasks)
   const t = tasks.map(task => { 
     return {
       name: task.name,
@@ -220,6 +225,7 @@ $(function () {
     const metric = $('#metricSelect').val()
     const lowerLimit = parseFloat($('#lowerLimit').val())
     const upperLimit = parseFloat($('#upperLimit').val())
+    const taskName = $('#task-name').val()
     const type = $('#type').val()
     if(metric === undefined || metric == '') {
       showMessage("Please select a metric")
@@ -227,7 +233,7 @@ $(function () {
       showMessage("The upper limit must be bigger or equal to the lower limit")
     } else {
       if(type === 'reactive') {
-        startStreamTask(resource, metric, lowerLimit, upperLimit)
+        startStreamTask(resource, metric, lowerLimit, upperLimit, taskName)
         .then(task=> {
           if(task.created_before) {
             showMessage('The task with the same config ' + task.ID)
@@ -238,7 +244,7 @@ $(function () {
         })
       } else {
         const duration = $('#time :selected').val()
-        startPollingTask(resource, metric, duration, lowerLimit, upperLimit)
+        startPollingTask(resource, metric, duration, lowerLimit, upperLimit, taskName)
         .then(task=> {
           if(task.created_before) {
             showMessage('The task with the same config ' + task.ID)
@@ -335,7 +341,7 @@ $(function () {
   //   const uid = JSON.parse(atob(guid))
   // }
 
-  async function startStreamTask(resource, metric = 'temperature', lowerLimit=0, upperLimit=10) {
+  async function startStreamTask(resource, metric = 'temperature', lowerLimit=0, upperLimit=10, name = 'example reactive task') {
     const tasks = await client.tasks.list({'tags.use_case':createStreamUseCaseID(resource, metric, lowerLimit, upperLimit), status: 'running'})
     if(tasks.length > 0) {
       const task = {...tasks[0], created_before: true}
@@ -403,7 +409,7 @@ $(function () {
           resource: resource,
           type: 'reactive', 
           start: true, 
-          name: 'example-reactive-task',
+          name: name,
           tags :{
             demo: 'demo-task',
             use_case: createStreamUseCaseID(resource, metric, lowerLimit, upperLimit)
@@ -415,7 +421,7 @@ $(function () {
    
   }
 
-  async function startPollingTask(resource, metric = 'temperature', from="PT30M", lowerLimit=0, upperLimit=10) {
+  async function startPollingTask(resource, metric = 'temperature', from="PT30M", lowerLimit=0, upperLimit=10, name = 'example polling task') {
     const tasks = await client.tasks.list({'tags.use_case':createStreamUseCaseID(resource, metric, from, lowerLimit, upperLimit), status: 'running'})
     if(tasks.length > 0) {
       const task = {...tasks[0], created_before: true}
@@ -499,7 +505,7 @@ $(function () {
           type: 'periodic', 
           pollingInterval: pollingInterval,
           start: true, 
-          name: 'example-polling-task',
+          name: name,
           tags :{
             demo: 'demo-task',
             use_case: createStreamUseCaseID(resource, metric, from, lowerLimit, upperLimit)
@@ -511,7 +517,7 @@ $(function () {
     
   }
 
-  async function startNotificationTask(resource, plugin = 'mandrillMail') {
+  async function startNotificationTask(resource, plugin = 'mandrillMail', name = 'notification task') {
     const tasks = await client.tasks.list({'tags.use_case':createStreamUseCaseID(resource, plugin), status: 'running'})
     if(tasks.length > 0) {
       const task = {...tasks[0], created_before: true}
@@ -556,10 +562,11 @@ $(function () {
           resource: resource,
           type: 'reactive', 
           start: true, 
-          name: 'notification-task',
+          name: name,
           tags :{
             demo: 'demo-task',
-            use_case: createStreamUseCaseID(resource, plugin)
+            use_case: createStreamUseCaseID(resource, plugin),
+            type: 'notification'
           }
         }
       }

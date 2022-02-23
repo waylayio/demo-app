@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
     <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="css/styles.css">
+    <link rel="stylesheet" type="text/css" href="css/sidebar.css">
 </head>
 <body>
     <div id="cover"></div>        
@@ -52,7 +53,7 @@
           <i class="fa fa-user-circle fa-4x" aria-hidden="true"></i>
         </div>
         <div class="user-info">
-          <span class="user-name"> <strong>Veselin Pizurica</strong></span>
+          <span id="user-name" class="user-name"> <strong></strong></span>
           <span class="user-role">Administrator</span>
           <span class="user-status"><i class="fa fa-circle"></i> <span>Online</span></span>
         </div>
@@ -77,8 +78,8 @@
             <a href="#tasks_"><i class="fa fa-file-code"></i><span>Tasks</span><span id='tasks_num' class="badge badge-pill badge-primary"></span></a>
             <div class="sidebar-submenu">
               <ul>
-                <li><a href="#tasks_">Tasks</a></li>
-                <li><a href="#notifications_">Notifications</a></li>
+                <li><a href="#tasks_">Tasks<span>Notifications </span><span id='monitoring_num' class="badge badge-pill badge-primary"></span></a></li>
+                <li><a href="#notifications_"><span>Notifications </span><span id='notifications_num' class="badge badge-pill badge-primary"></span></a></li>
               </ul>
             </div>
           </li>
@@ -122,6 +123,7 @@
                 <h1>Trigger configuration</h1>
                 <p>Select the trigger condition under which there are no issues, out of boundaries are lower and upper limit, if values are above or below, an alarm <strong><em>Out of Range</em></strong> will be generated:</p>
                 <button id="task-btn" title="Start a task ">Trigger</button>
+                <input type="text" id="task-name" placeholder="task name" name="task-name" value="">
                 <select id="type">
                     <option value="periodic">periodic</option>
                     <option value="reactive">when data arrives</option>
