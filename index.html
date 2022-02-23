@@ -1,180 +1,185 @@
 <!DOCTYPE html>
 <head>
-    <meta charset="utf-8">
-    <title>Waylay Demo</title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css">
-    <link rel="stylesheet" type="text/css" href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" />
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
-    <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="css/styles.css">
-    <link rel="stylesheet" type="text/css" href="css/sidebar.css">
+  <meta charset="utf-8">
+  <title>Waylay Demo</title>
+  <meta name="description" content="">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css">
+  <link rel="stylesheet" type="text/css" href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" />
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
+  <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
+  <link rel="stylesheet" type="text/css" href="css/styles.css">
+  <link rel="stylesheet" type="text/css" href="css/sidebar.css">
 </head>
 <body>
-    <div id="cover"></div>        
-    <div id="formConnect" class="box-form">
-        <div class="left">
-            <div class="overlay">
-                <h1>Waylay Demo App</h1>
+  <div id="cover"></div>    
+  <div class="container">
+    <div class="row" id="formConnect">
+      <div class="col-md-6 offset-md-3">
+        <h2 class="text-center text-dark mt-5">Login</h2>
+        <div class="card my-5">
+          <form class="card-body cardbody-color p-lg-5">
+            <div class="text-center">
+              <img src="https://global-uploads.webflow.com/600af1353f91b9eff1de3e74/614ae65291c6d045b3140bea_OTO%20Logo.png" class="img-fluid profile-image-pic img-thumbnail rounded-circle my-3"
+              width="200px" alt="profile">
             </div>
+            <div class="mb-3">
+              <input type="text" class="form-control" id="user" aria-describedby="emailHelp"
+              placeholder="User Name">
+            </div>
+            <div class="mb-3">
+              <input type="password" class="form-control" id="pwd" placeholder="password">
+            </div>
+            <div class="mb-3">
+              <input type="text" class="form-control" id="domain" aria-describedby="domain"
+              placeholder="Domain">
+            </div>
+            <div class="text-center"><button type="submit" class="btn btn-color px-5 mb-5 w-100" id="btnFormConnect">Login</button></div>
+          </form>
         </div>
-        <div class="right">
-            <h5>Login</h5>
-            <br><br><br>
-            <p>Developer-friendly Low-Code platform. </p>
-            <label for="user">Email</label>
-            <input type="text" id="user" placeholder="email" />
-            <label for="password">Password</label>
-            <input type="password" id="pwd" placeholder="password" />
-            <hr>
-            <label for="domain">Domain</label>
-            <input type="text" id="domain" placeholder="domain" />
-            <br><br><br><br>
-            <button id="btnFormConnect">Connect</button>
-            <p class="login-error">Your credentials are not correct</p>
-        </div>
+
+      </div>
     </div>
+  </div>    
 
+  <div id="app" class="page-wrapper chiller-theme toggled">
+    <a id="show-sidebar" class="btn btn-sm btn-dark" href="#">
+      <i class="fas fa-bars"></i>
+    </a>
 
-    <div id="app" class="page-wrapper chiller-theme toggled">
-  <a id="show-sidebar" class="btn btn-sm btn-dark" href="#">
-    <i class="fas fa-bars"></i>
-  </a>
-  
-  <nav id="sidebar" class="sidebar-wrapper">
-    <div class="sidebar-content">
-      <div class="sidebar-brand">
-        <a href="#">Waylay</a>
-        <div id="close-sidebar"><i class="fas fa-times"></i></div>
-      </div>
-      <div class="sidebar-header">
-        <div class="user-pic" style="color:#fff;">
-          <i class="fa fa-user-circle fa-4x" aria-hidden="true"></i>
+    <nav id="sidebar" class="sidebar-wrapper">
+      <div class="sidebar-content">
+        <div class="sidebar-brand">
+          <a href="#">Waylay</a>
+          <div id="close-sidebar"><i class="fas fa-times"></i></div>
         </div>
-        <div class="user-info">
-          <span id="user-name" class="user-name"> <strong></strong></span>
-          <span class="user-role">Administrator</span>
-          <span class="user-status"><i class="fa fa-circle"></i> <span>Online</span></span>
+        <div class="sidebar-header">
+          <div class="user-pic" style="color:#fff;">
+            <i class="fa fa-user-circle fa-4x" aria-hidden="true"></i>
+          </div>
+          <div class="user-info">
+            <span id="user-name" class="user-name"> <strong></strong></span>
+            <span class="user-role">Administrator</span>
+            <span class="user-status"><i class="fa fa-circle"></i> <span>Online</span></span>
+          </div>
         </div>
-      </div>
-      <div class="sidebar-search">
-        <div>
-          <div class="input-group">
-            <input type="text" class="form-control search-menu" id="resource" placeholder="Search..." />
-            <div class="input-group-append">
-              <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+        <div class="sidebar-search">
+          <div>
+            <div class="input-group">
+              <input type="text" class="form-control search-menu" id="resource" placeholder="Search..." />
+              <div class="input-group-append">
+                <span class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></span>
+              </div>
             </div>
           </div>
         </div>
+        <div class="sidebar-menu">
+          <ul>
+            <li class="header-menu"><span>General</span></li>
+            <li class="sidebar-dropdown">
+              <a href="#dashboards_" ><i class="fa fa-tachometer-alt"></i><span>Dashboard</a>
+            </li>
+            <li class="sidebar-dropdown">
+              <a href="#tasks_"><i class="fa fa-file-code"></i><span>Tasks</span><span id='tasks_num' class="badge badge-pill badge-primary"></span></a>
+              <div class="sidebar-submenu">
+                <ul>
+                  <li><a href="#tasks_">Tasks<span>Notifications </span><span id='monitoring_num' class="badge badge-pill badge-primary"></span></a></li>
+                  <li><a href="#notifications_"><span>Notifications </span><span id='notifications_num' class="badge badge-pill badge-primary"></span></a></li>
+                </ul>
+              </div>
+            </li>
+            <li class="sidebar-dropdown">
+              <a href="#alarms_"><i class="far fa-bell"></i><span>Alarms </span><span class="badge badge-pill badge-danger alarms_num"></span></a>
+            </li>
+          </ul>
+        </div>
       </div>
-      <div class="sidebar-menu">
-        <ul>
-          <li class="header-menu"><span>General</span></li>
-          <li class="sidebar-dropdown">
-            <a href="#dashboards_" ><i class="fa fa-tachometer-alt"></i><span>Dashboard</a>
-          </li>
-          <li class="sidebar-dropdown">
-            <a href="#tasks_"><i class="fa fa-file-code"></i><span>Tasks</span><span id='tasks_num' class="badge badge-pill badge-primary"></span></a>
-            <div class="sidebar-submenu">
-              <ul>
-                <li><a href="#tasks_">Tasks<span>Notifications </span><span id='monitoring_num' class="badge badge-pill badge-primary"></span></a></li>
-                <li><a href="#notifications_"><span>Notifications </span><span id='notifications_num' class="badge badge-pill badge-primary"></span></a></li>
-              </ul>
-            </div>
-          </li>
-          <li class="sidebar-dropdown">
-            <a href="#alarms_"><i class="far fa-bell"></i><span>Alarms </span><span class="badge badge-pill badge-danger alarms_num"></span></a>
-          </li>
-        </ul>
+      <div class="sidebar-footer">
+        <a href="#">
+          <i class="fa fa-bell"></i>
+          <span class="badge badge-pill badge-danger notification alarms_num"></span>
+        </a>
+        <a href="#alarms_" id="logout">
+          <i class="fa fa-power-off"></i>
+        </a>
       </div>
-    </div>
-    <div class="sidebar-footer">
-      <a href="#">
-        <i class="fa fa-bell"></i>
-        <span class="badge badge-pill badge-danger notification alarms_num"></span>
-      </a>
-      <a href="#alarms_" id="logout">
-        <i class="fa fa-power-off"></i>
-      </a>
-    </div>
-  </nav>
+    </nav>
     
-  <main class="page-content">
-    <div class="container-fluid">
+    <main class="page-content">
+      <div class="container-fluid">
         <div class="popup" id="popup"></div>
         <div id="dashboards_">
-            <h1>Dashboard</h1>
-            <div>
-                <canvas id="my-simple-chart"></canvas>
-            </div>
-            <select name="time" id="time">
-                <option value="PT1M">last minute</option>
-                <option value="PT15M">15 minutes</option>
-                <option value="PT30M">30 minutes</option>
-                <option value="PT60M">1 hour</option>
-                <option value="P1D">1 day</option>
-                <option value="P1M">1 month</option>
-                <option value="P1Y">1 year</option>
-            </select>
-            <button id="load-btn" title="Load data">Get Data</button>
-            <button id="legend-toggle" title="Toggle legend">Toggle Legend</button>
+          <h1>Dashboard</h1>
+          <div>
+            <canvas id="my-simple-chart"></canvas>
+          </div>
+          <select name="time" id="time">
+            <option value="PT1M">last minute</option>
+            <option value="PT15M">15 minutes</option>
+            <option value="PT30M">30 minutes</option>
+            <option value="PT60M">1 hour</option>
+            <option value="P1D">1 day</option>
+            <option value="P1M">1 month</option>
+            <option value="P1Y">1 year</option>
+          </select>
+          <button id="load-btn" title="Load data">Get Data</button>
+          <button id="legend-toggle" title="Toggle legend">Toggle Legend</button>
         </div>
         <hr>
         <div id="triggers_">
-            <div>
-                <h1>Trigger configuration</h1>
-                <p>Select the trigger condition under which there are no issues, out of boundaries are lower and upper limit, if values are above or below, an alarm <strong><em>Out of Range</em></strong> will be generated:</p>
-                <button id="task-btn" title="Start a task ">Trigger</button>
-                <input type="text" id="task-name" placeholder="task name" name="task-name" value="">
-                <select id="type">
-                    <option value="periodic">periodic</option>
-                    <option value="reactive">when data arrives</option>
-                </select>
-                <select id="metricSelect"></select>
-                <input type="number" id="lowerLimit" placeholder="lower limit" name="lowerLimit" value="0">
-                <input type="number" id="upperLimit" placeholder="upper limit" name="upperLimit" value="20">
-            </div>
+          <div>
+            <h1>Trigger configuration</h1>
+            <p>Select the trigger condition under which there are no issues, out of boundaries are lower and upper limit, if values are above or below, an alarm <strong><em>Out of Range</em></strong> will be generated:</p>
+            <button id="task-btn" title="Start a task ">Trigger</button>
+            <input type="text" id="task-name" placeholder="task name" name="task-name" value="">
+            <select id="type">
+              <option value="periodic">periodic</option>
+              <option value="reactive">when data arrives</option>
+            </select>
+            <select id="metricSelect"></select>
+            <input type="number" id="lowerLimit" placeholder="lower limit" name="lowerLimit" value="0">
+            <input type="number" id="upperLimit" placeholder="upper limit" name="upperLimit" value="20">
+          </div>
         </div>
         <hr>
         <div id="tasks_">
-            <h1>Tasks</h1>
-            <div id="tasks"></div>
-            <button id="tasks-btn" title="Stop and delete All">Stop and delete</button>
+          <h1>Tasks</h1>
+          <div id="tasks"></div>
+          <button id="tasks-btn" title="Stop and delete All">Stop and delete</button>
         </div>
         <hr>
         <div id="notifications_">
-            <h1>Notification configuration</h1>
-            <button id="notify-btn" title="Start alert task ">Notification </button>
-            <select name="notification" id="notification">
-                <option value="email">email</option>
-                <option value="sms">sms</option>
-                <option value="zendesk">zendesk</option>
-            </select>
+          <h1>Notification configuration</h1>
+          <button id="notify-btn" title="Start alert task ">Notification </button>
+          <select name="notification" id="notification">
+            <option value="email">email</option>
+            <option value="sms">sms</option>
+            <option value="zendesk">zendesk</option>
+          </select>
         </div>
         <hr>
         <div id="alarms_">
-            <h1>Alarms</h1>
-            <div id="alarms"></div>
-            <button id="alarms-btn" title="Delete All">Clear and delete</button>
+          <h1>Alarms</h1>
+          <div id="alarms"></div>
+          <button id="alarms-btn" title="Delete All">Clear and delete</button>
         </div>
-    </div>
-  </main>
-</div>
+      </div>
+    </main>
+  </div>
 
 
 
-    <script src="https://unpkg.com/@waylay/client/dist/waylay.umd.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
-    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
-    crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js" integrity="sha256-eTyxS0rkjpLEo16uXTS0uVCS4815lc40K2iVpWDvdSY=" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.bundle.js"></script>
-    <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
-    <script src="js/config.js"></script>
-    <script src="js/script.js"></script>
+  <script src="https://unpkg.com/@waylay/client/dist/waylay.umd.js"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+  integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+  crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js" integrity="sha256-eTyxS0rkjpLEo16uXTS0uVCS4815lc40K2iVpWDvdSY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.bundle.js"></script>
+  <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/script.js"></script>
 </body>
 </html>
 

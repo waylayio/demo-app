@@ -1,5 +1,5 @@
 const config = {
-  domain: 'https://fun-hawk.waylay.io',
+  domain: 'fun-hawk.waylay.io',
   mandrillMail: {
     to: 'veselin@waylay.io',
     from: 'info@waylay.io',
