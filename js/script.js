@@ -206,6 +206,13 @@ $(function () {
       })
     })
   })
+
+  $('#legend-toggle').on('click', function(e) {
+    chart.data.datasets.forEach(function(ds) {
+      ds.hidden = !ds.hidden
+    })
+    chart.update()
+  })
   
   $('#notify-btn').on('click', function(e) {
     const resource = $('#resource').val()
