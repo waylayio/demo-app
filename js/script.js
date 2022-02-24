@@ -4,18 +4,19 @@ var gridTasks = null
 var gridAlarms = null
 var plugins
 
-async function login(domain) {
-  client = new waylay({
-    domain: domain
-  })
-  await client.login($('#user').val(), $('#pwd').val())
-  .catch(error => {
-    $('.login-error').show()
-  })
+async function login(ops) {
+  if(ops.domain) {
+    client = new waylay({domain: ops.domain})
+    await client.login($('#user').val(), $('#pwd').val())
+    .catch(error => {
+      $('.login-error').show()
+    })
+  } else {
+    client = new waylay({token: ops.token})
+  }
 
   await client.loadSettings()
   .then(()=>{
-    $('.login-error').hide()
     $('#formConnect').hide()
     $('#app').show()
     $("#tabs").show()
@@ -153,10 +154,23 @@ function plot(data) {
 }
 
 $(function () {
-  $("#cover").hide()
-  $('#formConnect').show()
-  $('#app').hide()
   $('.login-error').hide()
+  $.urlParam = function(name){
+    var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+    if (results==null) {
+       return null;
+    }
+    return decodeURI(results[1]) || 0;
+  }
+  if($.urlParam('token')){
+    $('#formConnect').hide()
+    login({token: $.urlParam('token')})
+  } else {
+    $('#formConnect').show()
+  } 
+
+  $("#cover").hide()
+  $('#app').hide()
   $('#domain').val(config.domain)
 
   $(".sidebar-dropdown > a").click(function() {
@@ -181,7 +195,7 @@ $(function () {
 
 
   $('#btnFormConnect').click(function () {
-    login($('#domain').val())
+    login({domain: $('#domain').val()})
   })
 
 
