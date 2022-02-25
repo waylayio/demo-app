@@ -16,7 +16,6 @@
   <div class="container">
     <div class="row" id="formConnect">
       <div class="col-md-6 offset-md-3">
-        <h2 class="text-center text-dark mt-5">Login</h2>
         <div class="card my-5">
           <div class="card-body cardbody-color p-lg-5">
             <div class="text-center">
@@ -153,6 +152,10 @@
         <div id="notifications_">
           <h1>Notification configuration</h1>
           <button id="notify-btn" title="Start alert task ">Notification </button>
+          <select name="states" id="states">
+            <option value="Always">Always</option>
+            <option value="Created">First time created</option>
+          </select>
           <select name="notification" id="notification">
             <option value="email">email</option>
             <option value="sms">sms</option>

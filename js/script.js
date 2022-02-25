@@ -230,10 +230,15 @@ $(function () {
   
   $('#notify-btn').on('click', function(e) {
     const resource = $('#resource').val()
-    startNotificationTask(resource)
+    let states_option = $('#states :selected').val() 
+    let states = ['Created']
+    if(states_option === 'Always')
+      states.push('Occurred again')
+
+    startNotificationTask(resource, states)
     .then(task=>{
       if(task.created_before) {
-        showMessage('Already configured' + task.ID)
+        showMessage('Already configured ' + task.ID)
       } else {
         showMessage('Started a task ' + task.ID)
         listTasks()
@@ -358,12 +363,17 @@ $(function () {
     return btoa(JSON.stringify({resource, metric, lowerLimit, upperLimit}))
   }
 
-  // function getStreamUseCaseID(guid) {
-  //   const uid = JSON.parse(atob(guid))
-  // }
+  function createNotificationUseCaseID(resource, states, plugin) {
+    return btoa(JSON.stringify({resource, states, plugin}))
+  }
+
+  function createPollingUseCaseID(resource, metric, from, lowerLimit, upperLimit) {
+    return btoa(JSON.stringify({resource, metric, from, lowerLimit, upperLimit}))
+  }
 
   async function startStreamTask(resource, metric = 'temperature', lowerLimit=0, upperLimit=10, name = 'example reactive task') {
-    const tasks = await client.tasks.list({'tags.use_case':createStreamUseCaseID(resource, metric, lowerLimit, upperLimit), status: 'running'})
+    const use_case_id = createStreamUseCaseID(resource, metric, lowerLimit, upperLimit)
+    const tasks = await client.tasks.list({'tags.use_case': use_case_id, status: 'running'})
     if(tasks.length > 0) {
       const task = {...tasks[0], created_before: true}
       return task
@@ -433,7 +443,7 @@ $(function () {
           name: name,
           tags :{
             demo: 'demo-task',
-            use_case: createStreamUseCaseID(resource, metric, lowerLimit, upperLimit)
+            use_case: use_case_id
           }
         }
       }
@@ -443,7 +453,8 @@ $(function () {
   }
 
   async function startPollingTask(resource, metric = 'temperature', from="PT30M", lowerLimit=0, upperLimit=10, name = 'example polling task') {
-    const tasks = await client.tasks.list({'tags.use_case':createStreamUseCaseID(resource, metric, from, lowerLimit, upperLimit), status: 'running'})
+    const use_case_id = createPollingUseCaseID(resource, metric, from, lowerLimit, upperLimit)
+    const tasks = await client.tasks.list({'tags.use_case': use_case_id, status: 'running'})
     if(tasks.length > 0) {
       const task = {...tasks[0], created_before: true}
       return task
@@ -529,7 +540,7 @@ $(function () {
           name: name,
           tags :{
             demo: 'demo-task',
-            use_case: createStreamUseCaseID(resource, metric, from, lowerLimit, upperLimit)
+            use_case: use_case_id
           }
         }
       }
@@ -538,8 +549,9 @@ $(function () {
     
   }
 
-  async function startNotificationTask(resource, plugin = 'mandrillMail', name = 'notification task') {
-    const tasks = await client.tasks.list({'tags.use_case':createStreamUseCaseID(resource, plugin), status: 'running'})
+  async function startNotificationTask(resource, states=["Created", "Occurred again"], plugin = 'mandrillMail', name = 'notification task') {
+    const use_case_id = createNotificationUseCaseID(resource, states, plugin)
+    const tasks = await client.tasks.list({'tags.use_case': use_case_id, status: 'running'})
     if(tasks.length > 0) {
       const task = {...tasks[0], created_before: true}
       return task
@@ -576,7 +588,7 @@ $(function () {
           {
             sourceLabel: alarmEventSensorPlug.name,
             destinationLabel: notificationPlug.name,
-            statesTrigger: ["Created", "Occurred again", "Updated"]
+            statesTrigger: states
           }
         ],
         task: { 
@@ -586,7 +598,7 @@ $(function () {
           name: name,
           tags :{
             demo: 'demo-task',
-            use_case: createStreamUseCaseID(resource, plugin),
+            use_case: use_case_id,
             type: 'notification'
           }
         }
