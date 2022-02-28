@@ -4,6 +4,7 @@ var gridTasks = null
 var gridAlarms = null
 var plugins
 var timerId
+var tasks = []
 
 async function login(ops) {
   if(ops.domain) {
@@ -173,6 +174,8 @@ $(function () {
   $('#app').hide()
   $('#domain').val(config.domain)
 
+  updateTaskTypeSelection()
+
   $(".sidebar-dropdown > a").click(function() {
     $(".sidebar-submenu").slideUp(200);
     if ($(this).parent().hasClass("active")) {
@@ -228,6 +231,25 @@ $(function () {
     })
     chart.update()
   })
+
+  function resetTasks() {
+    tasks = []
+    $(".cloned-row:not(:last)").remove()
+  }
+
+  function storeTaskInList() {
+    const resource = $('#resource').val()
+    const metric = $('#metricSelect').val()
+    const lowerLimit = parseFloat($('#lowerLimit').val())
+    const upperLimit = parseFloat($('#upperLimit').val())
+    const name = $('#task-name').val()
+    const type = $('#type').val()
+    const polling_window = $('#polling_window :selected').val()
+    const aggregate = $('#aggregate_window :selected').val()
+
+    tasks.push({ resource, metric, name, type, polling_window, aggregate })
+
+  }
   
   $('#notify-btn').on('click', function(e) {
     const resource = $('#resource').val()
@@ -247,52 +269,61 @@ $(function () {
     })
   })
 
-  $( "#type" ).change(function() {
-    if($( "#type" ).val() === 'periodic')
-      $( "#polling_settings").show()
-    else
-      $( "#polling_settings").hide()
+  $("#add-task-btn").click(function() {
+    storeTaskInList()
+    var lastDiv = $(".cloned-row:last")
+    var clone = lastDiv.clone()
+    lastDiv.find("*").removeAttr("id")
+    clone.insertAfter(".cloned-row:last")
+    updateTaskTypeSelection()
   })
 
-  $('#task-btn').on('click', function(e) {
-    const resource = $('#resource').val()
-    const metric = $('#metricSelect').val()
-    const lowerLimit = parseFloat($('#lowerLimit').val())
-    const upperLimit = parseFloat($('#upperLimit').val())
-    const taskName = $('#task-name').val()
-    const type = $('#type').val()
-    if(metric === undefined || metric == '') {
-      showMessage("Please select a metric")
-    } else if(lowerLimit > upperLimit) {
-      showMessage("The upper limit must be bigger or equal to the lower limit")
-    } else {
-      if(type === 'reactive') {
-        startStreamTask(resource, metric, lowerLimit, upperLimit, taskName)
-        .then(task=> {
-          if(task.created_before) {
-            showMessage('The task with the same config ' + task.ID)
+  $("#clear-task-btn").click(function() {
+    $(".cloned-row:not(:last)").remove()
+  })
+      
+  function updateTaskTypeSelection() {
+    $("#type").change(() =>{
+      if($("#type").val() === 'periodic')
+        $("#polling_settings").show()
+      else
+        $("#polling_settings").hide()
+    })
+  }
+
+  function startAllTasks() {
+    storeTaskInList()
+    tasks.forEach(task => {
+      if(task.type === 'reactive') {
+        startStreamTask(task.resource, task.metric, task.lowerLimit, task.upperLimit, task.name)
+        .then(t=> {
+          if(t.created_before) {
+            showMessage('The task with the same config ' + t.ID)
           } else {
-            showMessage('New task ' + task.ID)
-            listTasks(resource)
+            showMessage('New task ' + t.ID)
+            listTasks(task.resource)
           }
         })
       } else {
-        const polling_window = $('#polling_window :selected').val()
-        const aggregate = $('#aggregate_window :selected').val()
-        startPollingTask(resource, metric, polling_window, aggregate, lowerLimit, upperLimit, taskName)
-        .then(task=> {
-          if(task.created_before) {
-            showMessage('The task with the same config ' + task.ID)
+        startPollingTask(task.resource, task.metric, task.polling_window, task.aggregate, task.lowerLimit, task.upperLimit, task.name)
+        .then(t=> {
+          if(t.created_before) {
+            showMessage('The task with the same config ' + t.ID)
           } else {
-            showMessage('New task ' + task.ID)
-            listTasks(resource)
+            showMessage('New task ' + t.ID)
+            listTasks(task.resource)
           }
         })
       }
-    }
+    })
+    resetTasks()
+  } 
+
+  $('#task-btn').on('click', function(e) {
+    startAllTasks()
   })
 
-  $('#tasks-btn').on('click', function(e) {
+  $('#tasks-remove-btn').on('click', function(e) {
     client.tasks.list({'tags.demo':'demo-task', status: 'running'})
     .then(tasks => {
       tasks.forEach(task => {

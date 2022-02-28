@@ -130,41 +130,48 @@
           <div>
             <h1>Trigger configuration</h1>
             <p>Select the trigger condition under which there are no issues, out of boundaries are lower and upper limit, if values are above or below, an alarm <strong><em>Out of Range</em></strong> will be generated:</p>
-            <button id="task-btn" title="Start a task ">Trigger</button>
-            <input type="text" id="task-name" placeholder="task name" name="task-name" value="">
-            <select id="type">
-              <option value="periodic">periodic</option>
-              <option value="reactive">when data arrives</option>
-            </select>
-            <select id="metricSelect"></select>
-            <span id='polling_settings'>
-              <select name="aggregate_window" id="aggregate_window">
-                <option selected value="mean">mean</option>
-                <option value="median">median</option>
-                <option value="min">min</option>
-                <option value="max">max</option>
-                <option value="std">std</option>
-                <option value="count">count</option>
-                <option value="first">first</option>
-                <option value="last">last</option>
+            <hr>
+            <div class='cloned-row'>
+              <input type="text"id="task-name" placeholder="task name" name="task-name" value="">
+              <select id="type">
+                <option value="periodic">periodic</option>
+                <option value="reactive">when data arrives</option>
               </select>
-              <select name="polling_window" id="polling_window">
-                <option selected value="PT15M">15 minutes</option>
-                <option value="PT30M">30 minutes</option>
-                <option value="PT60M">1 hour</option>
-                <option value="P1D">1 day</option>
-                <option value="P1M">1 month</option>
-              </select>
-            </span>
-            <input type="number" id="lowerLimit" placeholder="lower limit" name="lowerLimit" value="0">
-            <input type="number" id="upperLimit" placeholder="upper limit" name="upperLimit" value="20">
+              <select id="metricSelect"></select>
+              <span id='polling_settings'>
+                <select name="aggregate_window" id="aggregate_window">
+                  <option selected value="mean">mean</option>
+                  <option value="median">median</option>
+                  <option value="min">min</option>
+                  <option value="max">max</option>
+                  <option value="std">std</option>
+                  <option value="count">count</option>
+                  <option value="first">first</option>
+                  <option value="last">last</option>
+                </select>
+                <select name="polling_window" id="polling_window">
+                  <option selected value="PT15M">15 minutes</option>
+                  <option value="PT30M">30 minutes</option>
+                  <option value="PT60M">1 hour</option>
+                  <option value="P1D">1 day</option>
+                  <option value="P1M">1 month</option>
+                </select>
+              </span>
+              <input type="number" id="lowerLimit" placeholder="lower limit" name="lowerLimit" value="0">
+              <input type="number" id="upperLimit" placeholder="upper limit" name="upperLimit" value="20">
+              <br><br>
+            </div>
           </div>
+          <hr>
+          <button id="add-task-btn" title="Add a trigger ">Add trigger</button>
+          <button id="clear-task-btn" title="Reset">Reset</button>
+          <button id="task-btn" style="float: right;" title="Start a task ">Start a task</button>
         </div>
         <hr>
         <div id="tasks_">
           <h1>Tasks</h1>
           <div id="tasks"></div>
-          <button id="tasks-btn" title="Stop and delete All">Stop and delete</button>
+          <button id="tasks-remove-btn" title="Stop and delete All">Stop and delete</button>
         </div>
         <hr>
         <div id="notifications_">
