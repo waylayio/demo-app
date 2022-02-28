@@ -248,7 +248,6 @@ $(function () {
     const aggregate = $('#aggregate_window :selected').val()
 
     tasks.push({ resource, metric, name, type, polling_window, aggregate })
-
   }
   
   $('#notify-btn').on('click', function(e) {
@@ -494,7 +493,6 @@ $(function () {
       }
       return await client.tasks.create(task, {})
     }
-   
   }
 
   async function startPollingTask(resource, metric = 'temperature', duration="PT30M", aggregate='mean', lowerLimit=0, upperLimit=10, name = 'example polling task') {
@@ -504,7 +502,7 @@ $(function () {
       const task = {...tasks[0], created_before: true}
       return task
     } else {
-      const pollingInterval = moment.duration(duration).asSeconds()
+      const pollingInterval = moment.duration(duration).asSeconds() / 2
       const getMetricValuePlug = getPlugin('getMetricValue')
       const conditionPlug = getPlugin('condition')
       const createAlarmPlug = getPlugin('createAlarm')
