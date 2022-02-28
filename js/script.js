@@ -3,6 +3,7 @@ var chart = null
 var gridTasks = null
 var gridAlarms = null
 var plugins
+var timerId
 
 async function login(ops) {
   if(ops.domain) {
@@ -322,7 +323,8 @@ $(function () {
         $('.page-content').show()
         loadData(resource, metrics)
         listTasks(resource)
-        setInterval(() => listAlarms(resource), 5000)
+        clearTimeout(timerId)
+        timerId = setInterval(() => listAlarms(resource), 5000)
         $('#metricSelect').find('option').remove()
         metrics.forEach(metric => {
           $('#metricSelect').append($('<option>', { 
