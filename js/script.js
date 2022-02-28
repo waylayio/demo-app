@@ -19,6 +19,7 @@ async function login(ops) {
   .then(()=>{
     $('#formConnect').hide()
     $('#app').show()
+    $('.page-content').hide()
     $("#tabs").show()
     $("#user-name").text($('#user').val())
     showMessage("Connected", 500)
@@ -29,8 +30,6 @@ async function login(ops) {
     $('#app').hide()
   })
   plugins = await client.sensors.list()
-  listTasks()
-  setInterval(() => listAlarms(), 5000)
 }
 
 function getPlugin(name) {
@@ -49,8 +48,8 @@ function showMessage(text, delay=5000) {
   $("#popup").show().delay(delay).fadeOut()
 }
 
-async function listTasks() {
-  const tasks = await client.tasks.list({'tags.demo':'demo-task', status: 'running'})
+async function listTasks(resource) {
+  const tasks = await client.tasks.list({'tags.demo':'demo-task', status: 'running', resource: resource})
   $("#tasks_num").text(tasks.length)
   const notification_tasks = tasks.filter(task => 
       {return(task.tags.type !== undefined && 
@@ -93,8 +92,8 @@ async function listTasks() {
   }
 }
 
-async function listAlarms() {
-  const alarms = await client.alarms.search({status:'ACTIVE'})
+async function listAlarms(source) {
+  const alarms = await client.alarms.search({status:'ACTIVE', source})
   $(".alarms_num").text(alarms.alarms.length)
   const t = alarms.alarms.map(alarm => { 
     return {
@@ -210,7 +209,8 @@ $(function () {
     const resource = $('#resource').val()
     getMetrics(resource)
     .then(metrics => {
-      loadData(resource, metrics)
+      const time = $('#time :selected').val()
+      loadData(resource, metrics, time)
       $('#metricSelect').find('option').remove()
       metrics.forEach(metric => {
         $('#metricSelect').append($('<option>', { 
@@ -241,7 +241,7 @@ $(function () {
         showMessage('Already configured ' + task.ID)
       } else {
         showMessage('Started a task ' + task.ID)
-        listTasks()
+        listTasks(resource)
       }
     })
   })
@@ -265,7 +265,7 @@ $(function () {
             showMessage('The task with the same config ' + task.ID)
           } else {
             showMessage('New task ' + task.ID)
-            listTasks()
+            listTasks(resource)
           }
         })
       } else {
@@ -276,7 +276,7 @@ $(function () {
             showMessage('The task with the same config ' + task.ID)
           } else {
             showMessage('New task ' + task.ID)
-            listTasks()
+            listTasks(resource)
           }
         })
       }
@@ -308,6 +308,7 @@ $(function () {
        limit: 100
     })
     .then(data => {
+        $('.page-content').hide()
         var resource = data.values.map(x=> {return x.id})
         response(resource)
       })
@@ -315,9 +316,13 @@ $(function () {
     minLength: 1,
     cacheLength: 0,
     select: function(event, ui) {
-      getMetrics(ui.item.value)
+      const resource = ui.item.value
+      getMetrics(resource)
       .then(metrics => {
-        //loadData(resource, metrics)
+        $('.page-content').show()
+        loadData(resource, metrics)
+        listTasks(resource)
+        setInterval(() => listAlarms(resource), 5000)
         $('#metricSelect').find('option').remove()
         metrics.forEach(metric => {
           $('#metricSelect').append($('<option>', { 
@@ -340,8 +345,7 @@ $(function () {
     return metrics.filter(metric => {return metric !== 'collectedTime'})
   }
 
-  async function loadData(resource, metrics) {
-    const time = $('#time :selected').val()
+  async function loadData(resource, metrics, time = 'P1D') {
     const from = (moment().unix() - moment.duration(time).asSeconds()) * 1000
     var ts = []
     var i = 0
@@ -546,7 +550,6 @@ $(function () {
       }
       return await client.tasks.create(task, {})
     }
-    
   }
 
   async function startNotificationTask(resource, states=["Created", "Occurred again"], plugin = 'mandrillMail', name = 'notification task') {
