@@ -247,6 +247,13 @@ $(function () {
     })
   })
 
+  $( "#type" ).change(function() {
+    if($( "#type" ).val() === 'periodic')
+      $( "#polling_settings").show()
+    else
+      $( "#polling_settings").hide()
+  })
+
   $('#task-btn').on('click', function(e) {
     const resource = $('#resource').val()
     const metric = $('#metricSelect').val()
@@ -270,8 +277,9 @@ $(function () {
           }
         })
       } else {
-        const duration = $('#time :selected').val()
-        startPollingTask(resource, metric, duration, lowerLimit, upperLimit, taskName)
+        const polling_window = $('#polling_window :selected').val()
+        const aggregate = $('#aggregate_window :selected').val()
+        startPollingTask(resource, metric, polling_window, aggregate, lowerLimit, upperLimit, taskName)
         .then(task=> {
           if(task.created_before) {
             showMessage('The task with the same config ' + task.ID)
@@ -458,14 +466,14 @@ $(function () {
    
   }
 
-  async function startPollingTask(resource, metric = 'temperature', from="PT30M", lowerLimit=0, upperLimit=10, name = 'example polling task') {
-    const use_case_id = createPollingUseCaseID(resource, metric, from, lowerLimit, upperLimit)
+  async function startPollingTask(resource, metric = 'temperature', duration="PT30M", aggregate='mean', lowerLimit=0, upperLimit=10, name = 'example polling task') {
+    const use_case_id = createPollingUseCaseID(resource, metric, duration, aggregate, lowerLimit, upperLimit)
     const tasks = await client.tasks.list({'tags.use_case': use_case_id, status: 'running'})
     if(tasks.length > 0) {
       const task = {...tasks[0], created_before: true}
       return task
     } else {
-      const pollingInterval = moment.duration(from).asSeconds() / 2
+      const pollingInterval = moment.duration(duration).asSeconds()
       const getMetricValuePlug = getPlugin('getMetricValue')
       const conditionPlug = getPlugin('condition')
       const createAlarmPlug = getPlugin('createAlarm')
@@ -479,9 +487,10 @@ $(function () {
             dataTrigger: false,
             tickTrigger: true,
             properties: {
-              resource: resource,
-              metric: metric,
-              duration: from
+              resource,
+              metric,
+              duration,
+              aggregate
             },
             position: [ 150, 150 ]
           },
