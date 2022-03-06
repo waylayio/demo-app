@@ -10,7 +10,7 @@ function createPollingUseCaseID(resource, metric, from, lowerLimit, upperLimit) 
   return btoa(JSON.stringify({resource, metric, from, lowerLimit, upperLimit}))
 }
 
-async function startStreamTask(resource, metric = 'temperature', lowerLimit=0, upperLimit=10, name = 'example reactive task') {
+async function startStreamTask(resource, metric = 'temperature', lowerLimit=0, upperLimit=10, name = 'example reactive task', suffix = '') {
   const use_case_id = createStreamUseCaseID(resource, metric, lowerLimit, upperLimit)
   const tasks = await client.tasks.list({'tags.use_case': use_case_id, status: 'running'})
   if(tasks.length > 0) {
@@ -18,16 +18,16 @@ async function startStreamTask(resource, metric = 'temperature', lowerLimit=0, u
     return task
   } else {
     const value = '${streamdata.' + metric + '}'
-    const inRangePlug = getPlugin('inRange')
-    const createAlarmPlug = getPlugin('createAlarm')
-    const clearAlarmPlug = getPlugin('clearAlarm')
-    const conditionPlug = getPlugin('condition')
+    const inRangePlug = {...getPlugin('inRange'), label: 'inRange' + suffix}
+    const createAlarmPlug = {...getPlugin('createAlarm'), label: 'createAlarm' + suffix}
+    const clearAlarmPlug = {...getPlugin('clearAlarm'), label: 'clearAlarm' + suffix}
+    const conditionPlug = {...getPlugin('condition'), label: 'problem' + suffix}
 
     var task = {
       sensors: [
         {
-          label: 'inRange',
-          name: 'inRange',
+          label: inRangePlug.label,
+          name: inRangePlug.name,
           version: inRangePlug.version,
           dataTrigger: true,
           tickTrigger: false,
@@ -40,17 +40,17 @@ async function startStreamTask(resource, metric = 'temperature', lowerLimit=0, u
           position: [ 150, 150 ]
         },
         {
-          label: 'problem',
-          name: 'condition',
+          label: conditionPlug.label,
+          name: conditionPlug.name,
           version: conditionPlug.version,
           properties: {
-            condition: '$${nodes.inRange.state} === "In Range" '
+            condition: '$${nodes.' + inRangePlug.label + '.state} === "In Range" '
           },
           position: [ 800, 150 ]
         },
         {
-          label: 'createAlarm',
-          name: 'createAlarm',
+          label: createAlarmPlug.label,
+          name: createAlarmPlug.name,
           version: createAlarmPlug.version,
           properties: {
             text: 'Out of range',
@@ -61,8 +61,8 @@ async function startStreamTask(resource, metric = 'temperature', lowerLimit=0, u
             position: [ 800, 300 ]
           },
           {
-          label: 'clearAlarm',
-          name: 'clearAlarm',
+          label: clearAlarmPlug.label,
+          name: clearAlarmPlug.name,
           version: clearAlarmPlug.version,
           properties: {
             type: 'Out of range ' + metric,
@@ -73,17 +73,17 @@ async function startStreamTask(resource, metric = 'temperature', lowerLimit=0, u
       ],
       triggers: [
         {
-          sourceLabel: 'inRange',
-          destinationLabel: 'problem'
+          sourceLabel: inRangePlug.label,
+          destinationLabel: conditionPlug.label
         },
         {
-          sourceLabel: 'inRange',
-          destinationLabel: 'createAlarm',
+          sourceLabel: inRangePlug.label,
+          destinationLabel: createAlarmPlug.label,
           statesTrigger: [ 'Above' , 'Below']
         },
         {
-          sourceLabel: 'inRange',
-          destinationLabel: 'clearAlarm',
+          sourceLabel: inRangePlug.label,
+          destinationLabel: clearAlarmPlug.label,
           stateChangeTrigger: {
             stateFrom: "*",
             stateTo: 'In Range'
@@ -91,10 +91,9 @@ async function startStreamTask(resource, metric = 'temperature', lowerLimit=0, u
         }
       ],
       task: {
-        resource: resource,
+        resource, name,
         type: 'reactive',
         start: true,
-        name: name,
         tags :{
           demo: 'demo-task',
           use_case: use_case_id
@@ -105,7 +104,7 @@ async function startStreamTask(resource, metric = 'temperature', lowerLimit=0, u
   }
 }
 
-async function startPollingTask(resource, metric = 'temperature', duration="PT30M", aggregate='mean', lowerLimit=0, upperLimit=10, name = 'example polling task') {
+async function startPollingTask(resource, metric = 'temperature', duration="PT30M", aggregate='mean', lowerLimit=0, upperLimit=10, name = 'example polling task', suffix = '') {
   const use_case_id = createPollingUseCaseID(resource, metric, duration, aggregate, lowerLimit, upperLimit)
   const tasks = await client.tasks.list({'tags.use_case': use_case_id, status: 'running'})
   if(tasks.length > 0) {
@@ -113,15 +112,15 @@ async function startPollingTask(resource, metric = 'temperature', duration="PT30
     return task
   } else {
     const pollingInterval = moment.duration(duration).asSeconds() / 2
-    const getMetricValuePlug = getPlugin('getMetricValue')
-    const conditionPlug = getPlugin('condition')
-    const createAlarmPlug = getPlugin('createAlarm')
-    const clearAlarmPlug = getPlugin('clearAlarm')
+    const getMetricValuePlug = {...getPlugin('getMetricValue'), label: 'getMetricValue' + suffix}
+    const conditionPlug = {...getPlugin('condition'), label: 'condition' + suffix}
+    const createAlarmPlug = {...getPlugin('createAlarm'), label: 'createAlarm' + suffix}
+    const clearAlarmPlug = {...getPlugin('clearAlarm'), label: 'clearAlarm' + suffix}
     var task = {
       sensors: [
         {
-          label: 'getMetricValue',
-          name: 'getMetricValue',
+          label: getMetricValuePlug.label,
+          name: getMetricValuePlug.name,
           version: getMetricValuePlug.version,
           dataTrigger: false,
           tickTrigger: true,
@@ -134,26 +133,26 @@ async function startPollingTask(resource, metric = 'temperature', duration="PT30
           position: [ 150, 150 ]
         },
         {
-          label: 'condition',
-          name: 'condition',
+          label: conditionPlug.label,
+          name: conditionPlug.name,
           version: conditionPlug.version,
           properties: {
-            condition: "${nodes.getMetricValue.rawData.result} > " + upperLimit + " || ${nodes.getMetricValue.rawData.result} < " + lowerLimit
+            condition: '${nodes.' + getMetricValuePlug.label + '.rawData.result} > ' + upperLimit + ' || ${nodes.' + getMetricValuePlug.label + '.rawData.result}  < ' + lowerLimit
           },
           position: [ 350, 250 ]
         },
         {
           label: 'problem',
-          name: 'condition',
+          name: conditionPlug.name,
           version: conditionPlug.version,
           properties: {
-            condition: '$${nodes.condition.state} === "In Range" '
+            condition: '$${nodes.' + conditionPlug.label + '.state} === "In Range" '
           },
           position: [ 800, 150 ]
         },
         {
-          label: 'createAlarm',
-          name: 'createAlarm',
+          label: createAlarmPlug.label,
+          name: createAlarmPlug.name,
           version: createAlarmPlug.version,
           properties: {
             text: 'Out of range',
@@ -165,8 +164,8 @@ async function startPollingTask(resource, metric = 'temperature', duration="PT30
           position: [ 800, 300 ]
         },
         {
-          label: 'clearAlarm',
-          name: 'clearAlarm',
+          label: clearAlarmPlug.label,
+          name: clearAlarmPlug.name,
           version: clearAlarmPlug.version,
           properties: {
             type: 'Out of range ' + metric,
@@ -177,22 +176,22 @@ async function startPollingTask(resource, metric = 'temperature', duration="PT30
       ],
       triggers: [
        {
-          sourceLabel: 'getMetricValue',
-          destinationLabel: 'condition',
+          sourceLabel: getMetricValuePlug.label,
+          destinationLabel: conditionPlug.label,
           statesTrigger: [ 'Collected' ]
         },
         {
-          sourceLabel: 'condition',
+          sourceLabel: conditionPlug.label,
           destinationLabel: 'problem'
         },
         {
-          sourceLabel: 'condition',
-          destinationLabel: 'createAlarm',
+          sourceLabel: conditionPlug.label,
+          destinationLabel: createAlarmPlug.label,
           statesTrigger: [ 'True' ]
         },
         {
           sourceLabel: 'condition',
-          destinationLabel: 'clearAlarm',
+          destinationLabel: clearAlarmPlug.label,
           stateChangeTrigger: {
             stateFrom: "*",
             stateTo: 'False'
@@ -200,11 +199,10 @@ async function startPollingTask(resource, metric = 'temperature', duration="PT30
         }
       ],
       task: {
-        resource: resource,
+        resource, name,
         type: 'periodic',
         pollingInterval: pollingInterval,
         start: true,
-        name: name,
         tags :{
           demo: 'demo-task',
           use_case: use_case_id

@@ -3,7 +3,6 @@ var plugins
 var tasks = []
 var timerId
 
-
 async function getMetrics(resource) {
   const res = await client.data.getSeries(resource, { metadata: true })
   const metrics = res.map( x => x.name )
@@ -12,19 +11,19 @@ async function getMetrics(resource) {
 
 async function getData(resource, metrics, time = 'P1D') {
   const from = (moment().unix() - moment.duration(time).asSeconds()) * 1000
-  var ts = []
+  var timeseries = []
   var i = 0
   for (const metric of metrics) {
     var data = await client.data.getMetricSeries(resource, encodeURI(metric), {from})
     if(data.series.length) {
-      ts.push({
+      timeseries.push({
         label: metric,
         borderColor: getHeatmap(i++),
         data: data.series.map(d=> {return {x: new Date(d[0]), y:d[1] }} )
       })
     }
   }
-  return ts
+  return timeseries
 }
 
 function getPlugin(name) {
@@ -59,7 +58,7 @@ async function listTasks(resource) {
               task.tags.type ==='notification')}).length
   $("#notifications_num").text(notification_tasks)
   $("#monitoring_num").text(tasks.length - notification_tasks)
-  const t = tasks.map(task => {
+  const t_tasks = tasks.map(task => {
     return {
       name: task.name,
       user: task.user,
@@ -68,13 +67,13 @@ async function listTasks(resource) {
       type: task.type
       }
   })
-  gridTasks.updateConfig({data: t}).forceRender()
+  gridTasks.updateConfig({data: t_tasks}).forceRender()
 }
 
 async function listAlarms(source) {
   const alarms = await client.alarms.search({status:'ACTIVE', source})
   $(".alarms_num").text(alarms.alarms.length)
-  const t = alarms.alarms.map(alarm => {
+  const t_alarms = alarms.alarms.map(alarm => {
     return {
       time: alarm.lastUpdateTime,
       resource: alarm.source.id,
@@ -84,30 +83,7 @@ async function listAlarms(source) {
       count: alarm.count
     }
   })
-  if(gridAlarms === null) {
-      gridAlarms = new gridjs.Grid({
-      columns: ['Time', 'Resource', {
-      name: 'Severity',
-      attributes: (cell) => {
-          if (cell === 'MAJOR' || cell === 'CRITICAL') {
-            return {
-              'style': 'color: red',
-            }
-          } else if (cell === 'MINOR'){
-            return {
-              'style': 'color: orange',
-            }
-          }
-        }
-      }, 'Type', 'Text', 'Count'],
-      data: t,
-      search: true,
-      pagination: true,
-      sort: true
-    }).render(document.getElementById("alarms"))
-  } else {
-    gridAlarms.updateConfig({data: t}).forceRender()
-  }
+  gridAlarms.updateConfig({data: t_alarms}).forceRender()
 }
 
 connectButton.click(()=> {
@@ -126,7 +102,7 @@ function plot(data) {
   chart.update()
 }
 
-$(() => {
+function init() {
   loginError.hide()
   $("#cover").hide()
   app.hide()
@@ -211,15 +187,6 @@ $(() => {
   clearTaskButton.click(() => {
     $(".cloned-row:not(:last)").remove()
   })
-
-  function updateTaskTypeSelection() {
-    $("#type").change(() =>{
-      if($("#type").val() === 'periodic')
-        $("#polling_settings").show()
-      else
-        $("#polling_settings").hide()
-    })
-  }
 
   function startAllTasks() {
     // RULE_ID = await rules.Builder.add(Tasks).start()
@@ -314,6 +281,6 @@ $(() => {
     const resource = resourceEntry.val()
     getMetrics(resource)
   })
+}
 
-
-})
+init()
