@@ -15,6 +15,15 @@ const clearTaskButton = $('#clear-task-btn')
 const alarmsButton = $('#alarms-btn')
 const removeTasksButton = $('#tasks-remove-btn')
 const startTasksButton = $('#task-btn')
+const listTasksButton = $('#tasks-list-btn')
+
+$.urlParam = function(name){
+  var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+  if (results==null) {
+     return null;
+  }
+  return decodeURI(results[1]) || 0;
+}
 
 const map = ["#543005", "#8c510a", "#bf812d", "#dfc27d", "#f6e8c3", "#f5f5f5","#c7eae5","#80cdc1","#35978f","#01665e","#003c30"]
 function getHeatmap(num) {
@@ -36,16 +45,16 @@ var chart = new Chart(ctx, {
 })
 
 var gridTasks = new gridjs.Grid({
-  columns: ['Name', 'User', {
-  name: 'status',
+  columns: ['Name', 'Id', {
+  name: 'Problem',
   attributes: (cell) => {
-      if (cell === 'running') {
+      if (cell === 'true') {
         return {
-          'style': 'color: green',
-        }
-      } else if (cell === 'stopped'){
-         return {
           'style': 'color: red',
+        }
+      } else if (cell === 'false'){
+         return {
+          'style': 'color: green',
         }
       }
     }

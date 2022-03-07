@@ -132,7 +132,7 @@
             <p>Select the trigger condition under which there are no issues, out of boundaries are lower and upper limit, if values are above or below, an alarm <strong><em>Out of Range</em></strong> will be generated:</p>
             <hr>
             <div class='cloned-row'>
-              <input type="text"id="task-name" placeholder="task name" name="task-name" value="">
+              <input type="text"id="task-name" placeholder="task name" name="task-name" readonly value="f1">
               <select id="type">
                 <option value="periodic">periodic</option>
                 <option value="reactive">when data arrives</option>
@@ -171,6 +171,7 @@
         <div id="tasks_">
           <h1>Tasks</h1>
           <div id="tasks"></div>
+          <button id="tasks-list-btn" title="List all tasks">List all tasks</button>
           <button id="tasks-remove-btn" title="Stop and delete All">Stop and delete</button>
         </div>
         <hr>
@@ -210,7 +211,6 @@
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
   <script src="js/config.js"></script>
   <script src="js/init.js"></script>
-  <script src="js/util.js"></script>
   <script src="js/tasks.js"></script>
   <script src="js/script.js"></script>
 </body>

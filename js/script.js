@@ -1,6 +1,6 @@
 var client
 var plugins
-var tasks = []
+var triggers = []
 var timerId
 
 async function getMetrics(resource) {
@@ -61,14 +61,18 @@ async function listTasks(resource) {
   const t_tasks = tasks.map(task => {
     return {
       name: task.name,
-      user: task.user,
-      status: task.status,
+      id: task.ID,
       resource: task.resource,
       type: task.type
       }
   })
+  for(i=0; i < t_tasks.length; i++) {
+    const result = await checkIfProblem(t_tasks[i].id)
+    t_tasks[i].problem = '' + result //string
+  }
   gridTasks.updateConfig({data: t_tasks}).forceRender()
 }
+
 
 async function listAlarms(source) {
   const alarms = await client.alarms.search({status:'ACTIVE', source})
@@ -139,8 +143,8 @@ function init() {
     chart.update()
   })
 
-  function resetTasks() {
-    tasks = []
+  function resetTaskTable() {
+    triggers = []
     $(".cloned-row:not(:last)").remove()
   }
 
@@ -153,8 +157,7 @@ function init() {
     const type = $('#type').val()
     const polling_window = $('#polling_window :selected').val()
     const aggregate = $('#aggregate_window :selected').val()
-
-    tasks.push({ resource, metric, name, type, polling_window, aggregate })
+    triggers.push({ resource, metric, name, lowerLimit, upperLimit, type, polling_window, aggregate })
   }
 
   notifyButton.click(()=> {
@@ -177,51 +180,28 @@ function init() {
 
   addTaskButton.click(function() {
     storeTaskInList()
-    var lastDiv = $(".cloned-row:last")
-    var clone = lastDiv.clone()
-    lastDiv.find("*").removeAttr("id")
-    clone.insertAfter(".cloned-row:last")
-    updateTaskTypeSelection()
+    const count = triggers.length + 1
+    $('#task-name').val('f' + count)
   })
+
 
   clearTaskButton.click(() => {
-    $(".cloned-row:not(:last)").remove()
+    triggers = []
+    $('#task-name').val('f1')
   })
 
-  function startAllTasks() {
-    // RULE_ID = await rules.Builder.add(Tasks).start()
-    // ruleResult = rules.getRule(RULE_ID)
-    // ?ruleResult ===
-
-    storeTaskInList()
-    tasks.forEach(task => {
-      if(task.type === 'reactive') {
-        startStreamTask(task.resource, task.metric, task.lowerLimit, task.upperLimit, task.name)
-        .then(t=> {
-          if(t.created_before) {
-            showMessage('The task with the same config ' + t.ID)
-          } else {
-            showMessage('New task ' + t.ID)
-            listTasks(task.resource)
-          }
-        })
-      } else {
-        startPollingTask(task.resource, task.metric, task.polling_window, task.aggregate, task.lowerLimit, task.upperLimit, task.name)
-        .then(t=> {
-          if(t.created_before) {
-            showMessage('The task with the same config ' + t.ID)
-          } else {
-            showMessage('New task ' + t.ID)
-            listTasks(task.resource)
-          }
-        })
-      }
-    })
-    resetTasks()
+  async function startAllTasks() {
+    const task = await startAllTasks(triggers)
+    resetTaskTable()
+    listTasks()
   }
 
   startTasksButton.click(()=> {
     startAllTasks()
+  })
+
+  listTasksButton.click(()=> {
+    listTasks()
   })
 
   removeTasksButton.click(() => {
@@ -279,8 +259,14 @@ function init() {
 
   $('#time').change(() => {
     const resource = resourceEntry.val()
+    const time = $('#time :selected').val()
     getMetrics(resource)
+    .then((metrics)=>{
+      getData(resource, metrics, time)
+      .then(data => plot(data))
+    })
   })
+
 }
 
 init()
