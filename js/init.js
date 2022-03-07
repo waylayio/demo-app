@@ -45,7 +45,7 @@ var chart = new Chart(ctx, {
 })
 
 var gridTriggers = new gridjs.Grid({
-  columns: ['Resource', 'Metric', 'Type', 'lowerLimit', 'upperLimit'],
+  columns: ['Resource', 'Metric', 'Type', 'lowerLimit', 'upperLimit', 'path'],
   data: []
 }).render(document.getElementById("triggers"))
 
@@ -118,9 +118,24 @@ function showMessage(text, delay=5000) {
 
 function updateTaskTypeSelection() {
   $("#type").change(() =>{
-    if($("#type").val() === 'periodic')
+    if($("#type").val() === 'periodic'){
       $("#polling_settings").show()
-    else
+    } else {
       $("#polling_settings").hide()
+    }
+    if($("#type").val() === 'periodic' || $("#type").val() === 'reactive' ) {
+      $("#metricSelect").show()
+      $("#lowerLimit").show()
+      $("#upperLimit").show()
+    }
+    if($("#type").val() === 'event'){
+      $("#path_settings").show()
+      $("#polling_settings").hide()
+      $("#metricSelect").hide()
+      $("#lowerLimit").hide()
+      $("#upperLimit").hide()
+    } else {
+      $("#path_settings").hide()
+    }
   })
 }

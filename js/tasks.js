@@ -26,7 +26,7 @@ class RuleBuilder {
           version: inRangePlug.version,
           dataTrigger: true,
           tickTrigger: false,
-          resource: resource,
+          resource,
           evictionTime: 1000,
           properties: {
             value: value,
@@ -103,6 +103,47 @@ class RuleBuilder {
     return network
   }
 
+  prepareEventStream(trigger, iter = 0) {
+    const { resource, targetNode = 'problem', path } = trigger
+    const suffix = iter === 0 ? '' : '' + iter
+    const conditionPlug = {...this.getPlugin('condition'), label: targetNode}
+    const streamPlug = {...this.getPlugin('stream'), label: 'stream' + suffix}
+    const x_offset = 0//iter * 100
+    const y_offset = iter * 400
+
+    const network = {
+      sensors: [
+        {
+          label: streamPlug.label,
+          name: streamPlug.name,
+          version: streamPlug.version,
+          dataTrigger: true,
+          tickTrigger: false,
+          resource,
+          evictionTime: 1000,
+          position: [ 150 + x_offset, 150 + y_offset]
+        },
+        {
+          label: conditionPlug.label,
+          name: conditionPlug.name,
+          version: conditionPlug.version,
+          properties: {
+            condition: '(() => {\n let data = $${nodes.'+ streamPlug.label + '.rawData.stream.' + path +'}\n  return data !== "undefined" \n})()'
+          },
+          position: [ 350 + x_offset, 250 + y_offset]
+        }
+      ],
+      triggers: [
+       {
+          sourceLabel: streamPlug.label,
+          destinationLabel: conditionPlug.label,
+          statesTrigger: [ 'Data' ]
+        }
+      ]
+    }
+    return network
+  }
+
   createTaskResultGate(nodes, relation = 'AND', state = 'True') {
     const createAlarmPlug = {...this.getPlugin('createAlarm'), label: 'createResultAlarm'}
     const clearAlarmPlug = {...this.getPlugin('clearAlarm'), label: 'clearResultAlarm'}
@@ -165,8 +206,10 @@ class RuleBuilder {
       var network
       if(trigger.type === 'reactive')
         network = this.prepareStream(trigger, i++)
-      else
+      else if(trigger.type === 'periodic')
         network = this.preparePolling(trigger, i++)
+      else if(trigger.type === 'event')
+        network = this.prepareEventStream(trigger, i++)
       task.sensors = task.sensors.concat(network.sensors)
       task.triggers = task.triggers.concat(network.triggers)
       nodes.push(trigger.targetNode)

@@ -155,7 +155,8 @@ function init() {
     const type = $('#type').val()
     const polling_window = $('#polling_window :selected').val()
     const aggregate = $('#aggregate_window :selected').val()
-    triggers.push({ resource, metric, targetNode, lowerLimit, upperLimit, type, polling_window, aggregate })
+    const path = $('#path_settings').val()
+    triggers.push({ resource, metric, targetNode, lowerLimit, upperLimit, type, polling_window, aggregate, path })
   }
 
   notifyButton.click(()=> {
@@ -181,7 +182,8 @@ function init() {
         type: trigger.type,
         metric: trigger.metric,
         upperLimit: trigger.upperLimit,
-        lowerLimit: trigger.lowerLimit
+        lowerLimit: trigger.lowerLimit,
+        path: trigger.path
       }
     })
     gridTriggers.updateConfig({data: t_triggers}).forceRender()
