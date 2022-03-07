@@ -71,7 +71,6 @@ async function listTasks(resource) {
   gridTasks.updateConfig({data: t_tasks}).forceRender()
 }
 
-
 async function listAlarms(source) {
   const alarms = await client.alarms.search({status:'ACTIVE', source})
   $(".alarms_num").text(alarms.alarms.length)
@@ -144,7 +143,7 @@ function init() {
   function resetTriggerTable() {
     triggers = []
     gridTriggers.updateConfig({data: []}).forceRender()
-    $('#task-name').val('f1')
+    $('#trigger-name').val('f1')
   }
 
   function storeTriggerInList() {
@@ -152,7 +151,7 @@ function init() {
     const metric = metricSelect.val()
     const lowerLimit = parseFloat($('#lowerLimit').val())
     const upperLimit = parseFloat($('#upperLimit').val())
-    const name = $('#task-name').val()
+    const name = $('#trigger-name').val()
     const type = $('#type').val()
     const polling_window = $('#polling_window :selected').val()
     const aggregate = $('#aggregate_window :selected').val()
@@ -190,7 +189,7 @@ function init() {
       }
     })
     gridTriggers.updateConfig({data: t_triggers}).forceRender()
-    $('#task-name').val('f' + count)
+    $('#trigger-name').val('f' + count)
   })
 
   clearTriggerButton.click(() => {
@@ -201,7 +200,7 @@ function init() {
     if(!triggers.length){
       showMessage('No trigger defined yet')
     } else {
-      const task = await ruleBuilder.startTaskForTriggers(triggers)
+      const task = await ruleBuilder.startTaskForTriggers($('#task-name').val(), triggers)
       showMessage('Created task ' + task.ID)
       resetTriggerTable()
       listTasks()

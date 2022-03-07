@@ -132,7 +132,7 @@
             <p>Select the trigger condition under which there are no issues, out of boundaries are lower and upper limit, if values are above or below, an alarm <strong><em>Out of Range</em></strong> will be generated:</p>
             <hr>
             <div class='cloned-row'>
-              <input type="text"id="task-name" placeholder="task name" name="task-name" readonly value="f1">
+              <input type="text" id="trigger-name" placeholder="task name" name="trigger-name" readonly value="f1">
               <select id="type">
                 <option value="periodic">periodic</option>
                 <option value="reactive">when data arrives</option>
@@ -167,6 +167,7 @@
           <button id="add-task-btn" title="Add a trigger ">Add trigger</button>
           <button id="clear-task-btn" title="Reset">Reset</button>
           <button id="task-btn" style="float: right;" title="Start a task ">Start a task</button>
+          <input type="text" id="task-name" style="float: right;" value="Demo task">
         </div>
         <hr>
         <div id="tasks_">

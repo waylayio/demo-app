@@ -232,14 +232,14 @@ class RuleBuilder {
     return  {relations, sensors, triggers}
   }
 
-  async startTaskForTriggers(triggers) {
+  async startTaskForTriggers(name='Task builder', triggers) {
     var task =  {
       sensors: [],
       triggers: [],
       task: {
         type: 'reactive',
         start: true,
-        name: '',
+        name,
         tags: {
           demo: 'demo-task'
         }
