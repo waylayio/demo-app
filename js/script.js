@@ -191,9 +191,13 @@ function init() {
   })
 
   async function startAllTasks() {
-    const task = await startAllTasks(triggers)
-    resetTaskTable()
-    listTasks()
+    if(!triggers.length){
+      showMessage('No trigger defined yet')
+    } else {
+      const task = await startTaskForTriggers(triggers)
+      resetTaskTable()
+      listTasks()
+    }
   }
 
   startTasksButton.click(()=> {

@@ -222,7 +222,7 @@ function createTaskResultGate(nodes) {
   return  {relations, sensors, triggers}
 }
 
-async function startAllTasks(triggers) {
+async function startTaskForTriggers(triggers) {
   var task =  {
     sensors: [],
     triggers: [],
