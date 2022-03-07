@@ -42,7 +42,7 @@ class RuleBuilder {
           properties: {
             condition: '$${nodes.' + inRangePlug.label + '.state} === "In Range" '
           },
-          position: [ 800 + x_offset, 150 + y_offset]
+          position: [ 350 + x_offset, 150 + y_offset]
         },
         {
           label: createAlarmPlug.label,
@@ -73,16 +73,16 @@ class RuleBuilder {
           destinationLabel: conditionPlug.label
         },
         {
-          sourceLabel: inRangePlug.label,
+          sourceLabel: conditionPlug.label,
           destinationLabel: createAlarmPlug.label,
-          statesTrigger: [ 'Above' , 'Below']
+          statesTrigger: [ 'False' ]
         },
         {
-          sourceLabel: inRangePlug.label,
+          sourceLabel: conditionPlug.label,
           destinationLabel: clearAlarmPlug.label,
           stateChangeTrigger: {
             stateFrom: "*",
-            stateTo: 'In Range'
+            stateTo: 'True'
           }
         }
       ]
