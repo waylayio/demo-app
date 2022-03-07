@@ -94,7 +94,7 @@ class RuleBuilder {
     const suffix = iter === 0 ? '' : '' + iter
     const pollingInterval = moment.duration(duration).asMilliseconds() / 2
     const getMetricValuePlug = {...this.getPlugin('getMetricValue'), label: 'getMetricValue' + suffix}
-    const conditionPlug = {...this.getPlugin('condition'), label: 'condition' + suffix}
+    const conditionPlug = {...this.getPlugin('condition')}
     const createAlarmPlug = {...this.getPlugin('createAlarm'), label: 'createAlarm' + suffix}
     const clearAlarmPlug = {...this.getPlugin('clearAlarm'), label: 'clearAlarm' + suffix}
     const x_offset = 0//iter * 100
@@ -117,22 +117,13 @@ class RuleBuilder {
           position: [ 150 + x_offset, 150 + y_offset]
         },
         {
-          label: conditionPlug.label,
+          label: targetNode,
           name: conditionPlug.name,
           version: conditionPlug.version,
           properties: {
             condition: '${nodes.' + getMetricValuePlug.label + '.rawData.result} < ' + upperLimit + ' || ${nodes.' + getMetricValuePlug.label + '.rawData.result}  > ' + lowerLimit
           },
           position: [ 350 + x_offset, 250 + y_offset]
-        },
-        {
-          label: targetNode,
-          name: conditionPlug.name,
-          version: conditionPlug.version,
-          properties: {
-            condition: '$${nodes.' + conditionPlug.label + '.state} === "True" '
-          },
-          position: [ 800 + x_offset, 150 + y_offset]
         },
         {
           label: createAlarmPlug.label,
@@ -161,20 +152,16 @@ class RuleBuilder {
       triggers: [
        {
           sourceLabel: getMetricValuePlug.label,
-          destinationLabel: conditionPlug.label,
+          destinationLabel: targetNode,
           statesTrigger: [ 'Collected' ]
         },
         {
-          sourceLabel: conditionPlug.label,
-          destinationLabel: targetNode
-        },
-        {
-          sourceLabel: conditionPlug.label,
+          sourceLabel: targetNode,
           destinationLabel: createAlarmPlug.label,
           statesTrigger: [ 'False' ]
         },
         {
-          sourceLabel: conditionPlug.label,
+          sourceLabel: targetNode,
           destinationLabel: clearAlarmPlug.label,
           stateChangeTrigger: {
             stateFrom: "*",
