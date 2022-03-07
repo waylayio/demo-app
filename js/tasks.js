@@ -13,8 +13,6 @@ class RuleBuilder {
     const suffix = iter === 0 ? '' : '' + iter
     const value = '${streamdata.' + metric + '}'
     const inRangePlug = {...this.getPlugin('inRange'), label: 'inRange' + suffix}
-    const createAlarmPlug = {...this.getPlugin('createAlarm'), label: 'createAlarm' + suffix}
-    const clearAlarmPlug = {...this.getPlugin('clearAlarm'), label: 'clearAlarm' + suffix}
     //this node will hold a result
     const conditionPlug = {...this.getPlugin('condition'), label: targetNode}
 
@@ -62,8 +60,6 @@ class RuleBuilder {
     const pollingInterval = moment.duration(polling_window).asMilliseconds() / 2
     const getMetricValuePlug = {...this.getPlugin('getMetricValue'), label: 'getMetricValue' + suffix}
     const conditionPlug = {...this.getPlugin('condition'), label: targetNode}
-    const createAlarmPlug = {...this.getPlugin('createAlarm'), label: 'createAlarm' + suffix}
-    const clearAlarmPlug = {...this.getPlugin('clearAlarm'), label: 'clearAlarm' + suffix}
     const x_offset = 0//iter * 100
     const y_offset = iter * 400
     const network = {
