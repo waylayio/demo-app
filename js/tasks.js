@@ -94,7 +94,7 @@ class RuleBuilder {
     const suffix = iter === 0 ? '' : '' + iter
     const pollingInterval = moment.duration(duration).asMilliseconds() / 2
     const getMetricValuePlug = {...this.getPlugin('getMetricValue'), label: 'getMetricValue' + suffix}
-    const conditionPlug = {...this.getPlugin('condition')}
+    const conditionPlug = {...this.getPlugin('condition'), label: targetNode}
     const createAlarmPlug = {...this.getPlugin('createAlarm'), label: 'createAlarm' + suffix}
     const clearAlarmPlug = {...this.getPlugin('clearAlarm'), label: 'clearAlarm' + suffix}
     const x_offset = 0//iter * 100
@@ -117,7 +117,7 @@ class RuleBuilder {
           position: [ 150 + x_offset, 150 + y_offset]
         },
         {
-          label: targetNode,
+          label: conditionPlug.label,
           name: conditionPlug.name,
           version: conditionPlug.version,
           properties: {
@@ -152,16 +152,16 @@ class RuleBuilder {
       triggers: [
        {
           sourceLabel: getMetricValuePlug.label,
-          destinationLabel: targetNode,
+          destinationLabel: conditionPlug.label,
           statesTrigger: [ 'Collected' ]
         },
         {
-          sourceLabel: targetNode,
+          sourceLabel: conditionPlug.label,
           destinationLabel: createAlarmPlug.label,
           statesTrigger: [ 'False' ]
         },
         {
-          sourceLabel: targetNode,
+          sourceLabel: conditionPlug.label,
           destinationLabel: clearAlarmPlug.label,
           stateChangeTrigger: {
             stateFrom: "*",
