@@ -143,6 +143,7 @@ function init() {
 
   function resetTriggerTable() {
     triggers = []
+    gridTriggers.updateConfig({data: []}).forceRender()
     $('#task-name').val('f1')
   }
 
@@ -179,6 +180,16 @@ function init() {
   addTriggerButton.click(function() {
     storeTriggerInList()
     const count = triggers.length + 1
+    const t_triggers = triggers.map(trigger => {
+      return {
+        resource: trigger.resource,
+        type: trigger.type,
+        metric: trigger.metric,
+        upperLimit: trigger.upperLimit,
+        lowerLimit: trigger.lowerLimit
+      }
+    })
+    gridTriggers.updateConfig({data: t_triggers}).forceRender()
     $('#task-name').val('f' + count)
   })
 

@@ -44,6 +44,11 @@ var chart = new Chart(ctx, {
   }
 })
 
+var gridTriggers = new gridjs.Grid({
+  columns: ['Resource', 'Metric', 'Type', 'lowerLimit', 'upperLimit'],
+  data: []
+}).render(document.getElementById("triggers"))
+
 var gridTasks = new gridjs.Grid({
   columns: ['Name', 'Id', {
   name: 'Problem',
