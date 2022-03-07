@@ -43,47 +43,12 @@ class RuleBuilder {
             condition: '$${nodes.' + inRangePlug.label + '.state} === "In Range" '
           },
           position: [ 350 + x_offset, 150 + y_offset]
-        },
-        {
-          label: createAlarmPlug.label,
-          name: createAlarmPlug.name,
-          version: createAlarmPlug.version,
-          properties: {
-            text: 'Out of range',
-            severity: 'MINOR',
-            type: 'Out of range ' + metric,
-            resource: resource
-            },
-            position: [ 800 + x_offset, 300 + y_offset]
-          },
-          {
-          label: clearAlarmPlug.label,
-          name: clearAlarmPlug.name,
-          version: clearAlarmPlug.version,
-          properties: {
-            type: 'Out of range ' + metric,
-            resource: resource
-          },
-          position: [ 800 + x_offset, 450 + y_offset]
         }
       ],
       triggers: [
         {
           sourceLabel: inRangePlug.label,
           destinationLabel: conditionPlug.label
-        },
-        {
-          sourceLabel: conditionPlug.label,
-          destinationLabel: createAlarmPlug.label,
-          statesTrigger: [ 'False' ]
-        },
-        {
-          sourceLabel: conditionPlug.label,
-          destinationLabel: clearAlarmPlug.label,
-          stateChangeTrigger: {
-            stateFrom: "*",
-            stateTo: 'True'
-          }
         }
       ]
     }
@@ -124,29 +89,6 @@ class RuleBuilder {
             condition: '${nodes.' + getMetricValuePlug.label + '.rawData.result} < ' + upperLimit + ' || ${nodes.' + getMetricValuePlug.label + '.rawData.result}  > ' + lowerLimit
           },
           position: [ 350 + x_offset, 250 + y_offset]
-        },
-        {
-          label: createAlarmPlug.label,
-          name: createAlarmPlug.name,
-          version: createAlarmPlug.version,
-          properties: {
-            text: 'Out of range',
-            severity: 'MINOR',
-            type: 'Out of range ' + metric,
-            resource: resource
-
-          },
-          position: [ 800 + x_offset, 300 + y_offset]
-        },
-        {
-          label: clearAlarmPlug.label,
-          name: clearAlarmPlug.name,
-          version: clearAlarmPlug.version,
-          properties: {
-            type: 'Out of range ' + metric,
-            resource: resource
-          },
-          position: [ 800 + x_offset, 450 + y_offset]
         }
       ],
       triggers: [
@@ -154,19 +96,6 @@ class RuleBuilder {
           sourceLabel: getMetricValuePlug.label,
           destinationLabel: conditionPlug.label,
           statesTrigger: [ 'Collected' ]
-        },
-        {
-          sourceLabel: conditionPlug.label,
-          destinationLabel: createAlarmPlug.label,
-          statesTrigger: [ 'False' ]
-        },
-        {
-          sourceLabel: conditionPlug.label,
-          destinationLabel: clearAlarmPlug.label,
-          stateChangeTrigger: {
-            stateFrom: "*",
-            stateTo: 'True'
-          }
         }
       ]
     }
