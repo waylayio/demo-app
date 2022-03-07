@@ -254,9 +254,13 @@ class RuleBuilder {
 
   async checkIfProblem(id) {
     const task = await this.client.tasks.get(id)
-    var node = task.nodes.find(x => x.name === 'RESULT')
-    return (node !== undefined && node.mostLikelyState.state === 'FALSE' && node.mostLikelyState.probability === 1)
+    // var node = task.nodes.find(x => x.name === 'RESULT')
+    // return (node !== undefined && node.mostLikelyState.state === 'FALSE' && node.mostLikelyState.probability === 1)
+    const alarms = await this.client.alarms.search({source: id})
+    return alarms.alarms.length > 0
   }
+
+
 
   async startNotificationTask(resource, states=["Created", "Occurred again"], plugin = 'mandrillMail', name = 'notification task') {
     const alarmEventSensorPlug = this.getPlugin('AlarmEventSensor')
