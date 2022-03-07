@@ -143,12 +143,12 @@ function init() {
     chart.update()
   })
 
-  function resetTaskTable() {
+  function resetTriggerTable() {
     triggers = []
-    $(".cloned-row:not(:last)").remove()
+    $('#task-name').val('f1')
   }
 
-  function storeTaskInList() {
+  function storeTriggerInList() {
     const resource = resourceEntry.val()
     const metric = metricSelect.val()
     const lowerLimit = parseFloat($('#lowerLimit').val())
@@ -178,16 +178,14 @@ function init() {
     })
   })
 
-  addTaskButton.click(function() {
-    storeTaskInList()
+  addTriggerButton.click(function() {
+    storeTriggerInList()
     const count = triggers.length + 1
     $('#task-name').val('f' + count)
   })
 
-
-  clearTaskButton.click(() => {
-    triggers = []
-    $('#task-name').val('f1')
+  clearTriggerButton.click(() => {
+    resetTriggerTable()
   })
 
   async function startAllTasks() {
@@ -195,7 +193,8 @@ function init() {
       showMessage('No trigger defined yet')
     } else {
       const task = await startTaskForTriggers(triggers)
-      resetTaskTable()
+      showMessage('Created task ' + task.ID)
+      resetTriggerTable()
       listTasks()
     }
   }
