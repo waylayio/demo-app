@@ -27,6 +27,7 @@ class RuleBuilder {
           dataTrigger: true,
           tickTrigger: false,
           resource: resource,
+          evictionTime: 1000,
           properties: {
             value: value,
             lowerLimit: lowerLimit,
@@ -58,6 +59,7 @@ class RuleBuilder {
     const { resource, metric = 'temperature', lowerLimit=0, upperLimit=10, targetNode = 'problem', polling_window, aggregate = mean} = trigger
     const suffix = iter === 0 ? '' : '' + iter
     const pollingInterval = moment.duration(polling_window).asMilliseconds() / 2
+    const evictionTime = 2 * pollingInterval
     const getMetricValuePlug = {...this.getPlugin('getMetricValue'), label: 'getMetricValue' + suffix}
     const conditionPlug = {...this.getPlugin('condition'), label: targetNode}
     const x_offset = 0//iter * 100
@@ -71,6 +73,7 @@ class RuleBuilder {
           dataTrigger: false,
           tickTrigger: true,
           pollingPeriod: pollingInterval,
+          evictionTime: evictionTime,
           properties: {
             resource,
             metric,
@@ -100,14 +103,14 @@ class RuleBuilder {
     return network
   }
 
-  createTaskResultGate(nodes) {
+  createTaskResultGate(nodes, relation = 'AND', state = 'True') {
     const createAlarmPlug = {...this.getPlugin('createAlarm'), label: 'createResultAlarm'}
     const clearAlarmPlug = {...this.getPlugin('clearAlarm'), label: 'clearResultAlarm'}
     const relations = [{
       label: 'RESULT',
-      type: 'AND',
+      type: relation,
       parentLabels: nodes,
-      combinations: [nodes.map( () => 'True')],
+      combinations: [nodes.map( () => state)],
       position: [ 800 , 150]
     }]
     const sensors = [{
