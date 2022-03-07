@@ -8,7 +8,8 @@ class RuleBuilder {
     return this.plugins.find(x=> x.name === name)
   }
 
-  prepareStream(resource, metric = 'temperature', lowerLimit=0, upperLimit=10, targetNode = 'problem', iter = 0) {
+  prepareStream(trigger, iter = 0) {
+    const { resource, metric = 'temperature', lowerLimit=0, upperLimit=10, targetNode = 'problem' } = trigger
     const suffix = iter === 0 ? '' : '' + iter
     const value = '${streamdata.' + metric + '}'
     const inRangePlug = {...this.getPlugin('inRange'), label: 'inRange' + suffix}
@@ -55,9 +56,10 @@ class RuleBuilder {
     return network
   }
 
-  preparePolling(resource, metric = 'temperature', duration="PT30M", aggregate='mean', lowerLimit=0, upperLimit=10, targetNode = 'problem', iter = 0) {
+  preparePolling(trigger, iter = 0) {
+    const { resource, metric = 'temperature', lowerLimit=0, upperLimit=10, targetNode = 'problem', polling_window, aggregate = mean} = trigger
     const suffix = iter === 0 ? '' : '' + iter
-    const pollingInterval = moment.duration(duration).asMilliseconds() / 2
+    const pollingInterval = moment.duration(polling_window).asMilliseconds() / 2
     const getMetricValuePlug = {...this.getPlugin('getMetricValue'), label: 'getMetricValue' + suffix}
     const conditionPlug = {...this.getPlugin('condition'), label: targetNode}
     const createAlarmPlug = {...this.getPlugin('createAlarm'), label: 'createAlarm' + suffix}
@@ -76,7 +78,7 @@ class RuleBuilder {
           properties: {
             resource,
             metric,
-            duration,
+            polling_window,
             aggregate
           },
           position: [ 150 + x_offset, 150 + y_offset]
@@ -160,15 +162,15 @@ class RuleBuilder {
     }
     var i = 0
     var nodes = []
-    triggers.forEach(t => {
+    triggers.forEach(trigger => {
       var network
-      if(t.type === 'reactive')
-        network = this.prepareStream(t.resource, t.metric, t.lowerLimit, t.upperLimit, t.name, i++)
+      if(trigger.type === 'reactive')
+        network = this.prepareStream(trigger, i++)
       else
-        network = this.preparePolling(t.resource, t.metric, t.polling_window, t.aggregate, t.lowerLimit, t.upperLimit, t.name, i++)
+        network = this.preparePolling(trigger, i++)
       task.sensors = task.sensors.concat(network.sensors)
       task.triggers = task.triggers.concat(network.triggers)
-      nodes.push(t.name)
+      nodes.push(trigger.targetNode)
     })
     task.task.tags = {
         demo: 'demo-task',
@@ -184,7 +186,7 @@ class RuleBuilder {
 
   async checkStatus(id) {
     // var node = task.nodes.find(x => x.name === 'RESULT')
-    // return (node !== undefined && node.mostLikelyState.state === 'FALSE' && node.mostLikelyState.probability === 1)
+    // return (node !== undefined && node.mostLikelyState.state === 'FALSE' && node.mostLikelySta`te.probability === 1)
     const task = await this.client.tasks.get(id)
     const alarms =  await this.client.alarms.search({source: id})
     const problem = alarms.alarms.length > 0

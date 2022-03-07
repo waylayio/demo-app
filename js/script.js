@@ -151,11 +151,11 @@ function init() {
     const metric = metricSelect.val()
     const lowerLimit = parseFloat($('#lowerLimit').val())
     const upperLimit = parseFloat($('#upperLimit').val())
-    const name = $('#trigger-name').val()
+    const targetNode = $('#trigger-name').val()
     const type = $('#type').val()
     const polling_window = $('#polling_window :selected').val()
     const aggregate = $('#aggregate_window :selected').val()
-    triggers.push({ resource, metric, name, lowerLimit, upperLimit, type, polling_window, aggregate })
+    triggers.push({ resource, metric, targetNode, lowerLimit, upperLimit, type, polling_window, aggregate })
   }
 
   notifyButton.click(()=> {
