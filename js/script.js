@@ -65,8 +65,8 @@ async function listTasks(resource) {
       }
   })
   for(i=0; i < t_tasks.length; i++) {
-    const result = await ruleBuilder.checkIfProblem(t_tasks[i].id)
-    t_tasks[i].problem = '' + result //string
+    const result = await ruleBuilder.checkStatus(t_tasks[i].id)
+    t_tasks[i].problem = '' + result.problem //string
   }
   gridTasks.updateConfig({data: t_tasks}).forceRender()
 }
@@ -168,7 +168,7 @@ function init() {
     ruleBuilder.startNotificationTask(notificationResource, states)
     .then(task=>{
       showMessage('Started a notification task ' + task.ID)
-      listTasks()
+      listTasks
     })
   })
 

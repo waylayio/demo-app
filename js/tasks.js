@@ -226,10 +226,7 @@ class RuleBuilder {
       task: {
         type: 'reactive',
         start: true,
-        name,
-        tags: {
-          demo: 'demo-task'
-        }
+        name
       }
     }
     var i = 0
@@ -244,6 +241,10 @@ class RuleBuilder {
       task.triggers = task.triggers.concat(network.triggers)
       nodes.push(t.name)
     })
+    task.task.tags = {
+        demo: 'demo-task',
+        targetNodes: nodes
+    }
     const resultNetwork = this.createTaskResultGate(nodes)
     task.relations = resultNetwork.relations
     task.sensors = task.sensors.concat(resultNetwork.sensors)
@@ -252,15 +253,22 @@ class RuleBuilder {
     return result
   }
 
-  async checkIfProblem(id) {
-    const task = await this.client.tasks.get(id)
+  async checkStatus(id) {
     // var node = task.nodes.find(x => x.name === 'RESULT')
     // return (node !== undefined && node.mostLikelyState.state === 'FALSE' && node.mostLikelyState.probability === 1)
-    const alarms = await this.client.alarms.search({source: id})
-    return alarms.alarms.length > 0
+    const task = await this.client.tasks.get(id)
+    const alarms =  await this.client.alarms.search({source: id})
+    const problem = alarms.alarms.length > 0
+    const nodes = task.tags.targetNodes || []
+    const targetNodes = nodes.map(node => {
+      let n = task.nodes.find(x => x.name === node)
+      return {
+        name: n.name,
+        problem: n.mostLikelyState.state === 'FALSE' && n.mostLikelyState.probability === 1
+      }
+    })
+    return { problem, targetNodes }
   }
-
-
 
   async startNotificationTask(resource, states=["Created", "Occurred again"], plugin = 'mandrillMail', name = 'notification task') {
     const alarmEventSensorPlug = this.getPlugin('AlarmEventSensor')
