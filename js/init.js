@@ -117,6 +117,7 @@ function showMessage(text, delay=5000) {
 }
 
 function updateTaskTypeSelection() {
+  $("#path_settings").hide()
   $("#type").change(() =>{
     if($("#type").val() === 'periodic'){
       $("#polling_settings").show()
@@ -127,6 +128,7 @@ function updateTaskTypeSelection() {
       $("#metricSelect").show()
       $("#lowerLimit").show()
       $("#upperLimit").show()
+      $("#path_settings").hide()
     }
     if($("#type").val() === 'event'){
       $("#path_settings").show()
