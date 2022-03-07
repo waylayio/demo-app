@@ -191,7 +191,7 @@ class RuleBuilder {
         text: 'Result',
         severity: 'CRITICAL',
         type: 'Taks result',
-        resource: '${task.ID}'
+        resource: '${task.TASK_ID}'
         },
         position: [ 1200, 100 ]
       },
