@@ -164,15 +164,11 @@ function init() {
     let states = ['Created']
     if(states_option === 'Always')
       states.push('Occurred again')
-
-    ruleBuilder.startNotificationTask(resource, states)
+    const notificationResource = $('#notification-resource').val() || resource
+    ruleBuilder.startNotificationTask(notificationResource, states)
     .then(task=>{
-      if(task.created_before) {
-        showMessage('Already configured ' + task.ID)
-      } else {
-        showMessage('Started a task ' + task.ID)
-        listTasks(resource)
-      }
+      showMessage('Started a notification task ' + task.ID)
+      listTasks()
     })
   })
 
