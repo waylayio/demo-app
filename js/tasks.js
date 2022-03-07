@@ -110,7 +110,7 @@ class RuleBuilder {
       type: 'AND',
       parentLabels: nodes,
       combinations: [nodes.map( () => 'True')],
-      position: [ 1000 , 150]
+      position: [ 800 , 150]
     }]
     const sensors = [{
       label: createAlarmPlug.label,
@@ -122,7 +122,7 @@ class RuleBuilder {
         type: 'Taks result',
         resource: '${task.TASK_ID}'
         },
-        position: [ 1200, 100 ]
+        position: [ 1000, 100 ]
       },
       {
       label: clearAlarmPlug.label,
@@ -132,7 +132,7 @@ class RuleBuilder {
         type: 'Taks result',
         resource: '${task.TASK_ID}'
       },
-      position: [ 1200, 300 ]
+      position: [ 1000, 300 ]
     }]
     const triggers = [
       {
