@@ -2,6 +2,7 @@ var client
 var plugins
 var triggers = []
 var timerId
+var ruleBuilder
 
 async function getMetrics(resource) {
   const res = await client.data.getSeries(resource, { metadata: true })
@@ -26,10 +27,6 @@ async function getData(resource, metrics, time = 'P1D') {
   return timeseries
 }
 
-function getPlugin(name) {
-  return plugins.find(x=> x.name === name)
-}
-
 async function login(ops) {
   if(ops.domain) {
     client = new waylay({domain: ops.domain})
@@ -43,6 +40,7 @@ async function login(ops) {
 
   await client.loadSettings()
   plugins = await client.sensors.list()
+  ruleBuilder = new RuleBuilder(client, plugins)
   formConnect.hide()
   app.show()
   page.hide()
@@ -67,7 +65,7 @@ async function listTasks(resource) {
       }
   })
   for(i=0; i < t_tasks.length; i++) {
-    const result = await checkIfProblem(t_tasks[i].id)
+    const result = await ruleBuilder.checkIfProblem(t_tasks[i].id)
     t_tasks[i].problem = '' + result //string
   }
   gridTasks.updateConfig({data: t_tasks}).forceRender()
@@ -167,7 +165,7 @@ function init() {
     if(states_option === 'Always')
       states.push('Occurred again')
 
-    startNotificationTask(resource, states)
+    ruleBuilder.startNotificationTask(resource, states)
     .then(task=>{
       if(task.created_before) {
         showMessage('Already configured ' + task.ID)
@@ -192,7 +190,7 @@ function init() {
     if(!triggers.length){
       showMessage('No trigger defined yet')
     } else {
-      const task = await startTaskForTriggers(triggers)
+      const task = await ruleBuilder.startTaskForTriggers(triggers)
       showMessage('Created task ' + task.ID)
       resetTriggerTable()
       listTasks()
