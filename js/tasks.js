@@ -40,7 +40,7 @@ class RuleBuilder {
           name: conditionPlug.name,
           version: conditionPlug.version,
           properties: {
-            condition: '$${nodes.' + inRangePlug.label + '.state} === "In Range" '
+            condition: '$${nodes.' + inRangePlug.label + '.state} !== "In Range" '
           },
           position: [ 350 + x_offset, 150 + y_offset]
         }
@@ -87,7 +87,7 @@ class RuleBuilder {
           name: conditionPlug.name,
           version: conditionPlug.version,
           properties: {
-            condition: '${nodes.' + getMetricValuePlug.label + '.rawData.result} < ' + upperLimit + ' || ${nodes.' + getMetricValuePlug.label + '.rawData.result}  > ' + lowerLimit
+            condition: '${nodes.' + getMetricValuePlug.label + '.rawData.result} > ' + upperLimit + ' || ${nodes.' + getMetricValuePlug.label + '.rawData.result}  < ' + lowerLimit
           },
           position: [ 350 + x_offset, 250 + y_offset]
         }
@@ -128,7 +128,7 @@ class RuleBuilder {
           name: conditionPlug.name,
           version: conditionPlug.version,
           properties: {
-            condition: '(() => {\n let data = $${nodes.'+ streamPlug.label + '.rawData.stream.' + path +'}\n  return data !== "undefined" \n})()'
+            condition: '(() => {\n let data = $${?nodes.'+ streamPlug.label + '.rawData.stream.' + path +'}\n  return data !== "undefined" \n})()'
           },
           position: [ 350 + x_offset, 250 + y_offset]
         }
@@ -144,11 +144,11 @@ class RuleBuilder {
     return network
   }
 
-  createTaskResultGate(nodes, relation = 'AND', state = 'True') {
+  createTaskResultGate(nodes, relation = 'OR', state = 'True') {
     const createAlarmPlug = {...this.getPlugin('createAlarm'), label: 'createResultAlarm'}
     const clearAlarmPlug = {...this.getPlugin('clearAlarm'), label: 'clearResultAlarm'}
     const relations = [{
-      label: 'RESULT',
+      label: 'PROBLEM',
       type: relation,
       parentLabels: nodes,
       combinations: [nodes.map( () => state)],
@@ -178,14 +178,14 @@ class RuleBuilder {
     }]
     const triggers = [
       {
-        sourceLabel: 'RESULT',
+        sourceLabel: 'PROBLEM',
         destinationLabel: createAlarmPlug.label,
-        statesTrigger: [ 'FALSE']
+        statesTrigger: [ 'TRUE']
       },
       {
-        sourceLabel: 'RESULT',
+        sourceLabel: 'PROBLEM',
         destinationLabel: clearAlarmPlug.label,
-        statesTrigger: [ 'TRUE']
+        statesTrigger: [ 'FALSE']
       }]
     return  {relations, sensors, triggers}
   }
