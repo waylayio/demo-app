@@ -246,12 +246,18 @@ you need to specity the condition under which the target node will be in the TRU
     return result
   }
 
+/*
+check the status of the running task. Since the gate genererate ALARM for a given
+task id, we can simply check if that alarm is present. Other option, if the alarm
+service is not present is to check if the GATE (PROBLEM) is in the state TRUE.
+*/
   async checkStatus(id) {
-    // var node = task.nodes.find(x => x.name === 'RESULT')
-    // return (node !== undefined && node.mostLikelyState.state === 'FALSE' && node.mostLikelySta`te.probability === 1)
     const task = await this.client.tasks.get(id)
+
+    var node = task.nodes.find(x => x.name === 'PROBLEM')
+    const problemGATE =  (node !== undefined && node.mostLikelyState.state === 'TRUE' && node.mostLikelyState.probability === 1)
     const alarms =  await this.client.alarms.search({source: id})
-    const problem = alarms.alarms.length > 0
+    const problem = alarms.alarms.length > 0 || problemGATE
     const nodes = task.tags.targetNodes || []
     const targetNodes = nodes.map(node => {
       let n = task.nodes.find(x => x.name === node)
