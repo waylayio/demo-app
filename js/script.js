@@ -43,7 +43,7 @@ async function login(ops) {
   ruleBuilder = new RuleBuilder(client, plugins)
   formConnect.hide()
   app.show()
-  page.hide()
+  //page.hide()
   loggedUser.text($('#user').val())
   showMessage("Connected", 500)
 }

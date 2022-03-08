@@ -237,7 +237,7 @@ class RuleBuilder {
       let n = task.nodes.find(x => x.name === node)
       return {
         name: n.name,
-        problem: n.mostLikelyState.state === 'FALSE' && n.mostLikelyState.probability === 1
+        problem: n.mostLikelyState.state === 'TRUE' && n.mostLikelyState.probability === 1
       }
     })
     return { problem, targetNodes }
