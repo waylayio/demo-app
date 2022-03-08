@@ -128,7 +128,7 @@ class RuleBuilder {
           name: conditionPlug.name,
           version: conditionPlug.version,
           properties: {
-            condition: '(() => {\n let data = $${?nodes.'+ streamPlug.label + '.rawData.stream.' + path +'}\n  return data !== "undefined" \n})()'
+            condition: '(() => {\n let data = $${?nodes.'+ streamPlug.label + '.rawData.stream.' + path +'}\n  return data !== "" \n})()'
           },
           position: [ 350 + x_offset, 250 + y_offset]
         }
