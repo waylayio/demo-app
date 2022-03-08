@@ -8,12 +8,19 @@ class RuleBuilder {
     return this.plugins.find(x=> x.name === name)
   }
 
+  /*
+    stream template that has a threshold crossing lower and upper boundaries
+    if you want to make it only the higher or lower threshold rule, you make one of these
+    two values very high. E.g. if the lowerLimit is negative and INFINIT BIG value, and upperLimit 20,
+    then it is safe to assumet that the rule will trigger only when incoming value is above 20.
+    TRUE state means that the conditio is out of boudnaries
+ */
   prepareStream(trigger, iter = 0) {
     const { resource, metric = 'temperature', lowerLimit=0, upperLimit=10, targetNode = 'problem' } = trigger
     const suffix = iter === 0 ? '' : '' + iter
     const value = '${streamdata.' + metric + '}'
     const inRangePlug = {...this.getPlugin('inRange'), label: 'inRange' + suffix}
-    //this node will hold a result
+    //this node will hold a result, and it will be TRUE id the issue is found
     const conditionPlug = {...this.getPlugin('condition'), label: targetNode}
 
     const x_offset = 0//iter * 100
@@ -55,6 +62,11 @@ class RuleBuilder {
     return network
   }
 
+  /*
+    polling template with the same boundary conditions, but it also has polling window - duration,
+    and statistical inputs, such as the aggregation type (mean, nax etc..).
+    TRUE state means that the conditio is out of boudnaries
+  */
   preparePolling(trigger, iter = 0) {
     const { resource, metric = 'temperature', lowerLimit=0, upperLimit=10, targetNode = 'problem', polling_window, aggregate = mean} = trigger
     const suffix = iter === 0 ? '' : '' + iter
@@ -103,6 +115,10 @@ class RuleBuilder {
     return network
   }
 
+/*
+can be used to process events, such as camera events etc, where in the JSON part expression
+you need to specity the condition under which the target node will be in the TRUE state
+*/
   prepareEventStream(trigger, iter = 0) {
     const { resource, targetNode = 'problem', path } = trigger
     const suffix = iter === 0 ? '' : '' + iter
@@ -144,6 +160,10 @@ class RuleBuilder {
     return network
   }
 
+ /*
+ merging all templates via the target node, and it will fire an alarm any time one
+ of the networks is in the TRUE state.
+ */
   createTaskResultGate(nodes, relation = 'OR', state = 'True') {
     const createAlarmPlug = {...this.getPlugin('createAlarm'), label: 'createResultAlarm'}
     const clearAlarmPlug = {...this.getPlugin('clearAlarm'), label: 'clearResultAlarm'}
