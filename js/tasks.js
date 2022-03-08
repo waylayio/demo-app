@@ -72,7 +72,7 @@ class RuleBuilder {
           version: getMetricValuePlug.version,
           dataTrigger: false,
           tickTrigger: true,
-          pollingPeriod: pollingInterval,
+          duration: pollingInterval,
           evictionTime: evictionTime,
           properties: {
             resource,
