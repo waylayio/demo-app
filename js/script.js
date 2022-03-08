@@ -147,7 +147,7 @@ function init() {
   }
 
   function storeTriggerInList() {
-    const resource = resourceEntry.val()
+    const resource = resourceTriggerEntry.val()
     const metric = metricSelect.val()
     const lowerLimit = parseFloat($('#lowerLimit').val())
     const upperLimit = parseFloat($('#upperLimit').val())
@@ -160,7 +160,7 @@ function init() {
   }
 
   notifyButton.click(()=> {
-    const resource = resourceEntry.val()
+    const resource = resourceTriggerEntry.val()
     let states_option = $('#states :selected').val()
     let states = ['Created']
     if(states_option === 'Always')
@@ -247,6 +247,7 @@ function init() {
     cacheLength: 0,
     select: function(event, ui) {
       const resource = ui.item.value
+      resourceTriggerEntry.val(resource)
       getMetrics(resource)
       .then(metrics => {
         page.show()

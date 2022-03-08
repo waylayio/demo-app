@@ -131,8 +131,9 @@
             <h1>Trigger configuration</h1>
             <p>Select the trigger condition under which there are no issues, out of boundaries are lower and upper limit, if values are above or below, an alarm <strong><em>Out of Range</em></strong> will be generated:</p>
             <hr>
-            <div class='cloned-row'>
+            <div>
               <input type="text" id="trigger-name" placeholder="task name" name="trigger-name" readonly value="f1">
+              <input type="text" id="resource-trigger-name" placeholder="resource name" name="resource-trigger-name" value="">
               <select id="type">
                 <option value="periodic">periodic</option>
                 <option value="reactive">when data arrives</option>
