@@ -1,18 +1,22 @@
 //you need to provide list of templates (playbooks) that you want to combine together
 class RulePlaybooksBuilder {
 
-  constructor(client, templates) {
+  constructor(client, templates, variables, resource) {
     this.client = client
     this.templates = templates
+    this.variables = variables
+    this.resource = resource
   }
 
   // TODO: if there is a polling task, and every polling playbook has the same
   // frequency, then make the final task periodic, and don't add the polling to the first node
-  async startPlaybook(name= "playbook run", variables, tags, resource) {
+  async startPlaybook(name= "playbook run", tags) {
     this.plugins = await client.sensors.list()
     this.playbook = {
       task: {
-        name, tags, resource, variables,
+        name, tags,
+        resource: this.resource,
+        variables: this.variables,
         type: 'reactive',
         start: true
       },
