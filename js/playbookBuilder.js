@@ -32,62 +32,67 @@ class RulePlaybooksBuilder {
       let prefix = playbook.name + "_"
 
       const startSensor = playbook.sensors.reduce((prev, curr) => {
-          return prev.position[0] < curr.position[0] ? prev : curr
+        return prev.position[0] < curr.position[0] ? prev : curr
       })
       const index = playbook.sensors.findIndex(s => s.label === startSensor.label)
       const y_offset = playbook.sensors.reduce((prev, curr) => {
-          return prev.position[1] > curr.position[1] ? prev : curr
+        return prev.position[1] > curr.position[1] ? prev : curr
       }).position[1] + 300
-      const x_offset_ = playbook.sensors.reduce((prev, curr) => {
-          return prev.position[0] > curr.position[0] ? prev : curr
-      }).position[0] + 10
+
+      const lastNode = playbook.sensors.reduce((prev, curr) => {
+        return prev.position[0] > curr.position[0] ? prev : curr
+      })
+      const lastNodePlugin = this.getPlugin(lastNode.name)
+      const targetNode = playbook.taskDefaults.tags.targetNode || lastNode.label
+      const targetState = playbook.taskDefaults.tags.targetState || lastNodePlugin.states[0]
+
+      const x_offset_ = lastNode.position[0] + 10
+
       if(x_offset < x_offset_){
         x_offset = x_offset_
       }
 
-      if(playbook.taskDefaults.tags.targetNode && playbook.taskDefaults.tags.targetState){
-        if(playbook.taskDefaults.type === "periodic"){
-          // TODO: see comments at the top
-          playbook.sensors[index].tickTrigger = true
-          playbook.sensors[index].dataTrigger = false
-          playbook.sensors[index].pollingPeriod = playbook.taskDefaults.frequency * 1000
-          playbook.sensors[index].evictionTime = (playbook.taskDefaults.frequency - 1 ) * 1000
-        } else if(playbook.taskDefaults.type === "reactive"){
-          playbook.sensors[index].tickTrigger = false
-          playbook.sensors[index].dataTrigger = true
-          playbook.sensors[index].evictionTime = 1000
-        } else {
-          playbook.sensors[index].tickTrigger = true
-          playbook.sensors[index].dataTrigger = false
-          playbook.sensors[index].duration = 900 * 1000
-          playbook.sensors[index].evictionTime = (900 - 1 ) * 1000
-        }
-
-        for(k in playbook.sensors) {
-           playbook.sensors[k].label = prefix + playbook.sensors[k].label
-           if(i > 0){
-             playbook.sensors[k].position[1] = playbook.sensors[k].position[1] + y_offset
-           }
-        }
-
-        playbook.triggers = playbook.triggers.map( x=> { return {sourceLabel: prefix + x.sourceLabel, destinationLabel: prefix + x.destinationLabel}})
-
-        for(k in playbook.relations){
-          playbook.relations[k].label = prefix + playbook.relations[k].label
-          playbook.relations[k].parentLabels = playbook.relations[k].parentLabels.map(x=> prefix + x)
-          if(i > 0){
-            playbook.relations[k].position[1] = playbook.relations[k].position[1] + y_offset
-          }
-        }
-        targetNodes.push({
-          node: prefix + playbook.taskDefaults.tags.targetNode,
-          state: playbook.taskDefaults.tags.targetState
-        })
-        this.playbook.sensors = this.playbook.sensors.concat(playbook.sensors)
-        this.playbook.triggers = this.playbook.triggers.concat(playbook.triggers)
-        if(playbook.relations && playbook.relations.length > 0)
-          this.playbook.relations = this.playbook.relations.concat(playbook.relations)
+      if(playbook.taskDefaults.type === "periodic"){
+        // TODO: see comments at the top
+        playbook.sensors[index].tickTrigger = true
+        playbook.sensors[index].dataTrigger = false
+        playbook.sensors[index].pollingPeriod = playbook.taskDefaults.frequency * 1000
+        playbook.sensors[index].evictionTime = (playbook.taskDefaults.frequency - 1 ) * 1000
+      } else if(playbook.taskDefaults.type === "reactive"){
+        playbook.sensors[index].tickTrigger = false
+        playbook.sensors[index].dataTrigger = true
+        playbook.sensors[index].evictionTime = 1000
+      } else {
+        playbook.sensors[index].tickTrigger = true
+        playbook.sensors[index].dataTrigger = false
+        playbook.sensors[index].duration = 900 * 1000
+        playbook.sensors[index].evictionTime = (900 - 1 ) * 1000
       }
+
+      for(k in playbook.sensors) {
+        playbook.sensors[k].label = prefix + playbook.sensors[k].label
+        if(i > 0){
+          playbook.sensors[k].position[1] = playbook.sensors[k].position[1] + y_offset
+        }
+      }
+
+      playbook.triggers = playbook.triggers.map( x=> { return {sourceLabel: prefix + x.sourceLabel, destinationLabel: prefix + x.destinationLabel}})
+
+      for(k in playbook.relations){
+        playbook.relations[k].label = prefix + playbook.relations[k].label
+        playbook.relations[k].parentLabels = playbook.relations[k].parentLabels.map(x=> prefix + x)
+        if(i > 0){
+          playbook.relations[k].position[1] = playbook.relations[k].position[1] + y_offset
+        }
+      }
+      targetNodes.push({
+        node: prefix + targetNode,
+        state: targetState
+      })
+      this.playbook.sensors = this.playbook.sensors.concat(playbook.sensors)
+      this.playbook.triggers = this.playbook.triggers.concat(playbook.triggers)
+      if(playbook.relations && playbook.relations.length > 0)
+      this.playbook.relations = this.playbook.relations.concat(playbook.relations)
     }
     const resultNetwork = this.createTaskResultGate(targetNodes, x_offset + 200)
     this.playbook.relations = this.playbook.relations.concat(resultNetwork.relations)
@@ -124,10 +129,10 @@ class RulePlaybooksBuilder {
         severity: 'CRITICAL',
         type: 'Taks result',
         resource: '${task.TASK_ID}'
-        },
-        position: [ x_offset + 100, 100 ]
       },
-      {
+      position: [ x_offset + 200, 100 ]
+    },
+    {
       label: clearAlarmPlug.label,
       name: clearAlarmPlug.name,
       version: clearAlarmPlug.version,
@@ -135,7 +140,7 @@ class RulePlaybooksBuilder {
         type: 'Taks result',
         resource: '${task.TASK_ID}'
       },
-      position: [ x_offset + 100, 300 ]
+      position: [ x_offset + 200, 300 ]
     }]
     const triggers = [
       {
@@ -148,10 +153,10 @@ class RulePlaybooksBuilder {
         destinationLabel: clearAlarmPlug.label,
         statesTrigger: [ 'FALSE']
       }]
-    return  {relations, sensors, triggers}
-  }
+      return  {relations, sensors, triggers}
+    }
 
-  getPlugin(name) {
-    return this.plugins.find(x=> x.name === name)
+    getPlugin(name) {
+      return this.plugins.find(x=> x.name === name)
+    }
   }
-}
