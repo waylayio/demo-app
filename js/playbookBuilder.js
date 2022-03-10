@@ -1,4 +1,10 @@
-//you need to provide list of templates (playbooks) that you want to combine together
+/*
+you need to provide list of templates (playbooks) that you want to combine together
+each playbook should have a tags.targetNode and tags.targetState, if not, assumtion is that
+the last node in the template (by x position) will be a targetNode, with first state as
+being the end goal.
+For the start node, we will take the first left node in the graph.
+*/
 class RulePlaybooksBuilder {
 
   constructor(client, templates, variables, resource) {
