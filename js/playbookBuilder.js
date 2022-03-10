@@ -49,8 +49,9 @@ class RulePlaybooksBuilder {
         return prev.position[0] > curr.position[0] ? prev : curr
       })
       const lastNodePlugin = this.getPlugin(lastNode.name)
-      const targetNode = playbook.taskDefaults.tags.targetNode || lastNode.label
-      const targetState = playbook.taskDefaults.tags.targetState || lastNodePlugin.states[0]
+
+      const targetNode = (playbook.taskDefaults && playbook.taskDefaults.tags && playbook.taskDefaults.tags.targetNode )? playbook.taskDefaults.tags.targetNode : lastNode.label
+      const targetState = (playbook.taskDefaults && playbook.taskDefaults.tags && playbook.taskDefaults.tags.targetState )? playbook.taskDefaults.tags.targetState : lastNodePlugin.states[0]
 
       const x_offset_ = lastNode.position[0] + 10
 
@@ -58,13 +59,13 @@ class RulePlaybooksBuilder {
         x_offset = x_offset_
       }
 
-      if(playbook.taskDefaults.type === "periodic"){
+      if(playbook.taskDefaults && playbook.taskDefaults.type === "periodic"){
         // TODO: see comments at the top
         playbook.sensors[index].tickTrigger = true
         playbook.sensors[index].dataTrigger = false
         playbook.sensors[index].pollingPeriod = playbook.taskDefaults.frequency * 1000
         playbook.sensors[index].evictionTime = (playbook.taskDefaults.frequency - 1 ) * 1000
-      } else if(playbook.taskDefaults.type === "reactive"){
+      } else if(playbook.taskDefaults && playbook.taskDefaults.type === "reactive"){
         playbook.sensors[index].tickTrigger = false
         playbook.sensors[index].dataTrigger = true
         playbook.sensors[index].evictionTime = 1000

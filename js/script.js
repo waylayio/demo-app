@@ -3,6 +3,7 @@ var plugins
 var triggers = []
 var timerId
 var ruleBuilder
+var templates
 
 async function getMetrics(resource) {
   const res = await client.data.getSeries(resource, { metadata: true })
@@ -40,6 +41,13 @@ async function login(ops) {
 
   await client.loadSettings()
   plugins = await client.sensors.list()
+  templates = await client.templates.list()
+  templates.forEach(template => {
+    templatesSelection.append($('<option>', {
+        value: template.name,
+        text : template.name
+    }))
+  })
   ruleBuilder = new RuleBuilder(client, plugins)
   formConnect.hide()
   app.show()
@@ -47,6 +55,11 @@ async function login(ops) {
   loggedUser.text($('#user').val())
   showMessage("Connected", 500)
 }
+
+templatesSelection.change(value =>{
+  let template = templatesSelection.val()
+  playbooksEntry.val(template + "," + playbooksEntry.val())
+})
 
 async function listTasks(resource) {
   const tasks = await client.tasks.list({'tags.demo':'demo-task', status: 'running', resource: resource})
@@ -206,13 +219,16 @@ function init() {
   }
 
   playbookTaskButton.click(()=>{
-    const playbooks = playbooksEntry.val().split(',').map(x => x.trim())
+    const playbooks = playbooksEntry.val().replace(/(\s*,?\s*)*$/, "").split(',').map(x => x.trim())
     const rule = new RulePlaybooksBuilder(client, playbooks)
     rule.startPlaybook('demo')
     .then(task=>{
       showMessage('Started a notification task ' + task.ID)
       playbooksEntry.val('')
       listTasks()
+    })
+    .catch(err=> {
+      alert(err)
     })
   })
 
