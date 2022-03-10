@@ -169,7 +169,7 @@ function init() {
     ruleBuilder.startNotificationTask(notificationResource, states)
     .then(task=>{
       showMessage('Started a notification task ' + task.ID)
-      listTasks
+      listTasks()
     })
   })
 
@@ -204,6 +204,18 @@ function init() {
       listTasks()
     }
   }
+
+  playbookTaskButton.click(()=>{
+    const playbooks = playbooksEntry.val().split(',').map(x => x.trim())
+    const rule = new RulePlaybooksBuilder(client, playbooks)
+    rule.startPlaybook('demo')
+    .then(task=>{
+      showMessage('Started a notification task ' + task.ID)
+      playbooksEntry.val('')
+      listTasks()
+    })
+  })
+
 
   startTasksButton.click(()=> {
     startAllTasks()

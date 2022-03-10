@@ -17,6 +17,8 @@ const alarmsButton = $('#alarms-btn')
 const removeTasksButton = $('#tasks-remove-btn')
 const startTasksButton = $('#task-btn')
 const listTasksButton = $('#tasks-list-btn')
+const playbookTaskButton = $('#playbook-task-btn')
+const playbooksEntry = $('#playbooks-name')
 
 $.urlParam = function(name){
   var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);

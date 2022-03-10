@@ -127,7 +127,7 @@
         <hr>
         <div id="triggers_">
           <div>
-            <h1>Trigger configuration</h1>
+            <h1>Trigger (metric) configuration</h1>
             <p>Select the trigger condition under which there are no issues, out of boundaries are lower and upper limit, if values are above or below, an alarm <strong><em>Out of Range</em></strong> will be generated:</p>
             <hr>
             <div>
@@ -172,6 +172,11 @@
           <input type="text" id="task-name" style="float: right;" value="Demo task">
         </div>
         <hr>
+        <div id="Playbook triggers">
+          <h1>Playbook Trigger configuration</h1>
+          <button id="playbook-task-btn" style="float: right;" title="Start a task ">Start a task</button>
+          <input type="text" id="playbooks-name" style="width: 800px;"  placeholder="playbooks, comma separated">
+        </div>
         <div id="tasks_">
           <h1>Tasks</h1>
           <div id="tasks"></div>
@@ -216,5 +221,6 @@
   <script src="js/init.js"></script>
   <script src="js/tasks.js"></script>
   <script src="js/script.js"></script>
+  <script src="js/playbookBuilder.js"></script>
 </body>
 </html>
