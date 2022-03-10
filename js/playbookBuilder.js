@@ -6,11 +6,13 @@ class RulePlaybooksBuilder {
     this.templates = templates
   }
 
-  async startPlaybook(name= "playbook run", tags, resource) {
+  // TODO: if there is a polling task, and every polling playbook has the same
+  // frequency, then make the final task periodic, and don't add the polling to the first node
+  async startPlaybook(name= "playbook run", variables, tags, resource) {
     this.plugins = await client.sensors.list()
     this.playbook = {
       task: {
-        name, tags, resource,
+        name, tags, resource, variables,
         type: 'reactive',
         start: true
       },
@@ -20,6 +22,7 @@ class RulePlaybooksBuilder {
     }
     let targetNodes = []
     let i,k,j = 0
+    let x_offset = 0
     for(i in this.templates){
       let playbook = await client.templates.get(this.templates[i], {format: "simplified"})
       let prefix = playbook.name + "_"
@@ -28,11 +31,22 @@ class RulePlaybooksBuilder {
           return prev.position[0] < curr.position[0] ? prev : curr
       })
       const index = playbook.sensors.findIndex(s => s.label === startSensor.label)
+      const y_offset = playbook.sensors.reduce((prev, curr) => {
+          return prev.position[1] > curr.position[1] ? prev : curr
+      }).position[1] + 300
+      const x_offset_ = playbook.sensors.reduce((prev, curr) => {
+          return prev.position[0] > curr.position[0] ? prev : curr
+      }).position[0] + 10
+      if(x_offset < x_offset_){
+        x_offset = x_offset_
+      }
+
       if(playbook.taskDefaults.tags.targetNode && playbook.taskDefaults.tags.targetState){
         if(playbook.taskDefaults.type === "periodic"){
+          // TODO: see comments at the top
           playbook.sensors[index].tickTrigger = true
           playbook.sensors[index].dataTrigger = false
-          playbook.sensors[index].duration = playbook.taskDefaults.frequency * 1000
+          playbook.sensors[index].pollingPeriod = playbook.taskDefaults.frequency * 1000
           playbook.sensors[index].evictionTime = (playbook.taskDefaults.frequency - 1 ) * 1000
         } else if(playbook.taskDefaults.type === "reactive"){
           playbook.sensors[index].tickTrigger = false
@@ -45,9 +59,11 @@ class RulePlaybooksBuilder {
           playbook.sensors[index].evictionTime = (900 - 1 ) * 1000
         }
 
-        //NOTE:  that the target name will also change with this, we need to avoid label colision
         for(k in playbook.sensors) {
            playbook.sensors[k].label = prefix + playbook.sensors[k].label
+           if(i > 0){
+             playbook.sensors[k].position[1] = playbook.sensors[k].position[1] + y_offset
+           }
         }
 
         playbook.triggers = playbook.triggers.map( x=> { return {sourceLabel: prefix + x.sourceLabel, destinationLabel: prefix + x.destinationLabel}})
@@ -55,6 +71,9 @@ class RulePlaybooksBuilder {
         for(k in playbook.relations){
           playbook.relations[k].label = prefix + playbook.relations[k].label
           playbook.relations[k].parentLabels = playbook.relations[k].parentLabels.map(x=> prefix + x)
+          if(i > 0){
+            playbook.relations[k].position[1] = playbook.relations[k].position[1] + y_offset
+          }
         }
         targetNodes.push({
           node: prefix + playbook.taskDefaults.tags.targetNode,
@@ -66,7 +85,7 @@ class RulePlaybooksBuilder {
           this.playbook.relations = this.playbook.relations.concat(playbook.relations)
       }
     }
-    const resultNetwork = this.createTaskResultGate(targetNodes)
+    const resultNetwork = this.createTaskResultGate(targetNodes, x_offset + 200)
     this.playbook.relations = this.playbook.relations.concat(resultNetwork.relations)
     this.playbook.sensors = this.playbook.sensors.concat(resultNetwork.sensors)
     this.playbook.triggers = this.playbook.triggers.concat(resultNetwork.triggers)
@@ -82,7 +101,7 @@ class RulePlaybooksBuilder {
     return alarms.alarms.length > 0 || problemGATE
   }
 
-  createTaskResultGate(nodes) {
+  createTaskResultGate(nodes, x_offset) {
     const createAlarmPlug = {...this.getPlugin('createAlarm'), label: 'createResultAlarm'}
     const clearAlarmPlug = {...this.getPlugin('clearAlarm'), label: 'clearResultAlarm'}
     const relations = [{
@@ -90,7 +109,7 @@ class RulePlaybooksBuilder {
       type: 'OR',
       parentLabels: nodes.map(x=> x.node),
       combinations: [nodes.map((x) => x.state)],
-      position: [ 1800 , 150]
+      position: [ x_offset , 150]
     }]
     const sensors = [{
       label: createAlarmPlug.label,
@@ -102,7 +121,7 @@ class RulePlaybooksBuilder {
         type: 'Taks result',
         resource: '${task.TASK_ID}'
         },
-        position: [ 2000, 100 ]
+        position: [ x_offset + 100, 100 ]
       },
       {
       label: clearAlarmPlug.label,
@@ -112,7 +131,7 @@ class RulePlaybooksBuilder {
         type: 'Taks result',
         resource: '${task.TASK_ID}'
       },
-      position: [ 2000, 300 ]
+      position: [ x_offset + 100, 300 ]
     }]
     const triggers = [
       {
