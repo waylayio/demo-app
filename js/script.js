@@ -55,14 +55,10 @@ async function login(ops) {
   formConnect.hide()
   app.show()
   //page.hide()
+  $('.s2').select2()
   loggedUser.text($('#user').val())
   showMessage("Connected", 500)
 }
-
-templatesSelection.change(value =>{
-  let template = templatesSelection.val()
-  playbooksEntry.val(template + "," + playbooksEntry.val())
-})
 
 async function listTasks(resource) {
   const tasks = await client.tasks.list({'tags.demo':'demo-task', status: 'running', resource: resource})
@@ -182,11 +178,17 @@ function init() {
     if(states_option === 'Always')
       states.push('Occurred again')
     const notificationResource = $('#notification-resource').val() || resource
-    ruleBuilder.startNotificationTask(notificationResource, states)
-    .then(task=>{
-      showMessage('Started a notification task ' + task.ID)
-      listTasks()
-    })
+
+    const playbooks = templatesSelection.val()
+    if(playbooks.length) {
+      rulePlaybook.subscribePlaybooksToTask(notificationResource, 'demo-notification', playbooks)
+    } else {
+      ruleBuilder.startNotificationTask(notificationResource, states)
+      .then(task=>{
+        showMessage('Started a notification task ' + task.ID)
+        listTasks()
+      })
+    }
   })
 
   addTriggerButton.click(function() {
@@ -211,30 +213,32 @@ function init() {
   })
 
   async function startAllTasks() {
-    if(!triggers.length){
-      showMessage('No trigger defined yet')
+    const task_name = $('#task-name').val()
+    const playbooks = templatesSelection.val()
+    if(!triggers.length && playbooks !== ''){
+      const resource = resourceEntry.val()
+      rulePlaybook.startPlaybook(task_name, playbooks, {}, resource, {'demo':'demo-task'})
+      .then(task=>{
+        showMessage('Created task from playbooks' + task.ID)
+        listTasks()
+      })
+      .catch(err=> {
+        alert(err)
+      })
+    } else if(triggers.length){
+      ruleBuilder.startTaskForTriggers(task_name, triggers)
+      .then(task=>{
+        showMessage('Created task from triggers' + task.ID)
+        resetTriggerTable()
+        listTasks()
+      })
+      .catch(err=> {
+        alert(err)
+      })
     } else {
-      const task = await ruleBuilder.startTaskForTriggers($('#task-name').val(), triggers)
-      showMessage('Created task ' + task.ID)
-      resetTriggerTable()
-      listTasks()
+      showMessage('Create either triggers or select playbooks')
     }
   }
-
-  playbookTaskButton.click(()=>{
-    const playbooks = playbooksEntry.val().replace(/(\s*,?\s*)*$/, "").split(',').map(x => x.trim())
-    const resource = resourceEntry.val()
-
-    rulePlaybook.startPlaybook('demo', playbooks, {}, resource, {'demo':'demo-task'})
-    .then(task=>{
-      showMessage('Started a notification task ' + task.ID)
-      playbooksEntry.val('')
-      listTasks()
-    })
-    .catch(err=> {
-      alert(err)
-    })
-  })
 
 
   startTasksButton.click(()=> {

@@ -17,8 +17,6 @@ const alarmsButton = $('#alarms-btn')
 const removeTasksButton = $('#tasks-remove-btn')
 const startTasksButton = $('#task-btn')
 const listTasksButton = $('#tasks-list-btn')
-const playbookTaskButton = $('#playbook-task-btn')
-const playbooksEntry = $('#playbooks-name')
 const templatesSelection = $('#templates')
 
 $.urlParam = function(name){

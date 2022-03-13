@@ -5,11 +5,12 @@
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css">
-  <link rel="stylesheet" type="text/css" href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css" />
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
-  <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
-  <link rel="stylesheet" type="text/css" href="css/styles.css">
-  <link rel="stylesheet" type="text/css" href="css/sidebar.css">
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.6/css/all.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
+  <link rel="stylesheet" href="https://unpkg.com/gridjs/dist/theme/mermaid.min.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/sidebar.css">
 </head>
 <body>
   <div id="cover"></div>
@@ -35,7 +36,7 @@
             </div>
             <div class="text-center"><button type="submit" class="btn btn-color px-5 mb-5 w-100" id="btnFormConnect">Login</button></div>
             <div class="login-error"> <span>Incorrect credentials</span></div>
-            </div>
+          </div>
         </div>
 
       </div>
@@ -78,151 +79,163 @@
             <li class="header-menu"><span>General</span></li>
             <li class="sidebar-dropdown">
               <a href="#dashboards_" ><i class="fa fa-tachometer-alt"></i><span>Dashboard</a>
-            </li>
-            <li class="sidebar-dropdown">
-              <a href="#tasks_"><i class="fa fa-file-code"></i><span>Tasks</span><span id='tasks_num' class="badge badge-pill badge-primary"></span></a>
-              <div class="sidebar-submenu">
-                <ul>
-                  <li><a href="#tasks_">Tasks<span>Notifications </span><span id='monitoring_num' class="badge badge-pill badge-primary"></span></a></li>
-                  <li><a href="#notifications_"><span>Notifications </span><span id='notifications_num' class="badge badge-pill badge-primary"></span></a></li>
-                </ul>
-              </div>
-            </li>
-            <li class="sidebar-dropdown">
-              <a href="#alarms_"><i class="far fa-bell"></i><span>Alarms </span><span class="badge badge-pill badge-danger alarms_num"></span></a>
-            </li>
-          </ul>
-        </div>
-      </div>
-      <div class="sidebar-footer">
-        <a href="#">
-          <i class="fa fa-bell"></i>
-          <span class="badge badge-pill badge-danger notification alarms_num"></span>
-        </a>
-        <a href="#alarms_" id="logout">
-          <i class="fa fa-power-off"></i>
-        </a>
-      </div>
-    </nav>
-    <main class="page-content">
-      <div class="container-fluid">
-        <div class="popup" id="popup"></div>
-        <div id="dashboards_">
-          <h1>Dashboard</h1>
-          <div>
-            <canvas id="my-simple-chart"></canvas>
+              </li>
+              <li class="sidebar-dropdown">
+                <a href="#tasks_"><i class="fa fa-file-code"></i><span>Tasks</span><span id='tasks_num' class="badge badge-pill badge-primary"></span></a>
+                <div class="sidebar-submenu">
+                  <ul>
+                    <li><a href="#tasks_">Tasks<span>Notifications </span><span id='monitoring_num' class="badge badge-pill badge-primary"></span></a></li>
+                    <li><a href="#notifications_"><span>Notifications </span><span id='notifications_num' class="badge badge-pill badge-primary"></span></a></li>
+                  </ul>
+                </div>
+              </li>
+              <li class="sidebar-dropdown">
+                <a href="#alarms_"><i class="far fa-bell"></i><span>Alarms </span><span class="badge badge-pill badge-danger alarms_num"></span></a>
+              </li>
+            </ul>
           </div>
-          <select name="time" id="time">
-            <option value="PT1M">last minute</option>
-            <option value="PT15M">15 minutes</option>
-            <option value="PT30M">30 minutes</option>
-            <option value="PT60M">1 hour</option>
-            <option selected value="P1D">1 day</option>
-            <option value="P1M">1 month</option>
-            <option value="P1Y">1 year</option>
-          </select>
-          <button id="load-btn" title="Load data">Get Data</button>
-          <button id="legend-toggle" title="Toggle legend">Toggle Legend</button>
         </div>
-        <hr>
-        <div id="triggers_">
-          <div>
-            <h1>Trigger (metric) configuration</h1>
-            <p>Select the trigger condition under which there are no issues, out of boundaries are lower and upper limit, if values are above or below, an alarm <strong><em>Out of Range</em></strong> will be generated:</p>
-            <hr>
+        <div class="sidebar-footer">
+          <a href="#">
+            <i class="fa fa-bell"></i>
+            <span class="badge badge-pill badge-danger notification alarms_num"></span>
+          </a>
+          <a href="#alarms_" id="logout">
+            <i class="fa fa-power-off"></i>
+          </a>
+        </div>
+      </nav>
+      <main class="page-content">
+        <div class="container-fluid">
+          <div class="popup" id="popup"></div>
+          <div id="dashboards_">
+            <h1>Dashboard</h1>
             <div>
-              <input type="text" id="trigger-name" placeholder="task name" name="trigger-name" readonly value="f1">
-              <input type="text" id="resource-trigger-name" placeholder="resource name" name="resource-trigger-name" value="">
-              <select id="type">
-                <option value="periodic">periodic</option>
-                <option value="reactive">when data arrives</option>
-                <option value="event">event processing</option>
-              </select>
-              <select id="metricSelect"></select>
-              <span id='polling_settings'>
-                <select name="aggregate_window" id="aggregate_window">
-                  <option selected value="mean">mean</option>
-                  <option value="median">median</option>
-                  <option value="min">min</option>
-                  <option value="max">max</option>
-                  <option value="std">std</option>
-                  <option value="count">count</option>
-                  <option value="first">first</option>
-                  <option value="last">last</option>
-                </select>
-                <select name="polling_window" id="polling_window">
-                  <option selected value="PT15M">15 minutes</option>
-                  <option value="PT30M">30 minutes</option>
-                  <option value="PT60M">1 hour</option>
-                  <option value="P1D">1 day</option>
-                  <option value="P1M">1 month</option>
-                </select>
-              </span>
-              <input type="number" id="lowerLimit" placeholder="lower limit" name="lowerLimit" value="0">
-              <input type="number" id="upperLimit" placeholder="upper limit" name="upperLimit" value="20">
-              <input type="text" id="path_settings" placeholder="JSON path" name="path_settings" value="">
-              <br><br>
+              <canvas id="my-simple-chart"></canvas>
             </div>
+            <select name="time" id="time" >
+              <option value="PT1M">last minute</option>
+              <option value="PT15M">15 minutes</option>
+              <option value="PT30M">30 minutes</option>
+              <option value="PT60M">1 hour</option>
+              <option selected value="P1D">1 day</option>
+              <option value="P1M">1 month</option>
+              <option value="P1Y">1 year</option>
+            </select>
+            <button id="load-btn" title="Load data">Get Data</button>
+            <button id="legend-toggle" title="Toggle legend">Toggle Legend</button>
           </div>
           <hr>
-          <div id="triggers"></div>
-          <button id="add-task-btn" title="Add a trigger ">Add trigger</button>
-          <button id="clear-task-btn" title="Reset">Reset</button>
-          <button id="task-btn" style="float: right;" title="Start a task ">Start a task</button>
-          <input type="text" id="task-name" style="float: right;" value="Demo task">
-        </div>
-        <hr>
-        <div id="Playbook triggers">
-          <h1>Playbook Trigger configuration</h1>
-          <select id="templates">
-          </select>
-          <button id="playbook-task-btn" style="float: right;" title="Start a task ">Start a task</button>
-          <input type="text" id="playbooks-name" style="width: 400px;"  placeholder="playbooks, comma separated">
-        </div>
-        <div id="tasks_">
-          <h1>Tasks</h1>
-          <div id="tasks"></div>
-          <button id="tasks-list-btn" title="List all tasks">List all tasks</button>
-          <button id="tasks-remove-btn" title="Stop and delete All">Stop and delete</button>
-        </div>
-        <hr>
-        <div id="notifications_">
-          <h1>Notification configuration</h1>
-          <button id="notify-btn" title="Start alert task ">Notification </button>
-          <input type="text" id="notification-resource" placeholder="enter the task id" style="width: 300px;" value="">
-          <select name="states" id="states">
-            <option value="Always">Always</option>
-            <option value="Created">First time created</option>
-          </select>
-          <select name="notification" id="notification">
-            <option value="email">email</option>
-            <option value="sms">sms</option>
-            <option value="zendesk">zendesk</option>
-          </select>
-        </div>
-        <hr>
-        <div id="alarms_">
-          <h1>Alarms</h1>
-          <div id="alarms"></div>
-          <button id="alarms-btn" title="Delete All">Clear and delete</button>
-        </div>
-      </div>
-    </main>
-  </div>
 
-  <script src="https://unpkg.com/@waylay/client/dist/waylay.umd.js"></script>
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"
-  integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
-  crossorigin="anonymous"></script>
-  <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js" integrity="sha256-eTyxS0rkjpLEo16uXTS0uVCS4815lc40K2iVpWDvdSY=" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.bundle.js"></script>
-  <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
-  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
-  <script src="js/config.js"></script>
-  <script src="js/init.js"></script>
-  <script src="js/rulesBuilder.js"></script>
-  <script src="js/script.js"></script>
-  <script src="js/playbookBuilder.js"></script>
-</body>
-</html>
+          <h1>Create new tasks</h1>
+          <br>
+          <ul class="nav nav-tabs">
+            <li class="nav-item">
+            <a class="nav-link active" data-toggle="tab" href="#triggers_">Dynamic triggers</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" data-toggle="tab" href="#playbook_triggers">Playbooks</a>
+            </li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane" id="playbook_triggers">
+              <h1>Playbook Trigger configuration</h1>
+              <select id="templates" class="s2 form-control" style="width: 100%;"  multiple="multiple"></select>
+            </div>
+            <div class="tab-pane active" id="triggers_">
+              <div>
+                <h1>Trigger (metric) configuration</h1>
+                <p>Select the trigger condition under which there are no issues, out of boundaries are lower and upper limit, if values are above or below, an alarm <strong><em>Out of Range</em></strong> will be generated:</p>
+                <hr>
+                <div>
+                  <input type="hidden" id="trigger-name" placeholder="task name" name="trigger-name" readonly value="f1">
+                  <input type="text" id="resource-trigger-name" placeholder="resource name" name="resource-trigger-name" value="">
+                  <select id="metricSelect"></select>
+                  <select id="type">
+                    <option value="periodic">periodic</option>
+                    <option value="reactive">when data arrives</option>
+                    <option value="event">event processing</option>
+                  </select>
+                  <span id='polling_settings'>
+                    <select name="aggregate_window" id="aggregate_window">
+                      <option selected value="mean">mean</option>
+                      <option value="median">median</option>
+                      <option value="min">min</option>
+                      <option value="max">max</option>
+                      <option value="std">std</option>
+                      <option value="count">count</option>
+                      <option value="first">first</option>
+                      <option value="last">last</option>
+                    </select>
+                    <select name="polling_window" id="polling_window">
+                      <option selected value="PT15M">15 minutes</option>
+                      <option value="PT30M">30 minutes</option>
+                      <option value="PT60M">1 hour</option>
+                      <option value="P1D">1 day</option>
+                      <option value="P1M">1 month</option>
+                    </select>
+                  </span>
+                  <input type="number" id="lowerLimit" placeholder="lower limit" name="lowerLimit" value="0">
+                  <input type="number" id="upperLimit" placeholder="upper limit" name="upperLimit" value="10">
+                  <input type="text" id="path_settings" placeholder="JSON path" name="path_settings">
+                </div>
+                <br><br>
+              </div>
+              <hr>
+              <div id="triggers"></div>
+              <button id="add-task-btn" title="Add a trigger ">Add trigger</button>
+              <button id="clear-task-btn" title="Reset">Reset</button>
+            </div>
+          <br><br>
+          <input type="text" id="task-name" value="Demo task">
+          <button id="task-btn" title="Start a task ">Start a task</button>
+         </div>
+         <hr>
+          <div id="tasks_">
+            <h1>List Tasks</h1>
+            <div id="tasks"></div>
+            <button id="tasks-list-btn" title="List all tasks">List all tasks</button>
+            <button id="tasks-remove-btn" title="Stop and delete All">Stop and delete</button>
+          </div>
+          <hr>
+          <div id="notifications_">
+            <h1>Notification configuration</h1>
+            <button id="notify-btn" title="Start alert task ">Notification </button>
+            <input type="text" id="notification-resource" placeholder="enter the task id" style="width: 300px;" value="">
+            <select name="states" id="states">
+              <option value="Always">Always</option>
+              <option value="Created">First time created</option>
+            </select>
+            <select name="notification" id="notification">
+              <option value="email">email</option>
+              <option value="sms">sms</option>
+              <option value="zendesk">zendesk</option>
+            </select>
+          </div>
+          <hr>
+          <div id="alarms_">
+            <h1>Alarms</h1>
+            <div id="alarms"></div>
+            <button id="alarms-btn" title="Delete All">Clear and delete</button>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="https://unpkg.com/@waylay/client/dist/waylay.umd.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+    crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js" integrity="sha256-eTyxS0rkjpLEo16uXTS0uVCS4815lc40K2iVpWDvdSY=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.bundle.js"></script>
+    <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/init.js"></script>
+    <script src="js/rulesBuilder.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/playbookBuilder.js"></script>
+  </body>
+  </html>

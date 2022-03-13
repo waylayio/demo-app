@@ -5,8 +5,8 @@
     z-index: 1000;
     top: 0;
     left: 0;
-    cursor: default; 
-    color: white;  
+    cursor: default;
+    color: white;
 /*    background-color: #fff;*/
     padding:3px;
     /*border: 1px solid #ccc*/
@@ -32,7 +32,7 @@ ul {
   top: 50%;
   left: 50%;
   box-shadow: rgb(38, 57, 77) 0px 10px 10px -5px;
-} 
+}
 
 .btn-color{
   background-color: #0e1c36;
