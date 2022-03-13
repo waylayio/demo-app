@@ -178,12 +178,13 @@ function init() {
     if(states_option === 'Always')
       states.push('Occurred again')
     const notificationResource = $('#notification-resource').val() || resource
-
+    const notification = $('#notification').val()
     const playbooks = templatesSelection.val()
-    if(playbooks.length) {
-      rulePlaybook.subscribePlaybooksToTask(notificationResource, 'demo-notification', playbooks)
+
+    if(playbooks.length && notification === 'playbooks') {
+      rulePlaybook.subscribePlaybooksToTask(notificationResource, 'playbook-notification', playbooks, {type:'notification'})
     } else {
-      ruleBuilder.startNotificationTask(notificationResource, states)
+      ruleBuilder.startNotificationTask(notificationResource, states, 'mandrillMail', 'notification task', {type:'notification'})
       .then(task=>{
         showMessage('Started a notification task ' + task.ID)
         listTasks()

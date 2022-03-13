@@ -269,7 +269,7 @@ service is not present is to check if the GATE (PROBLEM) is in the state TRUE.
     return { problem, targetNodes }
   }
 
-  async startNotificationTask(resource, states=["Created", "Occurred again"], plugin = 'mandrillMail', name = 'notification task') {
+  async startNotificationTask(resource, states=["Created", "Occurred again"], plugin = 'mandrillMail', name = 'notification task', tags) {
     const alarmEventSensorPlug = this.getPlugin('AlarmEventSensor')
     const notificationPlug = this.getPlugin(plugin)
     const task = {
@@ -306,13 +306,9 @@ service is not present is to check if the GATE (PROBLEM) is in the state TRUE.
         }
       ],
       task: {
-        resource, name,
+        resource, name, tags,
         type: 'reactive',
-        start: true,
-        tags :{
-          demo: 'demo-task',
-          type: 'notification'
-        }
+        start: true
       }
     }
     return await this.client.tasks.create(task, {})
