@@ -7,8 +7,9 @@ For the start node, we will take the first left node in the graph.
 */
 class RulePlaybooksBuilder {
 
-  constructor(client) {
+  constructor(client, plugins) {
     this.client = client
+    this.plugins = plugins
   }
 
   getPlugin(name) {
@@ -18,7 +19,6 @@ class RulePlaybooksBuilder {
   // TODO: if there is a polling task, and every polling playbook has the same
   // frequency, then make the final task periodic, and don't add the polling to the first node
   async startPlaybook(name= "playbook run", templates, variables = {}, resource, tags) {
-    this.plugins = await client.sensors.list()
     let task  = {
       sensors: [],
       relations: [],
@@ -166,7 +166,6 @@ class RulePlaybooksBuilder {
     }
 
     async subscribePlaybooksToTask(id, name, playbooks, variables, tags) {
-      this.plugins = await client.sensors.list()
       const alarmEventSensorPlug = {...this.getPlugin('AlarmEventSensor'), label: 'AlarmEventSensor'}
       let task  = {
         sensors: [{

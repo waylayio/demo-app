@@ -3,6 +3,7 @@ var plugins
 var triggers = []
 var timerId
 var ruleBuilder
+var rulePlaybook
 var templates
 
 async function getMetrics(resource) {
@@ -48,7 +49,9 @@ async function login(ops) {
         text : template.name
     }))
   })
+  //two wasys to build rules
   ruleBuilder = new RuleBuilder(client, plugins)
+  rulePlaybook = new RulePlaybooksBuilder(client, plugins)
   formConnect.hide()
   app.show()
   //page.hide()
@@ -221,8 +224,8 @@ function init() {
   playbookTaskButton.click(()=>{
     const playbooks = playbooksEntry.val().replace(/(\s*,?\s*)*$/, "").split(',').map(x => x.trim())
     const resource = resourceEntry.val()
-    const rule = new RulePlaybooksBuilder(client)
-    rule.startPlaybook('demo', playbooks, {}, resource, {'demo':'demo-task'})
+
+    rulePlaybook.startPlaybook('demo', playbooks, {}, resource, {'demo':'demo-task'})
     .then(task=>{
       showMessage('Started a notification task ' + task.ID)
       playbooksEntry.val('')
