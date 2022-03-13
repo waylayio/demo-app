@@ -190,6 +190,7 @@ class RulePlaybooksBuilder {
         task: {
           name,
           variables,
+          tags,
           type: 'reactive',
           start: true
         }

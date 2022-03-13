@@ -181,7 +181,11 @@ function init() {
     const playbooks = templatesSelection.val()
 
     if(playbooks.length && notification === 'playbooks') {
-      rulePlaybook.subscribePlaybooksToTask(notificationResource, 'playbook-notification', playbooks, {type:'notification'})
+      rulePlaybook.subscribePlaybooksToTask(notificationResource, 'playbook-notification', playbooks, {},  {type:'notification'})
+      .then(task=>{
+        showMessage('Started a notification playbook task ' + task.ID)
+        listTasks()
+      })
     } else {
       ruleBuilder.startNotificationTask(notificationResource, states, 'mandrillMail', 'notification task', {type:'notification'})
       .then(task=>{
