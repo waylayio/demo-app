@@ -41,7 +41,6 @@ async function login(ops) {
   }
 
   await client.loadSettings()
-  plugins = await client.sensors.list()
   templates = await client.templates.list()
   templates.forEach(template => {
     templatesSelection.append($('<option>', {
@@ -50,8 +49,8 @@ async function login(ops) {
     }))
   })
   //two wasys to build rules
-  ruleBuilder = new RuleBuilder(client, plugins)
-  rulePlaybook = new RulePlaybooksBuilder(client, plugins)
+  ruleBuilder = await RuleBuilder.initialize(client)
+  rulePlaybook = await RulePlaybooksBuilder.initialize(client)
   formConnect.hide()
   app.show()
   //page.hide()

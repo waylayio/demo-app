@@ -12,6 +12,11 @@ class RulePlaybooksBuilder {
     this.plugins = plugins
   }
 
+  static async initialize(client) {
+    let plugins = await client.sensors.list()
+    return new RulePlaybooksBuilder(client, plugins)
+  }
+
   getPlugin(name) {
     return this.plugins.find(x=> x.name === name)
   }

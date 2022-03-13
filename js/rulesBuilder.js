@@ -1,7 +1,13 @@
 class RuleBuilder {
+
   constructor(client, plugins) {
     this.client = client
     this.plugins = plugins
+  }
+
+  static async initialize(client) {
+    let plugins = await client.sensors.list()
+    return new RuleBuilder(client, plugins)
   }
 
   getPlugin(name) {
