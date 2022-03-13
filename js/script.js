@@ -221,7 +221,7 @@ function init() {
     const playbooks = templatesSelection.val()
     if(!triggers.length && playbooks !== ''){
       const resource = resourceEntry.val()
-      rulePlaybook.startPlaybook(task_name, playbooks, {}, resource, {'demo':'demo-task'})
+      rulePlaybook.startFromPlaybooks(task_name, playbooks, {}, resource, {'demo':'demo-task'})
       .then(task=>{
         showMessage('Created task from playbooks' + task.ID)
         listTasks()

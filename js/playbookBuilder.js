@@ -23,7 +23,7 @@ class RulePlaybooksBuilder {
 
   // TODO: if there is a polling task, and every polling playbook has the same
   // frequency, then make the final task periodic, and don't add the polling to the first node
-  async startPlaybook(name= "playbook run", templates, variables = {}, resource, tags) {
+  async startFromPlaybooks(name= "playbook runs", playbooks, variables = {}, resource, tags) {
     let task  = {
       sensors: [],
       relations: [],
@@ -40,8 +40,8 @@ class RulePlaybooksBuilder {
     let targetNodes = []
     let i,k = 0
     let x_offset = 0
-    for(i in templates){
-      let playbook = await client.templates.get(templates[i], {format: "simplified"})
+    for(i in playbooks){
+      let playbook = await client.templates.get(playbooks[i], {format: "simplified"})
       let prefix = playbook.name + "_"
 
       const startSensor = playbook.sensors.reduce((prev, curr) => {
