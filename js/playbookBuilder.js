@@ -7,34 +7,36 @@ For the start node, we will take the first left node in the graph.
 */
 class RulePlaybooksBuilder {
 
-  constructor(client, templates, variables, resource) {
+  constructor(client) {
     this.client = client
-    this.templates = templates
-    this.variables = variables
-    this.resource = resource
+  }
+
+  getPlugin(name) {
+    return this.plugins.find(x=> x.name === name)
   }
 
   // TODO: if there is a polling task, and every polling playbook has the same
   // frequency, then make the final task periodic, and don't add the polling to the first node
-  async startPlaybook(name= "playbook run", tags) {
+  async startPlaybook(name= "playbook run", templates, variables = {}, resource, tags) {
     this.plugins = await client.sensors.list()
     let task  = {
       sensors: [],
       relations: [],
       triggers: [],
       task: {
-        name, tags,
-        resource: this.resource,
-        variables: this.variables,
+        name, variables, tags,
         type: 'reactive',
         start: true
       }
     }
+    if(resource !== '')
+      task.task.resource = resource
+
     let targetNodes = []
-    let i,k,j = 0
+    let i,k = 0
     let x_offset = 0
-    for(i in this.templates){
-      let playbook = await client.templates.get(this.templates[i], {format: "simplified"})
+    for(i in templates){
+      let playbook = await client.templates.get(templates[i], {format: "simplified"})
       let prefix = playbook.name + "_"
 
       const startSensor = playbook.sensors.reduce((prev, curr) => {
@@ -43,7 +45,7 @@ class RulePlaybooksBuilder {
       const index = playbook.sensors.findIndex(s => s.label === startSensor.label)
       const y_offset = playbook.sensors.reduce((prev, curr) => {
         return prev.position[1] > curr.position[1] ? prev : curr
-      }).position[1] + 300
+      }).position[1] + 100
 
       const lastNode = playbook.sensors.reduce((prev, curr) => {
         return prev.position[0] > curr.position[0] ? prev : curr
@@ -163,7 +165,77 @@ class RulePlaybooksBuilder {
       return  {relations, sensors, triggers}
     }
 
-    getPlugin(name) {
-      return this.plugins.find(x=> x.name === name)
+    async subscribePlaybooksToTask(id, name, playbooks, variables, tags) {
+      this.plugins = await client.sensors.list()
+      const alarmEventSensorPlug = {...this.getPlugin('AlarmEventSensor'), label: 'AlarmEventSensor'}
+      let task  = {
+        sensors: [{
+          label: alarmEventSensorPlug.label,
+          name: alarmEventSensorPlug.name,
+          version: alarmEventSensorPlug.version,
+          resource: id,
+          dataTrigger: false,
+          tickTrigger: false,
+          properties: {
+            status: 'ACTIVE'
+          },
+          position: [ 50, 50 ]
+        }],
+        relations: [],
+        triggers: [],
+        task: {
+          name,
+          variables,
+          type: 'reactive',
+          start: true
+        }
+      }
+      let targetNodes = []
+      let i,k = 0
+
+      for(i in playbooks){
+        let playbook = await client.templates.get(playbooks[i], {format: "simplified"})
+        let prefix = playbook.name + "_"
+
+        const startSensor = playbook.sensors.reduce((prev, curr) => {
+          return prev.position[0] < curr.position[0] ? prev : curr
+        })
+        const index = playbook.sensors.findIndex(s => s.label === startSensor.label)
+        const y_offset = playbook.sensors.reduce((prev, curr) => {
+          return prev.position[1] > curr.position[1] ? prev : curr
+        }).position[1] + 100
+
+        const targetNode = (playbook?.taskDefaults?.tags?.targetNode) ? playbook.taskDefaults.tags.targetNode : startSensor.label
+
+        for(k in playbook.sensors) {
+          playbook.sensors[k].label = prefix + playbook.sensors[k].label
+          if(i > 0){
+            playbook.sensors[k].position[1] = playbook.sensors[k].position[1] + y_offset
+          }
+        }
+
+        playbook.triggers = playbook.triggers.map( x=> { return {sourceLabel: prefix + x.sourceLabel, destinationLabel: prefix + x.destinationLabel}})
+
+        for(k in playbook.relations){
+          playbook.relations[k].label = prefix + playbook.relations[k].label
+          playbook.relations[k].parentLabels = playbook.relations[k].parentLabels.map(x=> prefix + x)
+          if(i > 0){
+            playbook.relations[k].position[1] = playbook.relations[k].position[1] + y_offset
+          }
+        }
+        targetNodes.push(prefix + targetNode)
+        task.sensors = task.sensors.concat(playbook.sensors)
+        task.triggers = task.triggers.concat(playbook.triggers)
+        if(playbook.relations && playbook.relations.length > 0)
+        task.relations = task.relations.concat(playbook.relations)
+      }
+      targetNodes.forEach((node) => {
+        task.triggers.push({
+          sourceLabel: alarmEventSensorPlug.label,
+          destinationLabel: node,
+          statesTrigger: ["Created", "Occurred again"]
+        })
+      })
+      return await this.client.tasks.create(task, {})
     }
   }

@@ -220,8 +220,9 @@ function init() {
 
   playbookTaskButton.click(()=>{
     const playbooks = playbooksEntry.val().replace(/(\s*,?\s*)*$/, "").split(',').map(x => x.trim())
-    const rule = new RulePlaybooksBuilder(client, playbooks)
-    rule.startPlaybook('demo', {'demo':'demo-task'})
+    const resource = resourceEntry.val()
+    const rule = new RulePlaybooksBuilder(client)
+    rule.startPlaybook('demo', playbooks, {}, resource, {'demo':'demo-task'})
     .then(task=>{
       showMessage('Started a notification task ' + task.ID)
       playbooksEntry.val('')
