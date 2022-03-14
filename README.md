@@ -40,18 +40,18 @@ Further we will only discuss RulePlaybooksBuilder class.
 First you need to create several playbooks, and then you can start them this way:
 
 ```
-rulePlaybook.startFromPlaybooks(task_name, playbooks, variables, resource, tags)
+let task = await rulePlaybook.startFromPlaybooks(task_name, playbooks, variables, resource, tags)
 ```
 
 variables is flat list of all variables that will be provided to all playbooks. Each playbook should have one `targetNode` and `targetState` which will be used to deduct if the particular condition of the playbook has been reached. Resulting task will merge all target nodes and generate an alarm with the task Id of the running task, in case any of underlying playbooks has reached its condition. If that is not specified, code will assume that the last right node with the first state is used as the end condition of that playbook.
 
-You can then subscribe other playbooks to 'fire' any time this condition is reached, using that task id:
+You can then subscribe other playbooks to 'fire' any time this condition is reached, using that task id (`task.ID`):
 
 ```
-rulePlaybook.subscribePlaybooksToTask(id, task_name, playbooks, variables,  tags)
+let task2 = await rulePlaybook.subscribePlaybooksToTask(id, task_name, playbooks, variables,  tags)
 ```
 
-This is similar to subscribing to the task event and invoking playbooks any time condition is met. Other option is to check the status of the running playbook this way and in case that result is true, run some other logic.
+This is similar to subscribing to the task event and invoking playbooks any time condition is met. Other option is to check the status of the running playbook this way and in case that result is true, run some other logic. Again, the id is (`task.ID`)
 
 ```
 let result = await checkStatus(id)
