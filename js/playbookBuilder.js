@@ -21,7 +21,7 @@ class RulePlaybooksBuilder {
     return this.plugins.find(x=> x.name === name)
   }
 
-  async startFromPlaybooks(name= "playbook runs", playbooks, variables = {}, resource, tags) {
+  async startFromPlaybooks(name, playbooks, variables = {}, resource, tags) {
     let task  = {
       sensors: [],
       relations: [],
