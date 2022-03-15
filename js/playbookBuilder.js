@@ -91,11 +91,21 @@ class RulePlaybooksBuilder {
         playbook.sensors[index].evictionTime = (900 - 1 ) * 1000
       }
 
+      let labels = playbook.sensors.map(sensor => sensor.label)
+
       for(k in playbook.sensors) {
         playbook.sensors[k].label = prefix + playbook.sensors[k].label
         if(i > 0){
           playbook.sensors[k].position[1] = playbook.sensors[k].position[1] + y_offset
         }
+
+        labels.forEach(label => {
+          if(playbook.sensors[k].properties) {
+            for (const [key, value] of Object.entries(playbook.sensors[k].properties)) {
+                playbook.sensors[k].properties[key] = playbook.sensors[k].properties[key].replaceAll('${nodes.' + label, '${nodes.' + prefix + label)
+            }
+          }
+        })
       }
 
       playbook.triggers = playbook.triggers.map( x=> { return {sourceLabel: prefix + x.sourceLabel, destinationLabel: prefix + x.destinationLabel}})
