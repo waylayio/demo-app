@@ -36,7 +36,10 @@ let ruleBuilder = await RuleBuilder.initialize(client)
 
 Further we will only discuss RulePlaybooksBuilder class.
 
-### Using RulePlaybooksBuilder
+## Using RulePlaybooksBuilder
+
+### Creating tasks that merges playbooks
+
 First you need to create several playbooks, and then you can start them this way:
 
 ```
@@ -49,8 +52,13 @@ Exxample of `targetNode` and `targetState` settings:
 
 <img width="583" alt="image" src="https://user-images.githubusercontent.com/1268521/158448653-f3a81d83-42e4-4744-8eb7-646daf51c931.png">
 
+Once you start all playbooks, they will all unflod into one task:
+<img width="1132" alt="image" src="https://user-images.githubusercontent.com/1268521/158449624-9ffebd60-90ef-4bc0-bd50-140d46bcae7e.png">
 
-You can then subscribe other playbooks to 'fire' any time this condition is reached, using that task id (`task.ID`):
+
+### Subscribing to the running task (created in previous step)
+
+You can then subscribe other playbooks to 'fire' any time this a particular condition is reached, using that task id (`task.ID`):
 
 ```
 let task2 = await rulePlaybook.subscribePlaybooksToTask(id, task_name, playbooks, variables,  tags)
