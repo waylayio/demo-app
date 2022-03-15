@@ -1,7 +1,8 @@
 # Demo app with waylay-js
 
-Please check the [config.js](js/config.js) to setup the right domain.
-Demo is written in jQuery :), nothing fancy. Should be easy to convert it to react or vue or whatever.
+You can check the app here: [demo app](https://waylayio.github.io/demo-app/)
+
+Default domain is configured in [config.js](js/config.js). Demo is written in jQuery :), nothing fancy. Should be easy to convert it to react or vue or whatever.
 
 ## Who is this for?
 
