@@ -140,7 +140,7 @@
           <div class="tab-content">
             <div class="tab-pane" id="playbook_triggers">
               <h1>Playbook Trigger configuration</h1>
-              <select id="templates" class="s2 form-control" style="width: 100%;"  multiple="multiple"></select>
+              <select id="templates" class="s2 form-control" style="width: 100%"  multiple="multiple"></select>
             </div>
             <div class="tab-pane active" id="triggers_">
               <div>
@@ -186,9 +186,12 @@
               <button id="add-task-btn" title="Add a trigger ">Add trigger</button>
               <button id="clear-task-btn" title="Reset">Reset</button>
             </div>
-          <br><br>
-          <input type="text" id="task-name" value="Demo task">
-          <button id="task-btn" title="Start a task ">Start a task</button>
+         </div>
+         <div>
+           <br><br>
+           <input type="text" id="task-name" value="Demo task" placeholder="Task name" style="float: right; width:300px">
+           <button id="task-btn" title="Start a task " style="float: right;">Start a task</button>
+           <br><br>
          </div>
          <hr>
           <div id="tasks_">

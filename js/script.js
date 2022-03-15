@@ -54,7 +54,7 @@ async function login(ops) {
   formConnect.hide()
   app.show()
   //page.hide()
-  $('.s2').select2()
+  $('.s2').select2({ width: '100%',  theme: "classic"})
   loggedUser.text($('#user').val())
   showMessage("Connected", 500)
 }
