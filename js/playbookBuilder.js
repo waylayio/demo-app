@@ -21,8 +21,6 @@ class RulePlaybooksBuilder {
     return this.plugins.find(x=> x.name === name)
   }
 
-  // TODO: if there is a polling task, and every polling playbook has the same
-  // frequency, then make the final task periodic, and don't add the polling to the first node
   async startFromPlaybooks(name= "playbook runs", playbooks, variables = {}, resource, tags) {
     let task  = {
       sensors: [],
@@ -40,6 +38,7 @@ class RulePlaybooksBuilder {
     let targetNodes = []
     let i,k = 0
     let x_offset = 0
+    let periodic_frequency = 0
     for(i in playbooks){
       let playbook = await client.templates.get(playbooks[i], {format: "simplified"})
       let prefix = playbook.name + "_"
@@ -67,15 +66,24 @@ class RulePlaybooksBuilder {
       }
 
       if(playbook.taskDefaults?.type === "periodic"){
-        // TODO: see comments at the top
-        playbook.sensors[index].tickTrigger = true
-        playbook.sensors[index].dataTrigger = false
-        playbook.sensors[index].pollingPeriod = playbook.taskDefaults.frequency * 1000
-        playbook.sensors[index].evictionTime = (playbook.taskDefaults.frequency - 1 ) * 1000
+        task.task.type = "periodic"
+        if(periodic_frequency === 0) {
+          periodic_frequency = playbook.taskDefaults.frequency
+          task.task.pollingInterval = periodic_frequency
+        } else if(periodic_frequency !== playbook.taskDefaults.frequency){
+          //this playbook is not with the same polling frequency, hence we need to start it with its own clock
+          playbook.sensors[index].tickTrigger = true
+          playbook.sensors[index].dataTrigger = false
+          playbook.sensors[index].pollingPeriod = playbook.taskDefaults.frequency * 1000
+          playbook.sensors[index].evictionTime = (playbook.taskDefaults.frequency - 1 ) * 1000
+        }
       } else if(playbook.taskDefaults?.type === "reactive"){
         playbook.sensors[index].tickTrigger = false
         playbook.sensors[index].dataTrigger = true
         playbook.sensors[index].evictionTime = 1000
+      } else if(playbook.taskDefaults?.type === "scheduled") {
+        task.task.type = "scheduled"
+        task.task.cron = playbook.taskDefaults.cron
       } else {
         playbook.sensors[index].tickTrigger = true
         playbook.sensors[index].dataTrigger = false
