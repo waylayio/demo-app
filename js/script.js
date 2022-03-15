@@ -154,7 +154,7 @@ function init() {
   function resetTriggerTable() {
     triggers = []
     gridTriggers.updateConfig({data: []}).forceRender()
-    $('#trigger-name').val('f1')
+    triggerName.val('f1')
   }
 
   function storeTriggerInList() {
@@ -162,7 +162,7 @@ function init() {
     const metric = metricSelect.val()
     const lowerLimit = parseFloat($('#lowerLimit').val())
     const upperLimit = parseFloat($('#upperLimit').val())
-    const targetNode = $('#trigger-name').val()
+    const targetNode = triggerName.val()
     const type = $('#type').val()
     const polling_window = $('#polling_window :selected').val()
     const aggregate = $('#aggregate_window :selected').val()
@@ -209,7 +209,7 @@ function init() {
       }
     })
     gridTriggers.updateConfig({data: t_triggers}).forceRender()
-    $('#trigger-name').val('f' + count)
+    triggerName.val('f' + count)
   })
 
   clearTriggerButton.click(() => {

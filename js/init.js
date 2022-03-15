@@ -18,6 +18,7 @@ const removeTasksButton = $('#tasks-remove-btn')
 const startTasksButton = $('#task-btn')
 const listTasksButton = $('#tasks-list-btn')
 const templatesSelection = $('#templates')
+const triggerName = $('#trigger-name')
 
 $.urlParam = function(name){
   var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
