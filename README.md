@@ -30,8 +30,8 @@ Normally these rules will be in the backend code, so that your front end has a d
 Then you can setup rules this way:
 
 ```
-rulePlaybook = await RulePlaybooksBuilder.initialize(client)
-ruleBuilder = await RuleBuilder.initialize(client)
+let rulePlaybook = await RulePlaybooksBuilder.initialize(client)
+let ruleBuilder = await RuleBuilder.initialize(client)
 ```
 
 Further we will only discuss RulePlaybooksBuilder class.
