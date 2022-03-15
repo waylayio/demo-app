@@ -90,17 +90,12 @@ class RulePlaybooksBuilder {
         playbook.sensors[index].duration = 900 * 1000
         playbook.sensors[index].evictionTime = (900 - 1 ) * 1000
       }
-
-      this.updateWithPrefix(playbook, prefix, i, y_offset)
-
+      
+      this.updateWithPrefix(task, playbook, prefix, i, y_offset)
       targetNodes.push({
         node: prefix + targetNode,
         state: targetState
       })
-      task.sensors = task.sensors.concat(playbook.sensors)
-      task.triggers = task.triggers.concat(playbook.triggers)
-      if(playbook.relations && playbook.relations.length > 0)
-      task.relations = task.relations.concat(playbook.relations)
     }
     const resultNetwork = this.createTaskResultGate(targetNodes, x_offset + 200)
     task.relations = task.relations.concat(resultNetwork.relations)
@@ -110,7 +105,7 @@ class RulePlaybooksBuilder {
     return await this.client.tasks.create(task, {})
   }
 
-  updateWithPrefix(playbook, prefix, i, y_offset) {
+  updateWithPrefix(task, playbook, prefix, i, y_offset) {
     let k = 0
     let labels = playbook.sensors.map(sensor => sensor.label)
 
@@ -138,6 +133,10 @@ class RulePlaybooksBuilder {
         playbook.relations[k].position[1] = playbook.relations[k].position[1] + y_offset
       }
     }
+    task.sensors = task.sensors.concat(playbook.sensors)
+    task.triggers = task.triggers.concat(playbook.triggers)
+    if(playbook.relations && playbook.relations.length > 0)
+      task.relations = task.relations.concat(playbook.relations)
   }
 
   async checkStatus(id) {
@@ -212,9 +211,7 @@ class RulePlaybooksBuilder {
         relations: [],
         triggers: [],
         task: {
-          name,
-          variables,
-          tags,
+          name, variables, tags,
           type: 'reactive',
           start: true
         }
@@ -235,13 +232,8 @@ class RulePlaybooksBuilder {
         }).position[1] + 100
 
         const targetNode = (playbook?.taskDefaults?.tags?.targetNode) ? playbook.taskDefaults.tags.targetNode : startSensor.label
-        this.updateWithPrefix(playbook, prefix, i, y_offset)
-
+        this.updateWithPrefix(task, playbook, prefix, i, y_offset)
         targetNodes.push(prefix + targetNode)
-        task.sensors = task.sensors.concat(playbook.sensors)
-        task.triggers = task.triggers.concat(playbook.triggers)
-        if(playbook.relations && playbook.relations.length > 0)
-        task.relations = task.relations.concat(playbook.relations)
       }
       targetNodes.forEach((node) => {
         task.triggers.push({
