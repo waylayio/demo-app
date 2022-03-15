@@ -45,6 +45,11 @@ let task = await rulePlaybook.startFromPlaybooks(task_name, playbooks, variables
 
 variables is flat list of all variables that will be provided to all playbooks. Each playbook should have one `targetNode` and `targetState` which will be used to deduct if the particular condition of the playbook has been reached. Resulting task will merge all target nodes and generate an alarm with the task Id of the running task, in case any of underlying playbooks has reached its condition. If that is not specified, code will assume that the last right node with the first state is used as the end condition of that playbook.
 
+Exxample of `targetNode` and `targetState` settings: 
+
+<img width="583" alt="image" src="https://user-images.githubusercontent.com/1268521/158448653-f3a81d83-42e4-4744-8eb7-646daf51c931.png">
+
+
 You can then subscribe other playbooks to 'fire' any time this condition is reached, using that task id (`task.ID`):
 
 ```
