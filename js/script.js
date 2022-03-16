@@ -41,7 +41,7 @@ async function login(ops) {
   }
 
   await client.loadSettings()
-  templates = await client.templates.list()
+  templates = await client.templates.list({'tags.targetNode':null, 'tags.targetState':null})
   templates.forEach(template => {
     templatesSelection.append($('<option>', {
         value: template.name,

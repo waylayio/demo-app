@@ -49,7 +49,9 @@ First you need to create several playbooks, and then you can start them this way
 let task = await rulePlaybook.startFromPlaybooks(task_name, playbooks, variables, resource, tags)
 ```
 
-variables is flat list of all variables that will be provided to all playbooks. Each playbook should have one `targetNode` and `targetState` which will be used to deduct if the particular condition of the playbook has been reached. Resulting task will merge all target nodes and generate an alarm with the task Id of the running task, in case any of underlying playbooks has reached its condition. If that is not specified, code will assume that the last right node with the first state is used as the end condition of that playbook.
+variables is flat list of all variables that will be provided to all playbooks. 
+Playbooks must have `targetNode` and `targetState` tags which will be used to deduct if the particular condition of the playbook has been reached. 
+Resulting task will merge all target nodes and generate an alarm with the task Id of the running task, in case any of underlying playbooks has reached its condition. 
 
 Example of `targetNode` and `targetState` settings:
 

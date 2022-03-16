@@ -36,7 +36,7 @@ class RulePlaybooksBuilder {
       task.task.resource = resource
 
     let targetNodes = []
-    let i,k = 0
+    let i = 0
     let x_offset = 0
     let periodic_frequency = 0
     for(i in playbooks){
@@ -56,8 +56,8 @@ class RulePlaybooksBuilder {
       })
       const lastNodePlugin = this.getPlugin(lastNode.name)
 
-      const targetNode = (playbook?.taskDefaults?.tags?.targetNode) ? playbook.taskDefaults.tags.targetNode : lastNode.label
-      const targetState = (playbook.taskDefaults?.tags?.targetState) ? playbook.taskDefaults.tags.targetState : lastNodePlugin.states[0]
+      const targetNode = (playbook?.tags?.targetNode) ? playbook.tags.targetNode : lastNode.label
+      const targetState = (playbook.tags?.targetState) ? playbook.tags.targetState : lastNodePlugin.states[0]
 
       const x_offset_ = lastNode.position[0] + 10
 
@@ -218,7 +218,7 @@ class RulePlaybooksBuilder {
         }
       }
       let targetNodes = []
-      let i,k = 0
+      let i = 0
 
       for(i in playbooks){
         let playbook = await client.templates.get(playbooks[i], {format: "simplified"})
