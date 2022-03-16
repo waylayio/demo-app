@@ -27,7 +27,7 @@ class RulePlaybooksBuilder {
       relations: [],
       triggers: [],
       task: {
-        name, variables, tags,
+        name, tags,
         type: 'reactive',
         start: true
       }
@@ -92,6 +92,13 @@ class RulePlaybooksBuilder {
         playbook.sensors[index].evictionTime = (900 - 1 ) * 1000
       }
 
+      // handle missing playbook variables using the defaults
+      playbook.variables.forEach( varDecl => {
+        if (!variables[varDecl.name] && varDecl.defaultValue) {
+          variables[varDecl.name] = varDecl.defaultValue
+        }
+      })
+
       this.updateWithPrefix(task, playbook, prefix, i, y_offset)
       targetNodes.push({
         node: prefix + targetNode,
@@ -102,6 +109,7 @@ class RulePlaybooksBuilder {
     task.relations = task.relations.concat(resultNetwork.relations)
     task.sensors = task.sensors.concat(resultNetwork.sensors)
     task.triggers = task.triggers.concat(resultNetwork.triggers)
+    task.task.variables = variables
 
     return await this.client.tasks.create(task, {})
   }
