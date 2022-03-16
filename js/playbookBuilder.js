@@ -70,6 +70,7 @@ class RulePlaybooksBuilder {
         if(periodic_frequency === 0) {
           periodic_frequency = playbook.taskDefaults.frequency
           task.task.pollingInterval = periodic_frequency
+          playbook.sensors[index].evictionTime = (periodic_frequency - 1 ) * 1000
         } else if(periodic_frequency !== playbook.taskDefaults.frequency){
           //this playbook is not with the same polling frequency, hence we need to start it with its own clock
           playbook.sensors[index].tickTrigger = true
@@ -90,7 +91,7 @@ class RulePlaybooksBuilder {
         playbook.sensors[index].duration = 900 * 1000
         playbook.sensors[index].evictionTime = (900 - 1 ) * 1000
       }
-      
+
       this.updateWithPrefix(task, playbook, prefix, i, y_offset)
       targetNodes.push({
         node: prefix + targetNode,
