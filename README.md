@@ -72,3 +72,37 @@ This is similar to subscribing to the task event and invoking playbooks any time
 ```
 let result = await checkStatus(id)
 ```
+
+## Using RuleBuilder
+This class creates rules on a fly based on few sensors, which either process data as it arrives, or it uses data statistical processing.
+
+First you need to select a resource, and then select metric and the range:
+![image](https://user-images.githubusercontent.com/1268521/158543346-114e1dab-92be-4514-b3de-3086df4b1d9c.png)
+
+This class creates rules on a fly based on few sensors, which either process data as it arrives, or it uses data statistical processing. You need to select out of boundaries for lower and upper limit, if values are above or below, an alarm Out of Range will be generated (on that resource), unlike in the previous example where the alarm is generated on the rules task ID. 
+
+
+This class creates rules on a fly based on few sensors, which either process data as it arrives, or it uses data statistical processing. You need to select out of boundaries for lower and upper limit, if values are above or below, an alarm Out of Range will be generated on the running task ID
+
+After adding all triggers 
+![image](https://user-images.githubusercontent.com/1268521/158543765-f9f42233-5dba-4b91-bcff-f432f37a7913.png)
+
+You can start a task and check it in the console
+![image](https://user-images.githubusercontent.com/1268521/158543936-455804da-aa88-4707-b5a8-b421599d8dba.png)
+
+
+## Notification rules
+Notification rule is creating a subscription task on the ALARMS, where by playbook(s) or one sensor is called every time ALARM is raised 
+![image](https://user-images.githubusercontent.com/1268521/158544225-c1ff0c12-e0a7-4e3e-9774-9102024902d5.png)
+
+
+In the console you can verify the task:
+![image](https://user-images.githubusercontent.com/1268521/158544345-0eadfe4c-784d-423b-b7e1-1922c9a22a1a.png)
+
+
+
+
+
+
+
+
