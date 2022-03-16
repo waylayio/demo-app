@@ -55,7 +55,7 @@ Resulting task will merge all target nodes and generate an alarm with the task I
 
 Example of `targetNode` and `targetState` settings:
 
-<img width="583" alt="image" src="https://user-images.githubusercontent.com/1268521/158448653-f3a81d83-42e4-4744-8eb7-646daf51c931.png">
+<img width="633" alt="image" src="https://user-images.githubusercontent.com/30588687/158630192-0af3bdbb-037a-4443-815b-c71e3ff34b4d.png">
 
 In the app, you can select playbooks to be merged (please note that this app is not actually adding any variables into the templates, that is left our. Normally you can read out this from the template in your own wizard UI and add these input variables.
 
