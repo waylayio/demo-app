@@ -27,7 +27,7 @@ class RulePlaybooksBuilder {
       relations: [],
       triggers: [],
       task: {
-        name, variables, tags,
+        name, tags,
         type: 'reactive',
         start: true
       }
@@ -36,7 +36,7 @@ class RulePlaybooksBuilder {
       task.task.resource = resource
 
     let targetNodes = []
-    let i,k = 0
+    let i = 0
     let x_offset = 0
     let periodic_frequency = 0
     for(i in playbooks){
@@ -56,8 +56,13 @@ class RulePlaybooksBuilder {
       })
       const lastNodePlugin = this.getPlugin(lastNode.name)
 
-      const targetNode = (playbook?.taskDefaults?.tags?.targetNode) ? playbook.taskDefaults.tags.targetNode : lastNode.label
-      const targetState = (playbook.taskDefaults?.tags?.targetState) ? playbook.taskDefaults.tags.targetState : lastNodePlugin.states[0]
+      const targetNode = (playbook?.tags?.targetNode) ? playbook.tags.targetNode : lastNode.label
+      const targetState = (playbook.tags?.targetState) ? playbook.tags.targetState : lastNodePlugin.states[0]
+
+      let nodeLabels = (playbook.sensors?.map(s => s.label) ?? []).concat(playbook.relations?.map(r => r.label) ?? [])
+      if (!nodeLabels?.includes(targetNode)) {
+        throw new Error(`Did not find targetNode ${targetNode} in playbook ${playbook.name} `)
+      }
 
       const x_offset_ = lastNode.position[0] + 10
 
@@ -92,6 +97,13 @@ class RulePlaybooksBuilder {
         playbook.sensors[index].evictionTime = (900 - 1 ) * 1000
       }
 
+      // handle missing playbook variables using the defaults
+      playbook.variables.forEach( varDecl => {
+        if (!variables[varDecl.name] && varDecl.defaultValue) {
+          variables[varDecl.name] = varDecl.defaultValue
+        }
+      })
+
       this.updateWithPrefix(task, playbook, prefix, i, y_offset)
       targetNodes.push({
         node: prefix + targetNode,
@@ -102,6 +114,7 @@ class RulePlaybooksBuilder {
     task.relations = task.relations.concat(resultNetwork.relations)
     task.sensors = task.sensors.concat(resultNetwork.sensors)
     task.triggers = task.triggers.concat(resultNetwork.triggers)
+    task.task.variables = variables
 
     return await this.client.tasks.create(task, {})
   }
@@ -218,7 +231,7 @@ class RulePlaybooksBuilder {
         }
       }
       let targetNodes = []
-      let i,k = 0
+      let i = 0
 
       for(i in playbooks){
         let playbook = await client.templates.get(playbooks[i], {format: "simplified"})
