@@ -59,6 +59,11 @@ class RulePlaybooksBuilder {
       const targetNode = (playbook?.tags?.targetNode) ? playbook.tags.targetNode : lastNode.label
       const targetState = (playbook.tags?.targetState) ? playbook.tags.targetState : lastNodePlugin.states[0]
 
+      let nodeLabels = (playbook.sensors?.map(s => s.label) ?? []).concat(playbook.relations?.map(r => r.label) ?? [])
+      if (!nodeLabels?.includes(targetNode)) {
+        throw new Error(`Did not find targetNode ${targetNode} in playbook ${playbook.name} `)
+      }
+
       const x_offset_ = lastNode.position[0] + 10
 
       if(x_offset < x_offset_){
