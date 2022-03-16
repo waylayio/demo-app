@@ -55,6 +55,12 @@ Exxample of `targetNode` and `targetState` settings:
 
 <img width="583" alt="image" src="https://user-images.githubusercontent.com/1268521/158448653-f3a81d83-42e4-4744-8eb7-646daf51c931.png">
 
+In the app, you can select playbooks to be merged (please note that this app is not actually adding any variables into the templates, that is left our. Normally you can read out this from the template in your own wizard UI and add these input varaibles.
+
+![image](https://user-images.githubusercontent.com/1268521/158545780-43190ed9-66b5-4d7e-afa0-c7e819386914.png)
+
+
+
 Once you start all playbooks, they will all unflod into one task:
 <img width="1132" alt="image" src="https://user-images.githubusercontent.com/1268521/158449624-9ffebd60-90ef-4bc0-bd50-140d46bcae7e.png">
 
