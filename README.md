@@ -51,17 +51,17 @@ let task = await rulePlaybook.startFromPlaybooks(task_name, playbooks, variables
 
 variables is flat list of all variables that will be provided to all playbooks. Each playbook should have one `targetNode` and `targetState` which will be used to deduct if the particular condition of the playbook has been reached. Resulting task will merge all target nodes and generate an alarm with the task Id of the running task, in case any of underlying playbooks has reached its condition. If that is not specified, code will assume that the last right node with the first state is used as the end condition of that playbook.
 
-Exxample of `targetNode` and `targetState` settings:
+Example of `targetNode` and `targetState` settings:
 
 <img width="583" alt="image" src="https://user-images.githubusercontent.com/1268521/158448653-f3a81d83-42e4-4744-8eb7-646daf51c931.png">
 
-In the app, you can select playbooks to be merged (please note that this app is not actually adding any variables into the templates, that is left our. Normally you can read out this from the template in your own wizard UI and add these input varaibles.
+In the app, you can select playbooks to be merged (please note that this app is not actually adding any variables into the templates, that is left our. Normally you can read out this from the template in your own wizard UI and add these input variables.
 
 ![image](https://user-images.githubusercontent.com/1268521/158545780-43190ed9-66b5-4d7e-afa0-c7e819386914.png)
 
 
 
-Once you start all playbooks, they will all unflod into one task:
+Once you start all playbooks, they will all unfold into one task:
 <img width="1132" alt="image" src="https://user-images.githubusercontent.com/1268521/158449624-9ffebd60-90ef-4bc0-bd50-140d46bcae7e.png">
 
 
@@ -85,12 +85,12 @@ This class creates rules on a fly based on few sensors, which either process dat
 First you need to select a resource, and then select metric and the range:
 ![image](https://user-images.githubusercontent.com/1268521/158543346-114e1dab-92be-4514-b3de-3086df4b1d9c.png)
 
-This class creates rules on a fly based on few sensors, which either process data as it arrives, or it uses data statistical processing. You need to select out of boundaries for lower and upper limit, if values are above or below, an alarm Out of Range will be generated (on that resource), unlike in the previous example where the alarm is generated on the rules task ID. 
+This class creates rules on a fly based on few sensors, which either process data as it arrives, or it uses data statistical processing. You need to select out of boundaries for lower and upper limit, if values are above or below, an alarm Out of Range will be generated (on that resource), unlike in the previous example where the alarm is generated on the rules task ID.
 
 
 This class creates rules on a fly based on few sensors, which either process data as it arrives, or it uses data statistical processing. You need to select out of boundaries for lower and upper limit, if values are above or below, an alarm Out of Range will be generated on the running task ID
 
-After adding all triggers 
+After adding all triggers
 ![image](https://user-images.githubusercontent.com/1268521/158543765-f9f42233-5dba-4b91-bcff-f432f37a7913.png)
 
 You can start a task and check it in the console
@@ -98,17 +98,9 @@ You can start a task and check it in the console
 
 
 ## Notification rules
-Notification rule is creating a subscription task on the ALARMS, where by playbook(s) or one sensor is called every time ALARM is raised 
+Notification rule is creating a subscription task on the ALARMS, where by playbook(s) or one sensor is called every time ALARM is raised
 ![image](https://user-images.githubusercontent.com/1268521/158544225-c1ff0c12-e0a7-4e3e-9774-9102024902d5.png)
 
 
 In the console you can verify the task:
 ![image](https://user-images.githubusercontent.com/1268521/158544345-0eadfe4c-784d-423b-b7e1-1922c9a22a1a.png)
-
-
-
-
-
-
-
-
