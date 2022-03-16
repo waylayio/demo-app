@@ -53,7 +53,7 @@ variables is flat list of all variables that will be provided to all playbooks.
 Playbooks must have `targetNode` and `targetState` tags which will be used to deduct if the particular condition of the playbook has been reached. 
 Resulting task will merge all target nodes and generate an alarm with the task Id of the running task, in case any of underlying playbooks has reached its condition. 
 
-Example of `targetNode` and `targetState` settings:
+Example of `targetNode` and `targetState` tags:
 
 <img width="633" alt="image" src="https://user-images.githubusercontent.com/30588687/158630192-0af3bdbb-037a-4443-815b-c71e3ff34b4d.png">
 
