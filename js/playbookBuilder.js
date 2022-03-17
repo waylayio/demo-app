@@ -151,12 +151,13 @@ class RulePlaybooksBuilder {
         sensor.resource =  sensor.resource.replaceAll('$', playbook_resource)
       }
 
-      labels.forEach(label => {
+      labels.forEach((label,i)=> {
         if(sensor.properties) {
           for (const [key, value] of Object.entries(sensor.properties)) {
             sensor.properties[key] = sensor.properties[key].replaceAll('{nodes.' + label, '{nodes.' + prefix + label)
             sensor.properties[key] = sensor.properties[key].replaceAll('{?nodes.' + label, '{?nodes.' + prefix + label)
-            sensor.properties[key] = sensor.properties[key].replaceAll('{variables.' , '{variables.' + prefix)
+            if(i===0) //only once, since this is not label specific
+              sensor.properties[key] = sensor.properties[key].replaceAll('{variables.' , '{variables.' + prefix)
           }
         }
       })
