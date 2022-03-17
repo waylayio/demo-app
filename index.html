@@ -141,7 +141,37 @@
             <div class="tab-pane" id="playbook_triggers">
               <h1>Playbook Trigger configuration</h1>
               <select id="templates" class="s2 form-control" style="width: 100%"  multiple="multiple"></select>
+
+              <div class="row mt-3">
+                <div id='input_container' class='col-md-12'>
+                  <label for="variables">Playbook variables</label>
+                  <textarea class="form-control" id="variables"></textarea>
+                </div>
+              </div>
+                      
+              <div class="row mt-3">
+                  <div class='col-md-4'></div>
+                  <div id='button_container' class='col-md-3'>
+                    <button id='json_to_table_btn' type="button" class="btn btn-default btn-lg btn-block">JSON to Table</button>
+                  </div>
+              </div>
+          
+              <div class="row mt-3">
+                <div id='table_container' class='col-md-12'></div>
+              </div>
+          
+              <div class="row mt-3">
+                  <div class='col-md-4'></div>
+                  <div id='button_container' class='col-md-3'>
+                    <button id='table_to_json_btn' type="button" class="btn btn-default btn-lg btn-block">Table to Variables</button>
+                  </div>
+              </div>
+          
+              <div class="row mt-3">
+                  <div id='result_container' class='col-md-12'></div>
+              </div>
             </div>
+
             <div class="tab-pane active" id="triggers_">
               <div>
                 <h1>Trigger (metric) configuration</h1>
@@ -236,6 +266,9 @@
     <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.7.1/jquery.contextMenu.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.7.1/jquery.ui.position.js"></script>
+    <script src="js/jsoneditor.js"></script>
     <script src="js/config.js"></script>
     <script src="js/init.js"></script>
     <script src="js/rulesBuilder.js"></script>
