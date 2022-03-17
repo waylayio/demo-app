@@ -227,9 +227,11 @@ function init() {
     for(let i = 0; i < playbooks.length; i ++ ) {
       let obj = {}
       p = await client.templates.get(playbooks, {format: "simplified"})
-      obj[p.name] = p.variables.map(variable => {
-        return {...variable, ...{value: variable.defaultValue}}
-      })
+      if(p.variables) {
+        obj[p.name] = p.variables.map(variable => {
+          return {...variable, ...{value: variable.defaultValue}}
+        })
+      }
       mergeVariables.push(obj)
     }
     $('#variables').val(JSON.stringify(mergeVariables))
@@ -242,10 +244,14 @@ function init() {
 
     if(!triggers.length && playbooks !== ''){
       const resource = resourceEntry.val()
-      let variables = JSON.parse($('#result_container').text())
+      //let variables = JSON.parse($('#result_container').text())
+      let variables = makeJson()
       let playbook_variables = [] 
       playbooks.forEach((playbook, i) =>{
-        playbook_variables.push(variables[i][playbook])
+        if(variables[i] && variables[i][playbook])
+          playbook_variables.push(variables[i][playbook])
+        else 
+          playbook_variables.push([])
       })
 
       rulePlaybook.startFromPlaybooks(task_name, playbooks, playbook_variables, resource, {'demo':'demo-task'})
