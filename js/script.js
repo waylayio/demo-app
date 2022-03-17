@@ -41,6 +41,13 @@ async function login(ops) {
   }
 
   await client.loadSettings()
+  //two wasys to build rules
+  ruleBuilder = await RuleBuilder.initialize(client)
+  rulePlaybook = await RulePlaybooksBuilder.initialize(client)
+  formConnect.hide()
+  app.show()
+  //page.hide()
+  loggedUser.text($('#user').val())
   templates = await client.templates.list({'tags.targetNode':null, 'tags.targetState':null})
   templates.forEach(template => {
     templatesSelection.append($('<option>', {
@@ -48,14 +55,8 @@ async function login(ops) {
         text : template.name
     }))
   })
-  //two wasys to build rules
-  ruleBuilder = await RuleBuilder.initialize(client)
-  rulePlaybook = await RulePlaybooksBuilder.initialize(client)
-  formConnect.hide()
-  app.show()
-  //page.hide()
+  jsonEditorInit('table_container', 'variables', 'result_container', 'json_to_table_btn', 'table_to_json_btn')
   $('.s2').select2({ width: '100%',  theme: "classic"})
-  loggedUser.text($('#user').val())
   showMessage("Connected", 500)
 }
 
@@ -216,12 +217,33 @@ function init() {
     resetTriggerTable()
   })
 
+  templatesSelection.change(template=>{
+    getVariables()
+  })
+
+  async function getVariables() {
+    mergeVariables = {}
+    const playbooks = templatesSelection.val()
+    for(let i = 0; i < playbooks.length; i ++ ) {
+      p = await client.templates.get(playbooks, {format: "simplified"})
+      mergeVariables = {...mergeVariables, ...p.variables}
+    }
+    $('#variables').val(JSON.stringify(mergeVariables))
+  }
+
   async function startAllTasks() {
     const task_name = $('#task-name').val()
     const playbooks = templatesSelection.val()
+    //todo
+
     if(!triggers.length && playbooks !== ''){
       const resource = resourceEntry.val()
-      rulePlaybook.startFromPlaybooks(task_name, playbooks, {}, resource, {'demo':'demo-task'})
+      let variables = {}
+      JSON.parse($('#result_container').text()).forEach(variable => { 
+        let value = variable.type === 'float' || variable.type === 'double'? parseFloat(variable.defaultValue) : variable.defaultValue
+        variables[variable.name] = value
+      })
+      rulePlaybook.startFromPlaybooks(task_name, playbooks, variables, resource, {'demo':'demo-task'})
       .then(task=>{
         showMessage('Created task from playbooks: ' + task.ID)
         listTasks()

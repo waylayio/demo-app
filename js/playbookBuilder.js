@@ -96,10 +96,12 @@ class RulePlaybooksBuilder {
       }
 
       // handle missing playbook variables using the defaults
+      // Note, this implies you can't have the same variables in two playbooks!
       if(playbook.variables) {
         playbook.variables.forEach( varDecl => {
           if (!variables[varDecl.name] && varDecl.defaultValue) {
-            variables[varDecl.name] = varDecl.defaultValue
+            if(variables[varDecl.name] === undefined)
+              variables[varDecl.name] = varDecl.defaultValue
           }
         })
       }
