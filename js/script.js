@@ -222,7 +222,7 @@ function init() {
   })
 
   async function getVariables() {
-    mergeVariables = []
+    let mergeVariables = []
     const playbooks = templatesSelection.val()
     for(let i = 0; i < playbooks.length; i ++ ) {
       let obj = {}
@@ -232,6 +232,9 @@ function init() {
           return {...variable, ...{value: variable.defaultValue}}
         })
       }
+      const resource = resourceEntry.val()
+      if(resource)
+        obj[p.name].push({name: 'resource', value: resource})
       mergeVariables.push(obj)
     }
     $('#variables').val(JSON.stringify(mergeVariables))
@@ -244,7 +247,6 @@ function init() {
 
     if(!triggers.length && playbooks !== ''){
       const resource = resourceEntry.val()
-      //let variables = JSON.parse($('#result_container').text())
       let variables = makeJson()
       let playbook_variables = [] 
       playbooks.forEach((playbook, i) =>{

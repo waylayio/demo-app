@@ -19,7 +19,7 @@ class RuleBuilder {
     if you want to make it only the higher or lower threshold rule, you make one of these
     two values very high. E.g. if the lowerLimit is negative and INFINIT BIG value, and upperLimit 20,
     then it is safe to assumet that the rule will trigger only when incoming value is above 20.
-    TRUE state means that the conditio is out of boudnaries
+    TRUE state means that the condition is out of boundaries
  */
   prepareStream(trigger, iter = 0) {
     const { resource, metric = 'temperature', lowerLimit=0, upperLimit=10, targetNode = 'problem' } = trigger

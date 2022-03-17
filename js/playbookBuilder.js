@@ -21,8 +21,10 @@ class RulePlaybooksBuilder {
     return this.plugins.find(x=> x.name === name)
   }
 
-  //playbook_variables list of set variables for playbooks, otherwise defaults will be in use
-  //if not empty, must be of the same size as playbooks: [[{name:'threshold', value:12}, {name:'metric', value:'temperature'}]].
+  /*  playbook_variables list of set variables for playbooks, otherwise defaults will be in use
+    if not empty, must be of the same size as playbooks: [[{name:'threshold', value:12}, {name:'metric', value:'temperature'}]].
+    Additionaly, playbook_variables can hold as well a resource name {name: 'resource', value: 'foobar'}
+  */
   async startFromPlaybooks(name, playbooks, playbook_variables = [], resource, tags) {
     if(playbook_variables.length === 0 ) {
       playbook_variables = new Array(playbooks.length)
@@ -53,6 +55,9 @@ class RulePlaybooksBuilder {
       let playbook = await client.templates.get(playbooks[i], {format: "simplified"})
       let prefix = "p" + i + "_"
       let playbook_variable = playbook_variables[i]
+      let playbook_resource = playbook_variable.find(x => x.name === 'resource')
+      if(playbook_resource)
+        playbook_resource = playbook_resource.value
 
       const startSensor = playbook.sensors.reduce((prev, curr) => {
         return prev.position[0] < curr.position[0] ? prev : curr
@@ -105,7 +110,6 @@ class RulePlaybooksBuilder {
         playbook.sensors[index].tickTrigger = false
         playbook.sensors[index].dataTrigger = true
       }
-
       
       if(playbook.variables) {
         playbook.variables.forEach( varDecl => {
@@ -114,7 +118,7 @@ class RulePlaybooksBuilder {
         })
       }
 
-      this.updateWithPrefix(task, playbook, prefix, i, y_offset)
+      this.updateWithPrefix(task, playbook, prefix, i, y_offset, playbook_resource)
       targetNodes.push({
         node: prefix + targetNode,
         state: targetState
@@ -129,22 +133,28 @@ class RulePlaybooksBuilder {
     return await this.client.tasks.create(task, {})
   }
 
-  updateWithPrefix(task, playbook, prefix, i, y_offset) {
+  updateWithPrefix(task, playbook, prefix, i, y_offset, playbook_resource) {
     let k = 0
     let labels = playbook.sensors.map(sensor => sensor.label)
 
     for(k in playbook.sensors) {
-      playbook.sensors[k].label = prefix + playbook.sensors[k].label
+      let sensor = playbook.sensors[k]
+      sensor.label = prefix + sensor.label
       if(i > 0){
-        playbook.sensors[k].position[1] = playbook.sensors[k].position[1] + y_offset
+        sensor.position[1] = sensor.position[1] + y_offset
+      }
+      if(playbook_resource !== undefined) {
+        sensor.resource =  sensor.resource.replaceAll('task.RESOURCE', playbook_resource)
+        sensor.resource =  sensor.resource.replaceAll('task.resource', playbook_resource)
+        sensor.resource =  sensor.resource.replaceAll('$', playbook_resource)
       }
 
       labels.forEach(label => {
-        if(playbook.sensors[k].properties) {
-          for (const [key, value] of Object.entries(playbook.sensors[k].properties)) {
-            playbook.sensors[k].properties[key] = playbook.sensors[k].properties[key].replaceAll('{nodes.' + label, '{nodes.' + prefix + label)
-            playbook.sensors[k].properties[key] = playbook.sensors[k].properties[key].replaceAll('{?nodes.' + label, '{?nodes.' + prefix + label)
-            playbook.sensors[k].properties[key] = playbook.sensors[k].properties[key].replaceAll('{variables.' , '{variables.' + prefix)
+        if(sensor.properties) {
+          for (const [key, value] of Object.entries(sensor.properties)) {
+            sensor.properties[key] = sensor.properties[key].replaceAll('{nodes.' + label, '{nodes.' + prefix + label)
+            sensor.properties[key] = sensor.properties[key].replaceAll('{?nodes.' + label, '{?nodes.' + prefix + label)
+            sensor.properties[key] = sensor.properties[key].replaceAll('{variables.' , '{variables.' + prefix)
           }
         }
       })
@@ -155,10 +165,11 @@ class RulePlaybooksBuilder {
       playbook.triggers = []
     }
     for(k in playbook.relations){
-      playbook.relations[k].label = prefix + playbook.relations[k].label
-      playbook.relations[k].parentLabels = playbook.relations[k].parentLabels.map(x=> prefix + x)
+      let relation = playbook.relations[k]
+      relation.label = prefix + relation.label
+      relation.parentLabels = relation.parentLabels.map(x=> prefix + x)
       if(i > 0){
-        playbook.relations[k].position[1] = playbook.relations[k].position[1] + y_offset
+        relation.position[1] = relation.position[1] + y_offset
       }
     }
     task.sensors = task.sensors.concat(playbook.sensors)
