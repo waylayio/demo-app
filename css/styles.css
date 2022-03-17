@@ -32,6 +32,7 @@ ul {
   top: 50%;
   left: 50%;
   box-shadow: rgb(38, 57, 77) 0px 10px 10px -5px;
+  font-size: 2rem;
 }
 
 .btn-color{

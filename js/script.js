@@ -223,7 +223,7 @@ function init() {
       const resource = resourceEntry.val()
       rulePlaybook.startFromPlaybooks(task_name, playbooks, {}, resource, {'demo':'demo-task'})
       .then(task=>{
-        showMessage('Created task from playbooks' + task.ID)
+        showMessage('Created task from playbooks: ' + task.ID)
         listTasks()
       })
       .catch(err=> {
@@ -232,7 +232,7 @@ function init() {
     } else if(triggers.length){
       ruleBuilder.startTaskForTriggers(task_name, triggers)
       .then(task=>{
-        showMessage('Created task from triggers' + task.ID)
+        showMessage('Created task from triggers: ' + task.ID)
         resetTriggerTable()
         listTasks()
       })
