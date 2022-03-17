@@ -98,11 +98,13 @@ class RulePlaybooksBuilder {
       }
 
       // handle missing playbook variables using the defaults
-      playbook.variables.forEach( varDecl => {
-        if (!variables[varDecl.name] && varDecl.defaultValue) {
-          variables[varDecl.name] = varDecl.defaultValue
-        }
-      })
+      if(playbook.variables) {
+        playbook.variables.forEach( varDecl => {
+          if (!variables[varDecl.name] && varDecl.defaultValue) {
+            variables[varDecl.name] = varDecl.defaultValue
+          }
+        })
+      }
 
       this.updateWithPrefix(task, playbook, prefix, i, y_offset)
       targetNodes.push({
