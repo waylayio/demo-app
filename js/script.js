@@ -222,11 +222,15 @@ function init() {
   })
 
   async function getVariables() {
-    mergeVariables = {}
+    mergeVariables = []
     const playbooks = templatesSelection.val()
     for(let i = 0; i < playbooks.length; i ++ ) {
+      let obj = {}
       p = await client.templates.get(playbooks, {format: "simplified"})
-      mergeVariables = {...mergeVariables, ...p.variables}
+      obj[p.name] = p.variables.map(variable => {
+        return {...variable, ...{value: variable.defaultValue}}
+      })
+      mergeVariables.push(obj)
     }
     $('#variables').val(JSON.stringify(mergeVariables))
   }
@@ -238,12 +242,13 @@ function init() {
 
     if(!triggers.length && playbooks !== ''){
       const resource = resourceEntry.val()
-      let variables = {}
-      JSON.parse($('#result_container').text()).forEach(variable => { 
-        let value = variable.type === 'float' || variable.type === 'double'? parseFloat(variable.defaultValue) : variable.defaultValue
-        variables[variable.name] = value
+      let variables = JSON.parse($('#result_container').text())
+      let playbook_variables = [] 
+      playbooks.forEach((playbook, i) =>{
+        playbook_variables.push(variables[i][playbook])
       })
-      rulePlaybook.startFromPlaybooks(task_name, playbooks, variables, resource, {'demo':'demo-task'})
+
+      rulePlaybook.startFromPlaybooks(task_name, playbooks, playbook_variables, resource, {'demo':'demo-task'})
       .then(task=>{
         showMessage('Created task from playbooks: ' + task.ID)
         listTasks()

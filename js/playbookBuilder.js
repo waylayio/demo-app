@@ -21,7 +21,17 @@ class RulePlaybooksBuilder {
     return this.plugins.find(x=> x.name === name)
   }
 
-  async startFromPlaybooks(name, playbooks, variables = {}, resource, tags) {
+  //playbook_variables list of set variables for playbooks, otherwise defaults will be in use
+  //if not empty, must be of the same size as playbooks: [[{name:'threshold', value:12}, {name:'metric', value:'temperature'}]].
+  async startFromPlaybooks(name, playbooks, playbook_variables = [], resource, tags) {
+    if(playbook_variables.length === 0 ) {
+      playbook_variables = new Array(playbooks.length)
+    } 
+    if(playbook_variables.length !== playbooks.length){
+      throw new Error(`playbook_variables ${playbook_variables.length} not the same as playbooks length ${ playbooks.length}`)
+    }
+    
+    let variables = {}
     let task  = {
       sensors: [],
       relations: [],
@@ -41,7 +51,8 @@ class RulePlaybooksBuilder {
     let periodic_frequency = 0
     for(i in playbooks){
       let playbook = await client.templates.get(playbooks[i], {format: "simplified"})
-      let prefix = playbook.name + "_"
+      let prefix = "p" + i + "_"
+      let playbook_variable = playbook_variables[i]
 
       const startSensor = playbook.sensors.reduce((prev, curr) => {
         return prev.position[0] < curr.position[0] ? prev : curr
@@ -95,14 +106,11 @@ class RulePlaybooksBuilder {
         playbook.sensors[index].dataTrigger = true
       }
 
-      // handle missing playbook variables using the defaults
-      // Note, this implies you can't have the same variables in two playbooks!
+      
       if(playbook.variables) {
         playbook.variables.forEach( varDecl => {
-          if (!variables[varDecl.name] && varDecl.defaultValue) {
-            if(variables[varDecl.name] === undefined)
-              variables[varDecl.name] = varDecl.defaultValue
-          }
+          let variable = playbook_variable.find(v => v.name === varDecl.name)
+          variables[prefix + varDecl.name] = variable ? variable.value : varDecl.defaultValue
         })
       }
 
@@ -134,7 +142,9 @@ class RulePlaybooksBuilder {
       labels.forEach(label => {
         if(playbook.sensors[k].properties) {
           for (const [key, value] of Object.entries(playbook.sensors[k].properties)) {
-              playbook.sensors[k].properties[key] = playbook.sensors[k].properties[key].replaceAll('${nodes.' + label, '${nodes.' + prefix + label)
+            playbook.sensors[k].properties[key] = playbook.sensors[k].properties[key].replaceAll('{nodes.' + label, '{nodes.' + prefix + label)
+            playbook.sensors[k].properties[key] = playbook.sensors[k].properties[key].replaceAll('{?nodes.' + label, '{?nodes.' + prefix + label)
+            playbook.sensors[k].properties[key] = playbook.sensors[k].properties[key].replaceAll('{variables.' , '{variables.' + prefix)
           }
         }
       })
