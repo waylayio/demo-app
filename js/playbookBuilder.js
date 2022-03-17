@@ -90,11 +90,9 @@ class RulePlaybooksBuilder {
       } else if(playbook.taskDefaults?.type === "scheduled") {
         task.task.type = "scheduled"
         task.task.cron = playbook.taskDefaults.cron
-      } else {
-        playbook.sensors[index].tickTrigger = true
-        playbook.sensors[index].dataTrigger = false
-        playbook.sensors[index].duration = 900 * 1000
-        playbook.sensors[index].evictionTime = (900 - 1 ) * 1000
+      } else { //default is reactive task
+        playbook.sensors[index].tickTrigger = false
+        playbook.sensors[index].dataTrigger = true
       }
 
       // handle missing playbook variables using the defaults
@@ -139,9 +137,11 @@ class RulePlaybooksBuilder {
         }
       })
     }
-
-    playbook.triggers = playbook.triggers.map( x=> { return {sourceLabel: prefix + x.sourceLabel, destinationLabel: prefix + x.destinationLabel}})
-
+    if(playbook.triggers) {
+      playbook.triggers = playbook.triggers.map( x=> { return {sourceLabel: prefix + x.sourceLabel, destinationLabel: prefix + x.destinationLabel}})
+    } else {
+      playbook.triggers = []
+    }
     for(k in playbook.relations){
       playbook.relations[k].label = prefix + playbook.relations[k].label
       playbook.relations[k].parentLabels = playbook.relations[k].parentLabels.map(x=> prefix + x)
@@ -155,7 +155,7 @@ class RulePlaybooksBuilder {
       task.relations = task.relations.concat(playbook.relations)
   }
 
-  async checkStatus(id) {
+  async  checkStatus(id) {
     const task = await this.client.tasks.get(id)
     var node = task.nodes.find(x => x.label === 'PROBLEM')
     const problemGATE =  (node !== undefined && node.mostLikelyState.state === 'TRUE' && node.mostLikelyState.probability === 1)
