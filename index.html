@@ -4,7 +4,7 @@
   <title>Waylay Demo</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css">
+  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/skeleton/2.0.4/skeleton.min.css"> -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.6/css/all.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css">
@@ -47,7 +47,6 @@
     <a id="show-sidebar" class="btn btn-sm btn-dark" href="#">
       <i class="fas fa-bars"></i>
     </a>
-
     <nav id="sidebar" class="sidebar-wrapper">
       <div class="sidebar-content">
         <div class="sidebar-brand">
@@ -113,7 +112,7 @@
             <div>
               <canvas id="my-simple-chart"></canvas>
             </div>
-            <select name="time" id="time" >
+            <select class="btn" name="time" id="time" >
               <option value="PT1M">last minute</option>
               <option value="PT15M">15 minutes</option>
               <option value="PT30M">30 minutes</option>
@@ -122,8 +121,8 @@
               <option value="P1M">1 month</option>
               <option value="P1Y">1 year</option>
             </select>
-            <button id="load-btn" title="Load data">Get Data</button>
-            <button id="legend-toggle" title="Toggle legend">Toggle Legend</button>
+            <button class="btn btn-secondary" id="load-btn" title="Load data">Get Data</button>
+            <button class="btn btn-secondary" id="legend-toggle" title="Toggle legend">Toggle Legend</button>
           </div>
           <hr>
 
@@ -141,7 +140,6 @@
             <div class="tab-pane" id="playbook_triggers">
               <h1>Playbook Trigger configuration</h1>
               <select id="templates" class="s2 form-control" style="width: 100%"  multiple="multiple"></select>
-
               <div class="row mt-3">
                 <div id='input_container' class='col-md-12'>
                   <label for="variables">Playbook variables</label>
@@ -152,7 +150,7 @@
               <div class="row mt-3">
                   <div class='col-md-4'></div>
                   <div id='button_container' class='col-md-3'>
-                    <button id='json_to_table_btn' type="button" class="btn btn-default btn-lg btn-block">JSON to Table</button>
+                    <button id='json_to_table_btn' type="button" class="btn btn-default btn-lg btn-block">Load in Table</button>
                   </div>
               </div>
           
@@ -168,15 +166,15 @@
                 <hr>
                 <div>
                   <input type="hidden" id="trigger-name" placeholder="task name" name="trigger-name" readonly value="f1">
-                  <input type="text" id="resource-trigger-name" placeholder="resource name" name="resource-trigger-name" value="">
-                  <select id="metricSelect"></select>
-                  <select id="type">
+                  <input type="text" id="resource-trigger-name" class="btn"  placeholder="resource name" name="resource-trigger-name" value="">
+                  <select id="metricSelect" class="btn" ></select>
+                  <select id="type" class="btn" >
                     <option value="periodic">periodic</option>
                     <option value="reactive">when data arrives</option>
                     <option value="event">event processing</option>
                   </select>
                   <span id='polling_settings'>
-                    <select name="aggregate_window" id="aggregate_window">
+                    <select name="aggregate_window" id="aggregate_window" class="btn">
                       <option selected value="mean">mean</option>
                       <option value="median">median</option>
                       <option value="min">min</option>
@@ -186,7 +184,7 @@
                       <option value="first">first</option>
                       <option value="last">last</option>
                     </select>
-                    <select name="polling_window" id="polling_window">
+                    <select name="polling_window" id="polling_window" class="btn">
                       <option selected value="PT15M">15 minutes</option>
                       <option value="PT30M">30 minutes</option>
                       <option value="PT60M">1 hour</option>
@@ -194,41 +192,41 @@
                       <option value="P1M">1 month</option>
                     </select>
                   </span>
-                  <input type="number" id="lowerLimit" placeholder="lower limit" name="lowerLimit" value="0">
-                  <input type="number" id="upperLimit" placeholder="upper limit" name="upperLimit" value="10">
-                  <input type="text" id="path_settings" placeholder="JSON path" name="path_settings">
+                  <input type="number" id="lowerLimit" class="btn" placeholder="lower limit" style="width: 50px" name="lowerLimit" value="0">
+                  <input type="number" id="upperLimit" class="btn" placeholder="upper limit" style="width: 50px" name="upperLimit" value="10">
+                  <input type="text" id="path_settings" class="btn" placeholder="JSON path" name="path_settings">
                 </div>
                 <br><br>
               </div>
               <hr>
               <div id="triggers"></div>
-              <button id="add-task-btn" title="Add a trigger ">Add trigger</button>
-              <button id="clear-task-btn" title="Reset">Reset</button>
+              <button id="add-task-btn" class="btn btn-secondary" title="Add a trigger ">Add trigger</button>
+              <button id="clear-task-btn" class="btn btn-secondary" title="Reset">Reset</button>
             </div>
          </div>
          <div>
            <br><br>
-           <input type="text" id="task-name" value="Demo task" placeholder="Task name" style="float: right; width:300px">
-           <button id="task-btn" title="Start a task " style="float: right;">Start a task</button>
+           <input type="text" id="task-name" class="btn" value="Demo task" placeholder="Task name" style="float: right; width:300px">
+           <button id="task-btn" class="btn btn-secondary" title="Start a task " style="float: right;">Start a task</button>
            <br><br>
          </div>
          <hr>
           <div id="tasks_">
             <h1>List Tasks</h1>
             <div id="tasks"></div>
-            <button id="tasks-list-btn" title="List all tasks">List all tasks</button>
-            <button id="tasks-remove-btn" title="Stop and delete All">Stop and delete</button>
+            <button id="tasks-list-btn" class="btn btn-secondary" title="List all tasks">List all tasks</button>
+            <button id="tasks-remove-btn" class="btn btn-secondary"  title="Stop and delete All">Stop and delete</button>
           </div>
           <hr>
           <div id="notifications_">
             <h1>Notification configuration</h1>
-            <button id="notify-btn" title="Start alert task ">Notification </button>
-            <input type="text" id="notification-resource" placeholder="enter the task id" style="width: 300px;" value="">
-            <select name="states" id="states">
+            <button id="notify-btn" class="btn btn-secondary" title="Start alert task ">Notification </button>
+            <input type="text" id="notification-resource" class="btn" placeholder="enter the task id" style="width: 300px;" value="">
+            <select name="states" id="states" class="btn">
               <option value="Always">Always</option>
               <option value="Created">First time created</option>
             </select>
-            <select name="notification" id="notification">
+            <select name="notification" id="notification" class="btn">
               <option value="email">email</option>
               <option value="playbooks">playbooks</option>
               <option value="sms">sms</option>
@@ -239,7 +237,7 @@
           <div id="alarms_">
             <h1>Alarms</h1>
             <div id="alarms"></div>
-            <button id="alarms-btn" title="Delete All">Clear and delete</button>
+            <button id="alarms-btn" class="btn btn-secondary" title="Delete All">Clear and delete</button>
           </div>
         </div>
       </main>

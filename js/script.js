@@ -56,7 +56,7 @@ async function login(ops) {
     }))
   })
   jsonEditorInit('table_container', 'variables', 'result_container', 'json_to_table_btn', 'table_to_json_btn')
-  $('.s2').select2({ width: '100%',  theme: "classic"})
+  $('.s2').select2({ width: '100%'})
   showMessage("Connected", 500)
 }
 
