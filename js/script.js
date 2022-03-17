@@ -228,7 +228,7 @@ function init() {
     const playbooks = templatesSelection.val()
     for(let i = 0; i < playbooks.length; i ++ ) {
       let obj = {}
-      p = await client.templates.get(playbooks, {format: "simplified"})
+      p = await client.templates.get(playbooks[i], {format: "simplified"})
       if(p.variables) {
         obj[p.name] = p.variables.map(variable => {
           return {...variable, ...{value: variable.defaultValue}}
@@ -239,7 +239,6 @@ function init() {
         obj[p.name].push({name: 'resource', value: resource})
       mergeVariables.push(obj)
     }
-
     editor.set(mergeVariables)
   }
 
