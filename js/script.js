@@ -1,10 +1,10 @@
-var client
-var plugins
-var triggers = []
-var timerId
-var ruleBuilder
-var rulePlaybook
-var templates
+let plugins
+let triggers = []
+let timerId
+let ruleBuilder
+let rulePlaybook
+let templates
+let editor
 
 async function getMetrics(resource) {
   const res = await client.data.getSeries(resource, { metadata: true })
@@ -55,7 +55,9 @@ async function login(ops) {
         text : template.name
     }))
   })
-  jsonEditorInit('table_container', 'variables', 'result_container', 'json_to_table_btn', 'table_to_json_btn')
+  const container = document.getElementById("jsoneditor")
+  const options = {}
+  editor = new JSONEditor(container, options)
   $('.s2').select2({ width: '100%'})
   showMessage("Connected", 500)
 }
@@ -237,7 +239,8 @@ function init() {
         obj[p.name].push({name: 'resource', value: resource})
       mergeVariables.push(obj)
     }
-    $('#variables').val(JSON.stringify(mergeVariables))
+
+    editor.set(mergeVariables)
   }
 
   async function startAllTasks() {
@@ -247,7 +250,7 @@ function init() {
 
     if(!triggers.length && playbooks !== ''){
       const resource = resourceEntry.val()
-      let variables = makeJson()
+      let variables = editor.get()
       let playbook_variables = [] 
       playbooks.forEach((playbook, i) =>{
         if(variables[i] && variables[i][playbook])
