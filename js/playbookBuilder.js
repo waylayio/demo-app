@@ -145,7 +145,7 @@ class RulePlaybooksBuilder {
       if(i > 0){
         sensor.position[1] = sensor.position[1] + y_offset
       }
-      if(playbook_resource !== undefined) {
+      if(playbook_resource !== undefined && sensor.resource !== undefined) {
         sensor.resource =  sensor.resource.replaceAll('task.RESOURCE', playbook_resource)
         sensor.resource =  sensor.resource.replaceAll('task.resource', playbook_resource)
         sensor.resource =  sensor.resource.replaceAll('$', playbook_resource)
