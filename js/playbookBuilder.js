@@ -21,9 +21,11 @@ class RulePlaybooksBuilder {
     return this.plugins.find(x=> x.name === name)
   }
 
-  /*  playbook_variables list of set variables for playbooks, otherwise defaults will be in use
-    if not empty, must be of the same size as playbooks: [[{name:'threshold', value:12}, {name:'metric', value:'temperature'}]].
-    Additionaly, playbook_variables can hold as well a resource name {name: 'resource', value: 'foobar'}
+  /*  
+  playbook_variables is list of variables for playbooks (in the same format): 
+  [[{name:'threshold', value:12}, {name:'metric', value:'temperature'}]]. If not specified 
+  playbook defaults will be in use. If the list is not empty, must be of the same size as playbooks.
+  Additionaly, playbook_variables can hold as well a resource name in this format {name: 'resource', value: 'foobar'}. 
   */
   async startFromPlaybooks(name, playbooks, playbook_variables = [], resource, tags) {
     if(playbook_variables.length === 0 ) {
