@@ -147,6 +147,10 @@ function init() {
     })
   })
 
+  resetButton.click(()=>{
+    chart.resetZoom()
+  })
+
   toggle.click((e) => {
     chart.data.datasets.forEach(function(ds) {
       ds.hidden = !ds.hidden

@@ -123,6 +123,7 @@
               <option value="P1Y">1 year</option>
             </select>
             <button class="btn btn-outline-secondary" id="load-btn" title="Load data">Get Data</button>
+            <button class="btn btn-outline-secondary" id="reset-zoom" title="Toggle legend">Reset Zoom</button>
             <button class="btn btn-outline-secondary" id="legend-toggle" title="Toggle legend">Toggle Legend</button>
           </div>
           <hr>
@@ -144,7 +145,7 @@
               <select id="templates" class="s2 form-control" style="width: 100%"  multiple="multiple"></select>
               <div id="jsoneditor"></div>    
             </div>
-
+ 
             <div class="tab-pane active" id="triggers_">
               <div>
                 <br>
@@ -234,7 +235,10 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.bundle.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js/dist/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/1.2.0/chartjs-plugin-zoom.min.js"></script>
     <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>

@@ -4,6 +4,7 @@ const app = $('#app')
 const page = $('.page-content')
 const loggedUser = $('#user-name')
 const loadButton = $('#load-btn')
+const resetButton = $('#reset-zoom')
 const resourceEntry = $('#resource')
 const resourceTriggerEntry = $('#resource-trigger-name')
 const connectButton = $('#btnFormConnect')
@@ -32,17 +33,28 @@ const map = ["#543005", "#8c510a", "#bf812d", "#dfc27d", "#f6e8c3", "#f5f5f5","#
 function getHeatmap(num) {
   return map[num % map.length]
 }
-
 const ctx = document.getElementById('my-simple-chart').getContext('2d')
 var chart = new Chart(ctx, {
   type: 'line',
   data: { datasets: []},
   options: {
-    spanGaps: true,
     scales: {
-      xAxes: [{
-        type: 'time'
-      }]
+      x: {
+        type: "time"
+      }
+    },
+    plugins: {
+      zoom: {
+        zoom: {
+          wheel: {
+            enabled: true,
+          },
+          pinch: {
+            enabled: true
+          },
+          mode: 'xy',
+        }
+      }
     }
   }
 })
