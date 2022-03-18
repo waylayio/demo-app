@@ -263,7 +263,7 @@ class RulePlaybooksBuilder {
 
       for(i in playbooks){
         let playbook = await client.templates.get(playbooks[i], {format: "simplified"})
-        let prefix = playbook.name + "_"
+        let prefix = "p" + i + "_"
 
         const startSensor = playbook.sensors.reduce((prev, curr) => {
           return prev.position[0] < curr.position[0] ? prev : curr
