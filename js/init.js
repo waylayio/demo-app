@@ -54,6 +54,18 @@ var chart = new Chart(ctx, {
           },
           mode: 'xy',
         }
+      },
+      datalabels: {
+        backgroundColor: function(context) {
+          return context.dataset.backgroundColor
+        },
+        borderRadius: 4,
+        color: 'white',
+        font: {
+          weight: 'bold'
+        },
+        formatter: Math.round,
+        padding: 6
       }
     }
   }
