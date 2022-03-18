@@ -127,7 +127,7 @@
           </div>
           <hr>
 
-          <h1>Create new tasks</h1>
+          <h1>Monitoring</h1>
           <br>
           <ul class="nav nav-tabs">
             <li class="nav-item">
@@ -139,14 +139,16 @@
           </ul>
           <div class="tab-content">
             <div class="tab-pane" id="playbook_triggers">
-              <h1>Playbook Trigger configuration</h1>
+              <br>
+              <h3>Select playbooks</h3>
               <select id="templates" class="s2 form-control" style="width: 100%"  multiple="multiple"></select>
               <div id="jsoneditor"></div>    
             </div>
 
             <div class="tab-pane active" id="triggers_">
               <div>
-                <h1>Trigger (metric) configuration</h1>
+                <br>
+                <h3>Select metrics</h3>
                 <p>Select the trigger condition under which there are no issues, out of boundaries are lower and upper limit, if values are above or below, an alarm <strong><em>Out of Range</em></strong> will be generated:</p>
                 <hr>
                 <div>
@@ -229,17 +231,13 @@
     </div>
 
     <script src="https://unpkg.com/@waylay/client/dist/waylay.umd.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
-    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
-    crossorigin="anonymous"></script>
-    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js" integrity="sha256-eTyxS0rkjpLEo16uXTS0uVCS4815lc40K2iVpWDvdSY=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.bundle.js"></script>
     <script src="https://unpkg.com/gridjs/dist/gridjs.umd.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.7.1/jquery.contextMenu.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-contextmenu/2.7.1/jquery.ui.position.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/9.7.4/jsoneditor.min.js"></script>
     <script src="js/config.js"></script>
     <script src="js/init.js"></script>
