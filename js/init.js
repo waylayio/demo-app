@@ -35,7 +35,8 @@ function getHeatmap(num) {
 }
 const autocolors = window['chartjs-plugin-autocolors']
 Chart.register(autocolors)
-const ctx = document.getElementById('my-simple-chart').getContext('2d')
+
+const ctx = document.getElementById('data-chart').getContext('2d')
 var chart = new Chart(ctx, {
   type: 'line',
   data: { datasets: []},
