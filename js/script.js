@@ -240,8 +240,11 @@ function init() {
         })
       }
       const resource = resourceEntry.val()
-      if(resource)
+      if(resource) {
+        if(obj[p.name] === undefined)
+          obj[p.name] = []
         obj[p.name].push({name: 'resource', value: resource})
+      }
       mergeVariables.push(obj)
     }
     editor.set(mergeVariables)
