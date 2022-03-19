@@ -33,7 +33,8 @@ const map = ["#543005", "#8c510a", "#bf812d", "#dfc27d", "#f6e8c3", "#f5f5f5","#
 function getHeatmap(num) {
   return map[num % map.length]
 }
-
+const autocolors = window['chartjs-plugin-autocolors']
+Chart.register(autocolors)
 const ctx = document.getElementById('my-simple-chart').getContext('2d')
 var chart = new Chart(ctx, {
   type: 'line',
@@ -60,6 +61,7 @@ var chart = new Chart(ctx, {
       }
     },
     plugins: {
+      autocolors,
       zoom: {
         zoom: {
           wheel: {
