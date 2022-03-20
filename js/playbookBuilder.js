@@ -235,7 +235,7 @@ class RulePlaybooksBuilder {
       return  {relations, sensors, triggers}
     }
 
-    async subscribePlaybooksToTask(id, name, playbooks, variables, tags) {
+    async subscribePlaybooksToTask(id, name, playbooks, variables, states = ["Created", "Occurred again"], tags) {
       const alarmEventSensorPlug = {...this.getPlugin('AlarmEventSensor'), label: 'AlarmEventSensor'}
       let task  = {
         sensors: [{
@@ -281,7 +281,7 @@ class RulePlaybooksBuilder {
         task.triggers.push({
           sourceLabel: alarmEventSensorPlug.label,
           destinationLabel: node,
-          statesTrigger: ["Created", "Occurred again"]
+          statesTrigger: states
         })
       })
       return await this.client.tasks.create(task, {})
