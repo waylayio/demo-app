@@ -254,8 +254,9 @@ function init() {
     const task_name = $('#task-name').val()
     const playbooks = templatesSelection.val()
     const resource = resourceEntry.val()
+    const alarmOnTask = $('#alarm_id :selected').val() === 'task'
 
-    if(!triggers.length && playbooks !== ''){
+    if(!triggers.length && playbooks.length){
       let variables = editor.get()
       let playbook_variables = [] 
       playbooks.forEach((playbook, i) =>{
@@ -265,7 +266,7 @@ function init() {
           playbook_variables.push([])
       })
 
-      rulePlaybook.startFromPlaybooks(task_name, playbooks, playbook_variables, resource, {'demo':'demo-task'})
+      rulePlaybook.startFromPlaybooks(task_name, playbooks, playbook_variables, resource, {'demo':'demo-task'}, alarmOnTask)
       .then(task=>{
         showMessage('Created task from playbooks: ' + task.ID)
         listTasks()
@@ -274,7 +275,7 @@ function init() {
         alert(err)
       })
     } else if(triggers.length){
-      ruleBuilder.startTaskForTriggers(task_name, triggers, resource, {'demo':'demo-task'})
+      ruleBuilder.startTaskForTriggers(task_name, triggers, resource, {'demo':'demo-task'}, alarmOnTask)
       .then(task=>{
         showMessage('Created task from triggers: ' + task.ID)
         resetTriggerTable()

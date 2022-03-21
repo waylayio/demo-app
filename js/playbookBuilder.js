@@ -53,7 +53,6 @@ class RulePlaybooksBuilder {
       if(!alarmOnTask)
         alarmId = resource
     }
-      
 
     let targetNodes = []
     let i = 0

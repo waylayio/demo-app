@@ -195,7 +195,11 @@
          <div>
            <br><br>
            <input type="text" id="task-name" class="btn" value="Demo task" placeholder="Task name" style="float: right; width:300px">
-           <button id="task-btn" class="btn btn-outline-secondary" title="Start a task " style="float: right;">Start a task</button>
+           <select style="float: right;" class="btn" name="alarm_id" id="alarm_id" >
+            <option selected value="task">Alarm on a task</option>
+            <option value="resource">Alarm on a resource</option>
+          </select>
+           <button id="task-btn" class="btn btn-outline-secondary" title="Start a task " style="float: right;">Start monitoring</button>
            <br><br>
          </div>
          <hr>
