@@ -244,10 +244,7 @@ you need to specity the condition under which the target node will be in the TRU
       task.triggers = task.triggers.concat(network.triggers)
       nodes.push(trigger.targetNode)
     })
-    task.task.tags = {
-        demo: 'demo-task',
-        targetNodes: nodes
-    }
+    
     const resultNetwork = this.createTaskResultGate(nodes, 'OR', 'True', alarmId)
     task.relations = resultNetwork.relations
     task.sensors = task.sensors.concat(resultNetwork.sensors)
