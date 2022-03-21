@@ -29,10 +29,6 @@ $.urlParam = function(name){
   return decodeURI(results[1]) || 0;
 }
 
-const map = ["#543005", "#8c510a", "#bf812d", "#dfc27d", "#f6e8c3", "#f5f5f5","#c7eae5","#80cdc1","#35978f","#01665e","#003c30"]
-function getHeatmap(num) {
-  return map[num % map.length]
-}
 const autocolors = window['chartjs-plugin-autocolors']
 Chart.register(autocolors)
 
@@ -43,12 +39,7 @@ var chart = new Chart(ctx, {
   options: {
     aspectRatio: 5 / 3,
     layout: {
-      padding: {
-        top: 32,
-        right: 16,
-        bottom: 16,
-        left: 8
-      }
+      padding: 20
     },
     elements: {
       line: {
@@ -64,16 +55,18 @@ var chart = new Chart(ctx, {
     plugins: {
       autocolors,
       zoom: {
-        zoom: {
-          wheel: {
+        pan: {
             enabled: true,
-          },
-          pinch: {
+            modifierKey: 'ctrl',
+            mode: 'xy'
+        },
+        zoom: {
+          drag: {
             enabled: true
           },
-          mode: 'xy',
+          mode: 'xy'
         }
-      }
+     }
     }
   }
 })

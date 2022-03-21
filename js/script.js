@@ -21,8 +21,6 @@ async function getData(resource, metrics, time = 'P1D') {
     if(data.series.length) {
       timeseries.push({
         label: metric,
-        // borderColor: getHeatmap(i),
-        // backgroundColor: getHeatmap(i++),
         data: data.series.map(d=> {return {x: new Date(d[0]), y:d[1] }} )
       })
     }
