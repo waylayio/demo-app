@@ -90,13 +90,11 @@ class RuleBuilder {
           version: getMetricValuePlug.version,
           dataTrigger: false,
           tickTrigger: true,
-          duration: pollingInterval,
+          pollingPeriod: pollingInterval,
           evictionTime: evictionTime,
           properties: {
-            resource,
-            metric,
-            polling_window,
-            aggregate
+            resource, metric, aggregate,
+            duration : polling_window,
           },
           position: [ 150 + x_offset, 150 + y_offset]
         },
