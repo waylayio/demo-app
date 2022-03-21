@@ -253,10 +253,9 @@ function init() {
   async function startAllTasks() {
     const task_name = $('#task-name').val()
     const playbooks = templatesSelection.val()
-    //todo
+    const resource = resourceEntry.val()
 
     if(!triggers.length && playbooks !== ''){
-      const resource = resourceEntry.val()
       let variables = editor.get()
       let playbook_variables = [] 
       playbooks.forEach((playbook, i) =>{
@@ -275,7 +274,7 @@ function init() {
         alert(err)
       })
     } else if(triggers.length){
-      ruleBuilder.startTaskForTriggers(task_name, triggers)
+      ruleBuilder.startTaskForTriggers(task_name, triggers, resource, {'demo':'demo-task'})
       .then(task=>{
         showMessage('Created task from triggers: ' + task.ID)
         resetTriggerTable()

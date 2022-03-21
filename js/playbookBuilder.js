@@ -2,8 +2,7 @@
 you need to provide list of templates (playbooks) that you want to combine together
 each playbook should have a tags.targetNode and tags.targetState, if not, assumtion is that
 the last node in the template (by x position) will be a targetNode, with first state as
-being the end goal.
-For the start node, we will take the first left node in the graph.
+being the end goal. For the start node, we will take the first left node in the graph.
 */
 class RulePlaybooksBuilder {
 
@@ -26,8 +25,10 @@ class RulePlaybooksBuilder {
   [[{name:'threshold', value:12}, {name:'metric', value:'temperature'}]]. If not specified 
   playbook defaults will be in use. If the list is not empty, must be of the same size as playbooks.
   Additionaly, playbook_variables can hold as well a resource name in this format {name: 'resource', value: 'foobar'}. 
+  The result of the task runner will either be alarm on the task Id (alarmOnTask) or on the resource itself, for which both alarmOnTask
+  must be false and resource must be defined
   */
-  async startFromPlaybooks(name, playbooks, playbook_variables = [], resource, tags) {
+  async startFromPlaybooks(name, playbooks, playbook_variables = [], resource, tags, alarmOnTask = true) {
     if(playbook_variables.length === 0 ) {
       playbook_variables = new Array(playbooks.length)
     } 
@@ -36,6 +37,7 @@ class RulePlaybooksBuilder {
     }
     
     let variables = {}
+    let alarmId = '${task.TASK_ID}'
     let task  = {
       sensors: [],
       relations: [],
@@ -46,8 +48,12 @@ class RulePlaybooksBuilder {
         start: true
       }
     }
-    if(resource !== '')
+    if(resource !== undefined && resource !== '') {
       task.task.resource = resource
+      if(!alarmOnTask)
+        alarmId = resource
+    }
+      
 
     let targetNodes = []
     let i = 0
@@ -88,29 +94,32 @@ class RulePlaybooksBuilder {
         x_offset = x_offset_
       }
 
+      let pl_StartSensor =  playbook.sensors[index]
       if(playbook.taskDefaults?.type === "periodic"){
         task.task.type = "periodic"
         if(periodic_frequency === 0) {
           periodic_frequency = playbook.taskDefaults.frequency
           task.task.pollingInterval = periodic_frequency
-          playbook.sensors[index].evictionTime = (periodic_frequency - 1 ) * 1000
+          pl_StartSensor.tickTrigger = true
+          pl_StartSensor.dataTrigger = false
+          pl_StartSensor.evictionTime = (periodic_frequency - 1 ) * 1000
         } else if(periodic_frequency !== playbook.taskDefaults.frequency){
           //this playbook is not with the same polling frequency, hence we need to start it with its own clock
-          playbook.sensors[index].tickTrigger = true
-          playbook.sensors[index].dataTrigger = false
-          playbook.sensors[index].pollingPeriod = playbook.taskDefaults.frequency * 1000
-          playbook.sensors[index].evictionTime = (playbook.taskDefaults.frequency - 1 ) * 1000
+          pl_StartSensor.tickTrigger = true
+          pl_StartSensor.dataTrigger = false
+          pl_StartSensor.pollingPeriod = playbook.taskDefaults.frequency * 1000
+          pl_StartSensor.evictionTime = (playbook.taskDefaults.frequency - 1 ) * 1000
         }
       } else if(playbook.taskDefaults?.type === "reactive"){
-        playbook.sensors[index].tickTrigger = false
-        playbook.sensors[index].dataTrigger = true
-        playbook.sensors[index].evictionTime = 1000
+        pl_StartSensor.tickTrigger = false
+        pl_StartSensor.dataTrigger = true
+        pl_StartSensor.evictionTime = 1000
       } else if(playbook.taskDefaults?.type === "scheduled") {
         task.task.type = "scheduled"
         task.task.cron = playbook.taskDefaults.cron
       } else { //default is reactive task
-        playbook.sensors[index].tickTrigger = false
-        playbook.sensors[index].dataTrigger = true
+        pl_StartSensor.tickTrigger = false
+        pl_StartSensor.dataTrigger = true
       }
       
       if(playbook.variables) {
@@ -126,7 +135,7 @@ class RulePlaybooksBuilder {
         state: targetState
       })
     }
-    const resultNetwork = this.createTaskResultGate(targetNodes, x_offset + 200)
+    const resultNetwork = this.createTaskResultGate(targetNodes, x_offset + 200, alarmId)
     task.relations = task.relations.concat(resultNetwork.relations)
     task.sensors = task.sensors.concat(resultNetwork.sensors)
     task.triggers = task.triggers.concat(resultNetwork.triggers)
@@ -189,7 +198,7 @@ class RulePlaybooksBuilder {
     return alarms.alarms.length > 0 || problemGATE
   }
 
-  createTaskResultGate(nodes, x_offset) {
+  createTaskResultGate(nodes, x_offset, resource = '${task.TASK_ID}') {
     const createAlarmPlug = {...this.getPlugin('createAlarm'), label: 'createResultAlarm'}
     const clearAlarmPlug = {...this.getPlugin('clearAlarm'), label: 'clearResultAlarm'}
     const relations = [{
@@ -207,7 +216,7 @@ class RulePlaybooksBuilder {
         text: 'Result',
         severity: 'CRITICAL',
         type: 'Taks result',
-        resource: '${task.TASK_ID}'
+        resource
       },
       position: [ x_offset + 200, 100 ]
     },
@@ -217,7 +226,7 @@ class RulePlaybooksBuilder {
       version: clearAlarmPlug.version,
       properties: {
         type: 'Taks result',
-        resource: '${task.TASK_ID}'
+        resource
       },
       position: [ x_offset + 200, 300 ]
     }]

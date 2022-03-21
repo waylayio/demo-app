@@ -168,7 +168,7 @@ you need to specity the condition under which the target node will be in the TRU
  merging all templates via the target node, and it will fire an alarm any time one
  of the networks is in the TRUE state.
  */
-  createTaskResultGate(nodes, relation = 'OR', state = 'True') {
+  createTaskResultGate(nodes, relation = 'OR', state = 'True', resource = '${task.TASK_ID}') {
     const createAlarmPlug = {...this.getPlugin('createAlarm'), label: 'createResultAlarm'}
     const clearAlarmPlug = {...this.getPlugin('clearAlarm'), label: 'clearResultAlarm'}
     const relations = [{
@@ -186,7 +186,7 @@ you need to specity the condition under which the target node will be in the TRU
         text: 'Result',
         severity: 'CRITICAL',
         type: 'Taks result',
-        resource: '${task.TASK_ID}'
+        resource
         },
         position: [ 1000, 100 ]
       },
@@ -196,7 +196,7 @@ you need to specity the condition under which the target node will be in the TRU
       version: clearAlarmPlug.version,
       properties: {
         type: 'Taks result',
-        resource: '${task.TASK_ID}'
+        resource
       },
       position: [ 1000, 300 ]
     }]
@@ -214,15 +214,21 @@ you need to specity the condition under which the target node will be in the TRU
     return  {relations, sensors, triggers}
   }
 
-  async startTaskForTriggers(name='Task builder', triggers) {
+  async startTaskForTriggers(name='Task builder', triggers, resource, tags, alarmOnTask = true) {
+    let alarmId = '${task.TASK_ID}'
     var task =  {
       sensors: [],
       triggers: [],
       task: {
         type: 'reactive',
         start: true,
-        name
+        name, tags
       }
+    }
+    if(resource !== undefined && resource !== '') {
+      task.task.resource = resource
+      if(!alarmOnTask)
+        alarmId = resource
     }
     var i = 0
     var nodes = []
@@ -242,7 +248,7 @@ you need to specity the condition under which the target node will be in the TRU
         demo: 'demo-task',
         targetNodes: nodes
     }
-    const resultNetwork = this.createTaskResultGate(nodes)
+    const resultNetwork = this.createTaskResultGate(nodes, 'OR', 'True', alarmId)
     task.relations = resultNetwork.relations
     task.sensors = task.sensors.concat(resultNetwork.sensors)
     task.triggers = task.triggers.concat(resultNetwork.triggers)
