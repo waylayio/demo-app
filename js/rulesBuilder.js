@@ -14,6 +14,14 @@ class RuleBuilder {
     return this.plugins.find(x=> x.name === name)
   }
 
+  guid(name) {
+    function _p8(s) {
+        var p = (Math.random().toString(16)+"000000000").substr(2,8);
+        return s ? "-" + p.substr(0,4) + "-" + p.substr(4,4) : p ;
+    }
+    return name + _p8(true) + _p8(true) + _p8();
+  }
+
   /*
     stream template that has a threshold crossing lower and upper boundaries
     if you want to make it only the higher or lower threshold rule, you make one of these
@@ -92,6 +100,7 @@ class RuleBuilder {
           tickTrigger: true,
           pollingPeriod: pollingInterval,
           evictionTime: evictionTime,
+          resource,
           properties: {
             resource, metric, aggregate,
             duration : polling_window,
@@ -226,7 +235,6 @@ you need to specity the condition under which the target node will be in the TRU
       }
     }
     if(resource !== undefined && resource !== '') {
-      task.task.resource = resource
       if(!alarmOnTask)
         alarmId = resource
     }
@@ -249,7 +257,11 @@ you need to specity the condition under which the target node will be in the TRU
     task.relations = resultNetwork.relations
     task.sensors = task.sensors.concat(resultNetwork.sensors)
     task.triggers = task.triggers.concat(resultNetwork.triggers)
-    const result = await this.client.tasks.create(task)
+    const templateName = this.guid(name)
+    let template = {...task, ...{taskDefaults: {type: 'reactive'}}, ...{name: templateName}}
+    const templateResult = await this.client.templates.create(template)
+    //const result = await this.client.tasks.create(task)
+    const result = await this.client.tasks.create({name, template: templateName})
     return result
   }
 
