@@ -62,7 +62,8 @@ async function login(ops) {
 }
 
 async function listTasks(resource) {
-  const tasks = await client.tasks.list({'tags.demo':'demo-task', status: 'running', resource: resource})
+  //const tasks = await client.tasks.list({'tags.demo':'demo-task', status: 'running', resource: resource})
+  const tasks = await client.tasks.list({'tags.demo':'demo-task', status: 'running'})
   $("#tasks_num").text(tasks.length)
   const notification_tasks = tasks.filter(task =>
       {return(task.tags.type !== undefined &&

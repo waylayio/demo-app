@@ -258,7 +258,7 @@ you need to specity the condition under which the target node will be in the TRU
     task.sensors = task.sensors.concat(resultNetwork.sensors)
     task.triggers = task.triggers.concat(resultNetwork.triggers)
     const templateName = this.guid(name)
-    let template = {...task, ...{taskDefaults: {type: 'reactive'}}, ...{name: templateName}}
+    let template = {...task, ...{taskDefaults: {type: 'reactive', tags}}, ...{name: templateName}}
     const templateResult = await this.client.templates.create(template)
     //const result = await this.client.tasks.create(task)
     const result = await this.client.tasks.create({name, template: templateName})
