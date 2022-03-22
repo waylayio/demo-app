@@ -119,6 +119,7 @@ function plot(data) {
 function init() {
   loginError.hide()
   $("#cover").hide()
+  $('[data-toggle="tooltip"]').tooltip()
   app.hide()
   $('#domain').val(config.domain)
   updateTaskTypeSelection()
