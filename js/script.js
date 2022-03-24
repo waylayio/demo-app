@@ -40,6 +40,8 @@ async function login(ops) {
   }
 
   await client.loadSettings()
+  const email = $('#user').val()
+  config.mandrillMail.to = email
   //this can take a while if too many sensors
   setTimeout(() => {
     RuleBuilder.initialize(client)
