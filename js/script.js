@@ -40,9 +40,15 @@ async function login(ops) {
   }
 
   await client.loadSettings()
-  //two wasys to build rules
-  ruleBuilder = await RuleBuilder.initialize(client)
-  rulePlaybook = await RulePlaybooksBuilder.initialize(client)
+  //this can take a while if too many sensors
+  setTimeout(() => {
+    RuleBuilder.initialize(client)
+    .then(client => ruleBuilder = client)
+    RulePlaybooksBuilder.initialize(client)
+    .then(client => rulePlaybook = client)
+    console.log("loaded rules")}, 5000)
+  // ruleBuilder = await RuleBuilder.initialize(client)
+  // rulePlaybook = await RulePlaybooksBuilder.initialize(client)
   formConnect.hide()
   app.show()
   //page.hide()
