@@ -223,7 +223,7 @@ you need to specity the condition under which the target node will be in the TRU
     return  {relations, sensors, triggers}
   }
 
-  async startTaskForTriggers(name='Task builder', triggers, resource, tags, alarmOnTask = true) {
+  async startTaskForTriggers(name='Task builder', triggers, resource, tags, alarmOnTask = true, createTemplateFirst = true) {
     let alarmId = '${task.TASK_ID}'
     var task =  {
       sensors: [],
@@ -257,12 +257,14 @@ you need to specity the condition under which the target node will be in the TRU
     task.relations = resultNetwork.relations
     task.sensors = task.sensors.concat(resultNetwork.sensors)
     task.triggers = task.triggers.concat(resultNetwork.triggers)
-    const templateName = this.guid(name)
-    let template = {...task, ...{taskDefaults: {type: 'reactive', tags}}, ...{name: templateName}}
-    const templateResult = await this.client.templates.create(template)
-    //const result = await this.client.tasks.create(task)
-    const result = await this.client.tasks.create({name, template: templateName})
-    return result
+    if(createTemplateFirst){
+      const templateName = this.guid(name)
+      let template = {...task, ...{taskDefaults: {type: 'reactive', tags}}, ...{name: templateName}}
+      const templateResult = await this.client.templates.create(template)
+      return await this.client.tasks.create({name, template: templateName})
+    } else {
+      return await this.client.tasks.create(task)
+    }
   }
 
 /*
