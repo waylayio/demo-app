@@ -60,6 +60,8 @@ class RuleBuilder {
           label: conditionPlug.label,
           name: conditionPlug.name,
           version: conditionPlug.version,
+          dataTrigger: false,
+          tickTrigger: false,
           properties: {
             condition: '$${nodes.' + inRangePlug.label + '.state} !== "In Range" '
           },
@@ -111,6 +113,8 @@ class RuleBuilder {
           label: conditionPlug.label,
           name: conditionPlug.name,
           version: conditionPlug.version,
+          dataTrigger: false,
+          tickTrigger: false,
           properties: {
             condition: '${nodes.' + getMetricValuePlug.label + '.rawData.result} > ' + upperLimit + ' || ${nodes.' + getMetricValuePlug.label + '.rawData.result}  < ' + lowerLimit
           },
@@ -156,6 +160,8 @@ you need to specity the condition under which the target node will be in the TRU
           label: conditionPlug.label,
           name: conditionPlug.name,
           version: conditionPlug.version,
+          dataTrigger: false,
+          tickTrigger: false,
           properties: {
             condition: '(() => {\n let data = $${?nodes.'+ streamPlug.label + '.rawData.stream.' + path +'}\n  return data !== "" \n})()'
           },
