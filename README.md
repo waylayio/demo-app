@@ -27,7 +27,18 @@ if(ops.domain) {
 await client.loadSettings()
 ```
 
-Normally these rules will be in the backend code, so that your front end has a different login flow the what you would have in the waylay console. In the example, we have setup the waylay client using waylay credentials. You can login to the app using your console account or you can just provide your JWT token as the URL parameter and hosted it as an app in the console. If you create your own app, normally you would provide your own access control and then you can as well from the backend use these classes to go with Waylay credentials towards Waylay backend. Some other ways to initiaze the client you can find [here](https://sdk.waylay.io/#waylay)
+Normally these rules will be in the backend code, so that your front end has a different login flow then what you would have in the waylay console. In this code example, we have setup the waylay client using waylay credentials. You can login to the app using your console account or you can just provide your JWT token as the URL parameter and hosted it as an app in the console. If you create your own app, normally you would provide your own access control and then you can as well from the backend use waylay [npm package](https://www.npmjs.com/package/@waylay/client), in which case you will probaly start with something like this: 
+```
+const Waylay = require('@waylay/client')
+
+const client = new Waylay({
+  clientID: 'CLIENT_ID',
+  secret: 'CLIENT_SECRET',
+  domain: 'my-domain.waylay.io'
+}).loadSettings()
+```
+
+Full Waylay SDK is described  [here](https://sdk.waylay.io/#waylay). 
 
 Then you can setup rules this way:
 
