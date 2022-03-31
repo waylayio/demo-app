@@ -39,3 +39,9 @@ ul {
   background-color: #0e1c36;
   color: #fff;
 }
+
+.resource {
+  border-style: solid;
+  border-color: cadetblue;
+  text-align: left;
+}

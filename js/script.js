@@ -297,7 +297,6 @@ function init() {
     }
   }
 
-
   startTasksButton.click(()=> {
     startAllTasks()
   })
@@ -331,6 +330,7 @@ function init() {
        limit: 100
     })
     .then(data => {
+        $("#entry-resouce").show()
         page.hide()
         var resource = data.values.map(x=> {return x.id})
         response(resource)
@@ -343,6 +343,7 @@ function init() {
       resourceTriggerEntry.val(resource)
       getMetrics(resource)
       .then(metrics => {
+        $("#entry-resouce").hide()
         page.show()
         getData(resource, metrics)
         .then(data => plot(data))

@@ -91,6 +91,15 @@
               <li class="sidebar-dropdown">
                 <a href="#alarms_"><i class="far fa-bell"></i><span>Alarms </span><span class="badge badge-pill badge-danger alarms_num"></span></a>
               </li>
+              <li class="sidebar-dropdown">
+                <a href="#configuration"><i class="fa fa-wrench"></i><span>Configuration </span></a>
+                <div class="sidebar-submenu">
+                  <ul>
+                    <li><a href="#emailSettings_">Email<span id='email_config'></span></a></li>
+                    <li><a href="#organization_"><span>Organization </span><span id='organization_config' ></span></a></li>
+                  </ul>
+                </div>
+              </li>
             </ul>
           </div>
         </div>
@@ -110,6 +119,7 @@
       <main class="page-content">
         <div class="container-fluid">
           <div class="popup" id="popup"></div>
+          <img id="entry-resouce" src="assets/resource.svg">
           <div id="dashboards_">
             <h1>Dashboard</h1>
             <div>
@@ -159,7 +169,7 @@
                 <hr>
                 <div>
                   <input type="hidden" id="trigger-name" placeholder="task name" name="trigger-name" readonly value="f1">
-                  <input type="text" id="resource-trigger-name" class="btn"  placeholder="resource name" name="resource-trigger-name" value="">
+                  <input type="text" id="resource-trigger-name" class="btn resource" placeholder="resource name" name="resource-trigger-name" value="">
                   <select id="metricSelect" class="btn" ></select>
                   <select id="type" class="btn" >
                     <option value="periodic">periodic</option>
@@ -199,7 +209,7 @@
          </div>
          <div>
            <br><br>
-           <input type="text" id="task-name" class="btn" value="Demo task" placeholder="Task name" style="float: right; width:300px">
+           <input type="text" id="task-name" class="btn resource" value="Demo task" placeholder="Task name" style="float: right; width:300px">
            <select style="float: right;" class="btn" name="alarm_id" id="alarm_id" >
             <option selected value="task">Alarm on a task</option>
             <option value="resource">Alarm on a resource</option>
@@ -226,8 +236,6 @@
             <select name="notification" id="notification" class="btn">
               <option value="email">email</option>
               <option value="playbooks">playbooks</option>
-              <option value="sms">sms</option>
-              <option value="zendesk">zendesk</option>
             </select>
           </div>
           <hr>
