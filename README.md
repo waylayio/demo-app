@@ -50,6 +50,10 @@ let ruleBuilder = await RuleBuilder.initialize(client)
 Further we will only discuss RulePlaybooksBuilder class.
 
 ## Using RulePlaybooksBuilder
+Idea behind this project is that set of playbooks with target nodes/state will result in the alarm creation, either on the task level (taskID) or by specifying one particular resource. Alarm is fired every time any of the running playbooks reach that desired state. Another use case that is also featured in this demo is possiblity to have other set of playbooks subscribing to the alarm events and fire any time alarm is created or updated.
+
+![image](https://user-images.githubusercontent.com/1268521/161003338-480e051e-3e87-4c75-9467-703e64abab8e.png)
+
 
 ### Creating tasks that merges playbooks
 
