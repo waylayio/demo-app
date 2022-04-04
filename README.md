@@ -113,7 +113,7 @@ You can start a task and check it in the console
 
 
 ## Notification rules
-Notification rule is creating a subscription task on the ALARMS, where by playbook(s) or one sensor is called every time ALARM is raised
+Notification rule is creating a subscription task on the ALARMS (or resource if you wish), where playbook(s) or one particular sensor (like SMS or email) are called every time ALARM is raised
 ![image](https://user-images.githubusercontent.com/1268521/158544225-c1ff0c12-e0a7-4e3e-9774-9102024902d5.png)
 
 
