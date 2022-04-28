@@ -2,7 +2,12 @@
 
 You can check the app here: [demo app](https://waylayio.github.io/demo-app/)
 
+![image](https://user-images.githubusercontent.com/1268521/165769067-1ca04c95-e9b9-43a2-89f4-1aa60afd6208.png)
+
+
 Default domain is configured in [config.js](js/config.js). Demo is written in jQuery :), nothing fancy. Should be easy to convert it to react or vue or whatever.
+Application is written is such a way that you can also provide a valid Waylay JWT token in a URL, which would automatically let you in, without a need to go through the login first, in which case you can directly register it as a native application within console:
+![image](https://user-images.githubusercontent.com/1268521/165769226-64307687-e8d1-4306-9984-e60490c69e7a.png)
 
 ## Who is this for?
 
