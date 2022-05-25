@@ -154,8 +154,13 @@
             <div class="tab-pane" id="playbook_triggers">
               <br>
               <h3>Select playbooks</h3>
-              <p>If you want to overwrite a default variable <em>(defaultValue)</em>, use the field <strong>value</strong>.</p>
-              <p>In case your plabook uses a task resource field, you can change that too: (check the last object in the array).</p>
+              <p>If you want to overwrite a default variable <em>(defaultValue)</em>, use the field <strong>value</strong>. In case your plabook uses a task resource field, you can change that too.</p>
+              <p> Select relation which will be used to merge playbooks: 
+              <select name="relation" id="relation" class="btn">
+                <option selected value="OR">OR</option>
+                <option value="AND">AND</option>
+              </select>
+             </p>
               <select id="templates" class="s2 form-control" style="width: 100%"  multiple="multiple"></select>
               <div id="jsoneditor"></div>    
             </div>

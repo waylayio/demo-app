@@ -263,6 +263,7 @@ function init() {
     const playbooks = templatesSelection.val()
     const resource = resourceEntry.val()
     const alarmOnTask = $('#alarm_id :selected').val() === 'task'
+    const relation = $('#relation :selected').val()
 
     if(!triggers.length && playbooks.length){
       let variables = editor.get()
@@ -274,7 +275,7 @@ function init() {
           playbook_variables.push([])
       })
 
-      rulePlaybook.startFromPlaybooks(task_name, playbooks, playbook_variables, resource, {'demo':'demo-task'}, alarmOnTask)
+      rulePlaybook.startFromPlaybooks(task_name, relation, playbooks, playbook_variables, resource, {'demo':'demo-task'}, alarmOnTask)
       .then(task=>{
         showMessage('Created task from playbooks: ' + task.ID)
         listTasks()

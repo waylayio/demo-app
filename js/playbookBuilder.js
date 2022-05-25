@@ -21,19 +21,25 @@ class RulePlaybooksBuilder {
   }
 
   /*  
+  relation defines how playbooks will be merged, can be OR or AND relation. That meants that either all TargetNode/State 
+  need to be set (for each playbook) in order to create an alarm, which is AND relation, or that any of the TargetNode/State 
+  causes a firing if the alarm (OR) of the running task.
   playbook_variables is list of variables for playbooks (in the same format): 
   [[{name:'threshold', value:12}, {name:'metric', value:'temperature'}]]. If not specified 
   playbook defaults will be in use. If the list is not empty, must be of the same size as playbooks.
-  Additionaly, playbook_variables can hold as well a resource name in this format {name: 'resource', value: 'foobar'}. 
-  The result of the task runner will either be alarm on the task Id (alarmOnTask) or on the resource itself, for which both alarmOnTask
-  must be false and resource must be defined
+  Additionaly, playbook_variables can hold as well a resource name in this format {name: 'resource', value: 'foobar'}, 
+  which will be only applied to that playbook. The result of the task runner will either be alarm on the task Id (alarmOnTask) 
+  or on the resource itself, for which both alarmOnTask must be false and resource must be defined.
   */
-  async startFromPlaybooks(name, playbooks, playbook_variables = [], resource, tags, alarmOnTask = true) {
+  async startFromPlaybooks(name, relation, playbooks, playbook_variables = [], resource, tags, alarmOnTask = true) {
     if(playbook_variables.length === 0 ) {
       playbook_variables = new Array(playbooks.length)
     } 
     if(playbook_variables.length !== playbooks.length){
       throw new Error(`playbook_variables ${playbook_variables.length} not the same as playbooks length ${ playbooks.length}`)
+    }
+    if(relation !== 'OR' && relation !== 'AND'){
+      throw new Error('Relation must be either OR or AND')
     }
     
     let variables = {}
@@ -134,7 +140,7 @@ class RulePlaybooksBuilder {
         state: targetState
       })
     }
-    const resultNetwork = this.createTaskResultGate(targetNodes, x_offset + 200, alarmId)
+    const resultNetwork = this.createTaskResultGate(relation, targetNodes, x_offset + 200, alarmId)
     task.relations = task.relations.concat(resultNetwork.relations)
     task.sensors = task.sensors.concat(resultNetwork.sensors)
     task.triggers = task.triggers.concat(resultNetwork.triggers)
@@ -197,12 +203,12 @@ class RulePlaybooksBuilder {
     return alarms.alarms.length > 0 || problemGATE
   }
 
-  createTaskResultGate(nodes, x_offset, resource = '${task.TASK_ID}') {
+  createTaskResultGate(relation, nodes, x_offset, resource = '${task.TASK_ID}') {
     const createAlarmPlug = {...this.getPlugin('createAlarm'), label: 'createResultAlarm'}
     const clearAlarmPlug = {...this.getPlugin('clearAlarm'), label: 'clearResultAlarm'}
     const relations = [{
       label: 'PROBLEM',
-      type: 'OR',
+      type: relation,
       parentLabels: nodes.map(x=> x.node),
       combinations: [nodes.map((x) => x.state)],
       position: [ x_offset , 150]
